@@ -60,6 +60,7 @@ export interface ResultResponse {
     finalScore: number;
     bonusType: "NONE" | "VETERAN_5" | "VETERAN_10" | "HERO_3" | "HERO_5";
     bonusRate: number;
+    certificateBonus: number;
     createdAt: string;
     editCount: number;
     maxEditLimit: number;

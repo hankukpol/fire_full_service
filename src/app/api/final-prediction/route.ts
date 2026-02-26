@@ -3,7 +3,11 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { parsePositiveInt } from "@/lib/exam-utils";
-import { calculateKnownFinalRank, calculateKnownFinalScore } from "@/lib/final-prediction";
+import {
+  calculateKnownFinalRank,
+  calculateKnownFinalScore,
+  getWrittenScoreMax,
+} from "@/lib/final-prediction";
 import { prisma } from "@/lib/prisma";
 import { getSiteSettingsUncached } from "@/lib/site-settings";
 
@@ -12,9 +16,8 @@ export const dynamic = "force-dynamic";
 
 interface FinalPredictionRequestBody {
   submissionId?: unknown;
-  fitnessPassed?: unknown;
-  martialDanLevel?: unknown;
-  additionalBonusPoint?: unknown;
+  fitnessRawScore?: unknown;    // 체력 원점수 (0~60)
+  certificateBonus?: unknown;   // 자격증 가산점 재입력 (0~5, 미입력 시 제출 시 등록값 사용)
 }
 
 interface AdminPreviewCandidate {
@@ -32,19 +35,8 @@ const submissionSelect = {
   examType: true,
   finalScore: true,
   examNumber: true,
+  certificateBonus: true, // 자격증 가산점 (최종 환산에 사용)
 } as const;
-
-function parseBoolean(value: unknown): boolean | null {
-  if (typeof value === "boolean") {
-    return value;
-  }
-  if (typeof value === "string") {
-    const normalized = value.trim().toLowerCase();
-    if (normalized === "true") return true;
-    if (normalized === "false") return false;
-  }
-  return null;
-}
 
 function parseFiniteNumber(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) {
@@ -63,14 +55,6 @@ function parseNumberInRange(value: unknown, minValue: number, maxValue: number):
   const parsed = parseFiniteNumber(value);
   if (parsed === null) return null;
   if (parsed < minValue || parsed > maxValue) return null;
-  return parsed;
-}
-
-function parseDanLevel(value: unknown): number | null {
-  const parsed = parseFiniteNumber(value);
-  if (parsed === null || !Number.isInteger(parsed) || parsed < 0 || parsed > 20) {
-    return null;
-  }
   return parsed;
 }
 
@@ -111,22 +95,13 @@ async function buildAdminPreviewCandidates(): Promise<AdminPreviewCandidate[]> {
         examNumber: true,
         examType: true,
         user: {
-          select: {
-            name: true,
-            phone: true,
-          },
+          select: { name: true, phone: true },
         },
         region: {
-          select: {
-            name: true,
-          },
+          select: { name: true },
         },
         exam: {
-          select: {
-            year: true,
-            round: true,
-            name: true,
-          },
+          select: { year: true, round: true, name: true },
         },
       },
     });
@@ -150,14 +125,8 @@ async function findTargetSubmission(params: {
   if (params.submissionId) {
     return prisma.submission.findFirst({
       where: params.isAdmin
-        ? {
-            id: params.submissionId,
-            examNumber: { startsWith: MOCK_EXAM_NUMBER_PREFIX },
-          }
-        : {
-            id: params.submissionId,
-            userId: params.userId,
-          },
+        ? { id: params.submissionId, examNumber: { startsWith: MOCK_EXAM_NUMBER_PREFIX } }
+        : { id: params.submissionId, userId: params.userId },
       select: submissionSelect,
     });
   }
@@ -171,9 +140,7 @@ async function findTargetSubmission(params: {
   }
 
   const firstCandidateSubmissionId = params.adminPreviewCandidates[0]?.submissionId;
-  if (!firstCandidateSubmissionId) {
-    return null;
-  }
+  if (!firstCandidateSubmissionId) return null;
 
   return prisma.submission.findUnique({
     where: { id: firstCandidateSubmissionId },
@@ -219,10 +186,11 @@ export async function GET(request: NextRequest) {
         adminPreviewCandidates,
         submissionId: null,
         writtenScore: null,
+        writtenScoreMax: null,
+        certificateBonus: null,
         finalPrediction: null,
       });
     }
-
     return NextResponse.json({ error: "최종 환산 예측을 조회할 제출 데이터가 없습니다." }, { status: 404 });
   }
 
@@ -236,18 +204,24 @@ export async function GET(request: NextRequest) {
   const saved = await prisma.finalPrediction.findUnique({
     where: { submissionId: submission.id },
     select: {
-      fitnessScore: true,
-      interviewScore: true,
-      interviewGrade: true,
+      fitnessScore: true,    // 체력 원점수 (0~60)
+      interviewScore: true,  // 자격증 가산점 재입력 값 (재사용 컬럼, null이면 제출 시 등록값 사용)
       finalScore: true,
       finalRank: true,
       updatedAt: true,
     },
   });
 
-  const fitnessPassed = saved?.interviewGrade === "PASS";
+  const writtenScoreMax = getWrittenScoreMax(submission.examType);
+  const submissionCertificateBonus = Number(submission.certificateBonus); // 제출 시 등록 원본값
+  // 최종 환산 페이지에서 재입력한 값이 있으면 우선 사용, 없으면 제출 시 등록값 사용
+  const effectiveCertificateBonus =
+    saved?.interviewScore !== null && saved?.interviewScore !== undefined
+      ? Number(saved.interviewScore)
+      : submissionCertificateBonus;
+
   const rankInfo =
-    saved?.finalScore === null || saved?.finalScore === undefined || !fitnessPassed
+    !saved?.finalScore
       ? { finalRank: null as number | null, totalParticipants: 0 }
       : await calculateKnownFinalRank({
           examId: submission.examId,
@@ -256,23 +230,17 @@ export async function GET(request: NextRequest) {
           submissionId: submission.id,
         });
 
-  const martialBonusPoint =
-    saved?.fitnessScore === null || saved?.fitnessScore === undefined ? 0 : Number(saved.fitnessScore);
-  const additionalBonusPoint =
-    saved?.interviewScore === null || saved?.interviewScore === undefined ? 0 : Number(saved.interviewScore);
-  const knownBonusPoint = martialBonusPoint + additionalBonusPoint;
-
   return NextResponse.json({
     isAdminPreview: isAdmin,
     ...(isAdmin ? { adminPreviewCandidates } : {}),
     submissionId: submission.id,
     writtenScore: Number(submission.finalScore),
+    writtenScoreMax,
+    submissionCertificateBonus,   // 제출 시 등록한 원본값 (참고용 표시)
+    certificateBonus: effectiveCertificateBonus, // 현재 유효 가산점 (재입력 우선)
     finalPrediction: saved
       ? {
-          fitnessPassed,
-          martialBonusPoint,
-          additionalBonusPoint,
-          knownBonusPoint,
+          fitnessRawScore: saved.fitnessScore === null ? 0 : Number(saved.fitnessScore),
           knownFinalScore: saved.finalScore === null ? null : Number(saved.finalScore),
           finalRank: rankInfo.finalRank,
           totalParticipants: rankInfo.totalParticipants,
@@ -314,31 +282,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "유효한 submissionId가 필요합니다." }, { status: 400 });
   }
 
-  const fitnessPassed = parseBoolean(body.fitnessPassed);
-  if (fitnessPassed === null) {
-    return NextResponse.json({ error: "체력 통과 여부(fitnessPassed)를 true/false로 전달해 주세요." }, { status: 400 });
+  const fitnessRawScore = parseNumberInRange(body.fitnessRawScore, 0, 60);
+  if (fitnessRawScore === null) {
+    return NextResponse.json({ error: "체력 점수는 0 이상 60 이하 숫자여야 합니다." }, { status: 400 });
   }
 
-  const martialDanLevel = parseDanLevel(body.martialDanLevel);
-  if (martialDanLevel === null) {
-    return NextResponse.json({ error: "무도 단수는 0~20 사이의 정수여야 합니다." }, { status: 400 });
-  }
-
-  const additionalBonusPoint = parseNumberInRange(body.additionalBonusPoint, 0, 10);
-  if (additionalBonusPoint === null) {
-    return NextResponse.json({ error: "추가 가산점은 0 이상 10 이하 숫자여야 합니다." }, { status: 400 });
-  }
+  // 자격증 가산점: 재입력 값(0~5) 우선, 미입력 시 null → 제출 시 등록값 사용
+  const certBonusOverride = parseNumberInRange(body.certificateBonus, 0, 5);
 
   const submission = await prisma.submission.findFirst({
     where: isAdmin
-      ? {
-          id: submissionId,
-          examNumber: { startsWith: MOCK_EXAM_NUMBER_PREFIX },
-        }
-      : {
-          id: submissionId,
-          userId,
-        },
+      ? { id: submissionId, examNumber: { startsWith: MOCK_EXAM_NUMBER_PREFIX } }
+      : { id: submissionId, userId },
     select: submissionSelect,
   });
 
@@ -347,40 +302,42 @@ export async function POST(request: NextRequest) {
   }
 
   const writtenScore = Number(submission.finalScore);
+  const writtenScoreMax = getWrittenScoreMax(submission.examType);
+  // 재입력 값이 있으면 우선 사용, 없으면 제출 시 등록값 사용
+  const certificateBonus = certBonusOverride !== null ? certBonusOverride : Number(submission.certificateBonus);
+
   const calculated = calculateKnownFinalScore({
     writtenScore,
-    fitnessPassed,
-    martialDanLevel,
-    additionalBonusPoint,
+    writtenScoreMax,
+    fitnessRawScore,
+    certificateBonus,
   });
 
   await prisma.finalPrediction.upsert({
     where: { submissionId: submission.id },
     update: {
       userId: submission.userId,
-      fitnessScore: calculated.martialBonusPoint,
-      interviewScore: additionalBonusPoint,
-      interviewGrade: fitnessPassed ? "PASS" : "FAIL",
+      fitnessScore: fitnessRawScore,       // 체력 원점수 저장
+      interviewScore: certificateBonus,    // 자격증 가산점 재입력 값 저장 (컬럼 재사용)
+      interviewGrade: null,
       finalScore: calculated.knownFinalScore,
     },
     create: {
       submissionId: submission.id,
       userId: submission.userId,
-      fitnessScore: calculated.martialBonusPoint,
-      interviewScore: additionalBonusPoint,
-      interviewGrade: fitnessPassed ? "PASS" : "FAIL",
+      fitnessScore: fitnessRawScore,       // 체력 원점수 저장
+      interviewScore: certificateBonus,    // 자격증 가산점 재입력 값 저장 (컬럼 재사용)
+      interviewGrade: null,
       finalScore: calculated.knownFinalScore,
     },
   });
 
-  const rankInfo = fitnessPassed
-    ? await calculateKnownFinalRank({
-        examId: submission.examId,
-        regionId: submission.regionId,
-        examType: submission.examType,
-        submissionId: submission.id,
-      })
-    : { finalRank: null as number | null, totalParticipants: 0 };
+  const rankInfo = await calculateKnownFinalRank({
+    examId: submission.examId,
+    regionId: submission.regionId,
+    examType: submission.examType,
+    submissionId: submission.id,
+  });
 
   await prisma.finalPrediction.update({
     where: { submissionId: submission.id },
@@ -391,12 +348,12 @@ export async function POST(request: NextRequest) {
     success: true,
     submissionId: submission.id,
     writtenScore,
-    fitnessPassed,
-    martialDanLevel,
-    additionalBonusPoint,
+    writtenScoreMax,
+    fitnessRawScore,
+    certificateBonus,
     calculation: {
-      martialBonusPoint: calculated.martialBonusPoint,
-      knownBonusPoint: calculated.knownBonusPoint,
+      writtenConverted: calculated.writtenConverted,
+      fitnessConverted: calculated.fitnessConverted,
       knownFinalScore: calculated.knownFinalScore,
     },
     rank: rankInfo,

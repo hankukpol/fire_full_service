@@ -50,6 +50,7 @@ interface SubmissionRequestBody {
   bonusType?: unknown;
   veteranPercent?: unknown;
   heroPercent?: unknown;
+  certificateBonus?: unknown;
   submitDurationMs?: unknown;
   answers?: unknown;
 }
@@ -88,6 +89,11 @@ function parsePercent(value: unknown): number {
     return Number.isFinite(parsed) ? parsed : 0;
   }
   return 0;
+}
+
+function parseCertificateBonus(value: unknown): number {
+  const parsed = parsePercent(value);
+  return parsed === 1 || parsed === 2 || parsed === 3 || parsed === 4 || parsed === 5 ? parsed : 0;
 }
 
 function parseExamNumber(value: unknown): string | null {
@@ -639,6 +645,7 @@ export async function POST(request: Request) {
 
     const bonusType = resolveBonusType(body);
     const bonusRate = getBonusPercent(bonusType);
+    const certificateBonus = parseCertificateBonus(body.certificateBonus);
     const recruitCount = quota ? getRegionRecruitCount(quota, examType, gender === "MALE" ? "MALE" : "FEMALE") : 0;
     if (!Number.isInteger(recruitCount) || recruitCount < 1) {
       const message =
@@ -692,6 +699,7 @@ export async function POST(request: Request) {
           totalScore: scoreResult.totalScore,
           bonusType,
           bonusRate,
+          certificateBonus,
           finalScore: scoreResult.finalScore,
           submitDurationMs,
           isSuspicious: answerPatternResult.isSuspicious,
@@ -783,7 +791,7 @@ export async function PUT(request: Request) {
       where: { id: submissionId },
       select: {
         id: true, userId: true, examId: true, editCount: true,
-        examType: true, regionId: true, examNumber: true, gender: true, bonusType: true,
+        examType: true, regionId: true, examNumber: true, gender: true, bonusType: true, certificateBonus: true,
       },
     });
 
@@ -891,6 +899,7 @@ export async function PUT(request: Request) {
 
     const bonusType = resolveBonusType(body);
     const bonusRate = getBonusPercent(bonusType);
+    const certificateBonus = parseCertificateBonus(body.certificateBonus);
     const recruitCount = quotaForEdit ? getRegionRecruitCount(quotaForEdit, examType, gender === "MALE" ? "MALE" : "FEMALE") : 0;
     if (!Number.isInteger(recruitCount) || recruitCount < 1) {
       const message =
@@ -940,6 +949,7 @@ export async function PUT(request: Request) {
     if (existingSubmission.examNumber !== examNumber) changedFields.push("examNumber");
     if (existingSubmission.gender !== gender) changedFields.push("gender");
     if (existingSubmission.bonusType !== bonusType) changedFields.push("bonusType");
+    if (existingSubmission.certificateBonus !== certificateBonus) changedFields.push("certificateBonus");
     changedFields.push("answers");
 
     const updated = await prisma.$transaction(async (tx) => {
@@ -954,6 +964,7 @@ export async function PUT(request: Request) {
           totalScore: scoreResult.totalScore,
           bonusType,
           bonusRate,
+          certificateBonus,
           finalScore: scoreResult.finalScore,
           submitDurationMs: submitDurationMsEdit,
           editCount: { increment: 1 },

@@ -107,6 +107,29 @@ function getPopulationConditionSql(submissionHasCutoff: boolean): Prisma.Sql {
   `;
 }
 
+function getGenderConditionSql(params: {
+  examType: ExamType;
+  gender: "MALE" | "FEMALE";
+  recruitAcademicCombined: number;
+}): Prisma.Sql {
+  const { examType, gender, recruitAcademicCombined } = params;
+
+  if (examType === ExamType.CAREER_RESCUE) {
+    return Prisma.empty;
+  }
+
+  if (examType === ExamType.CAREER_ACADEMIC) {
+    // 양성(통합) 지역은 성별 분리 없이 동일 모집단
+    if (recruitAcademicCombined > 0) {
+      return Prisma.empty;
+    }
+    return Prisma.sql`AND s."gender"::text = ${gender}`;
+  }
+
+  // 공채, 구급: 성별 분리 모집단
+  return Prisma.sql`AND s."gender"::text = ${gender}`;
+}
+
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -148,6 +171,7 @@ export async function GET(request: NextRequest) {
       finalScore: true,
       bonusType: true,
       bonusRate: true,
+      certificateBonus: true,
       createdAt: true,
       editCount: true,
       exam: {
@@ -210,7 +234,7 @@ export async function GET(request: NextRequest) {
         select: {
           id: true, userId: true, examId: true, examType: true, regionId: true,
           gender: true, examNumber: true, totalScore: true, finalScore: true,
-          bonusType: true, bonusRate: true, createdAt: true, editCount: true,
+          bonusType: true, bonusRate: true, certificateBonus: true, createdAt: true, editCount: true,
           exam: { select: { id: true, name: true, year: true, round: true } },
           region: { select: { id: true, name: true } },
           subjectScores: {
@@ -255,6 +279,22 @@ export async function GET(request: NextRequest) {
   const rankingBasis = submissionHasCutoff ? "ALL_PARTICIPANTS" : "NON_CUTOFF_PARTICIPANTS";
   const populationConditionSql = getPopulationConditionSql(submissionHasCutoff);
   const myFinalScore = Number(submission.finalScore);
+  const quota = await prisma.examRegionQuota.findUnique({
+    where: {
+      examId_regionId: {
+        examId: submission.examId,
+        regionId: submission.regionId,
+      },
+    },
+    select: {
+      recruitAcademicCombined: true,
+    },
+  });
+  const genderConditionSql = getGenderConditionSql({
+    examType: submission.examType,
+    gender: submission.gender,
+    recruitAcademicCombined: quota?.recruitAcademicCombined ?? 0,
+  });
 
   const [overallRow] = await prisma.$queryRaw<CountRow[]>(Prisma.sql`
     SELECT
@@ -265,6 +305,7 @@ export async function GET(request: NextRequest) {
     WHERE s."examId" = ${submission.examId}
       AND s."regionId" = ${submission.regionId}
       AND s."examType"::text = ${submission.examType}
+      ${genderConditionSql}
       ${populationConditionSql}
   `);
 
@@ -319,6 +360,7 @@ export async function GET(request: NextRequest) {
           WHERE s."examId" = ${submission.examId}
             AND s."regionId" = ${submission.regionId}
             AND s."examType"::text = ${submission.examType}
+            ${genderConditionSql}
             ${populationConditionSql}
           GROUP BY ss."subjectId"
         `)
@@ -351,6 +393,7 @@ export async function GET(request: NextRequest) {
             WHERE s."examId" = ${submission.examId}
               AND s."regionId" = ${submission.regionId}
               AND s."examType"::text = ${submission.examType}
+              ${genderConditionSql}
               ${populationConditionSql}
           )
           SELECT
@@ -388,6 +431,7 @@ export async function GET(request: NextRequest) {
       WHERE s."examId" = ${submission.examId}
         AND s."regionId" = ${submission.regionId}
         AND s."examType"::text = ${submission.examType}
+        ${genderConditionSql}
         ${populationConditionSql}
     )
     SELECT
@@ -405,6 +449,7 @@ export async function GET(request: NextRequest) {
     WHERE s."examId" = ${submission.examId}
       AND s."regionId" = ${submission.regionId}
       AND s."examType"::text = ${submission.examType}
+      ${genderConditionSql}
       ${populationConditionSql}
   `);
 
@@ -604,6 +649,7 @@ export async function GET(request: NextRequest) {
       finalScore: Number(submission.finalScore),
       bonusType: submission.bonusType,
       bonusRate: Number(submission.bonusRate),
+      certificateBonus: Number(submission.certificateBonus),
       createdAt: submission.createdAt,
       editCount: submission.editCount,
       maxEditLimit,

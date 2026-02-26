@@ -449,8 +449,8 @@ export default function AdminRegionsPage() {
 
       {/* 선택된 시험 헤더 */}
       {selectedExam ? (
-        <div className="rounded-xl border border-police-200 bg-police-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-police-600">현재 선택된 시험</p>
+        <div className="rounded-xl border border-fire-200 bg-fire-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-fire-600">현재 선택된 시험</p>
           <p className="mt-1 text-lg font-bold text-slate-900">{selectedExam.name}</p>
           <p className="mt-0.5 text-sm text-slate-600">
             상태: {selectedExam.isActive ? "활성" : "비활성"}
@@ -549,7 +549,7 @@ export default function AdminRegionsPage() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`relative px-5 py-2.5 text-sm font-semibold transition-colors ${
                     activeTab === tab.key
-                      ? "text-police-700"
+                      ? "text-fire-700"
                       : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
@@ -560,7 +560,7 @@ export default function AdminRegionsPage() {
                     </span>
                   )}
                   {activeTab === tab.key && (
-                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-police-600" />
+                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-fire-600" />
                   )}
                 </button>
               );

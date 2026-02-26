@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 
 type BonusVeteran = 0 | 5 | 10;
 type BonusHero = 0 | 3 | 5;
+type BonusCertificate = 0 | 1 | 2 | 3 | 4 | 5;
 type AnswersBySubject = Record<string, Record<number, number | null>>;
 type DifficultyBySubject = Record<string, DifficultyRating | null>;
 
@@ -84,6 +85,7 @@ interface EditSubmissionResponse {
     regionId: number;
     examNumber: string | null;
     bonusType: EditBonusType;
+    certificateBonus: number;
     editCount: number;
     maxEditLimit: number;
   };
@@ -221,6 +223,7 @@ export default function ExamInputPage({
   const pageLoadedAtRef = useRef(Date.now());
   const [veteranPercent, setVeteranPercent] = useState<BonusVeteran>(0);
   const [heroPercent, setHeroPercent] = useState<BonusHero>(0);
+  const [certificateBonus, setCertificateBonus] = useState<BonusCertificate>(0);
   const [activeSubjectIndex, setActiveSubjectIndex] = useState(0);
   const [inputMode, setInputMode] = useState<OmrInputMode>("radio");
   const [quickFocusToken, setQuickFocusToken] = useState(0);
@@ -289,6 +292,15 @@ export default function ExamInputPage({
           setExamNumber(sub.examNumber || "");
           setVeteranPercent(0);
           setHeroPercent(0);
+          setCertificateBonus(
+            sub.certificateBonus === 1 ||
+            sub.certificateBonus === 2 ||
+            sub.certificateBonus === 3 ||
+            sub.certificateBonus === 4 ||
+            sub.certificateBonus === 5
+              ? sub.certificateBonus
+              : 0
+          );
           if (sub.bonusType === "VETERAN_5") setVeteranPercent(5);
           else if (sub.bonusType === "VETERAN_10") setVeteranPercent(10);
           else if (sub.bonusType === "HERO_3") setHeroPercent(3);
@@ -598,6 +610,7 @@ export default function ExamInputPage({
         examNumber: normalizedExamNumber,
         veteranPercent,
         heroPercent,
+        certificateBonus,
         submitDurationMs: Date.now() - pageLoadedAtRef.current,
         answers,
         difficulty: difficulty as Array<{ subjectName: string; rating: DifficultyRating }>,
@@ -756,7 +769,7 @@ export default function ExamInputPage({
           <h2 className="text-sm font-semibold text-slate-900">가산점</h2>
           <p className="mt-1 text-xs text-slate-500">취업지원과 의사상자 가산점은 동시에 적용할 수 없습니다.</p>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
             <fieldset className="space-y-2">
               <legend className="text-sm font-medium text-slate-700">취업지원대상자</legend>
               <div className="flex flex-wrap gap-4 text-sm text-slate-700">
@@ -790,6 +803,26 @@ export default function ExamInputPage({
                 ))}
               </div>
             </fieldset>
+
+            <fieldset className="space-y-2">
+              <legend className="text-sm font-medium text-slate-700">자격증 가산점</legend>
+              <div className="flex flex-wrap gap-4 text-sm text-slate-700">
+                {[0, 1, 2, 3, 4, 5].map((value) => (
+                  <label key={value} className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="bonus-certificate"
+                      checked={certificateBonus === value}
+                      onChange={() => setCertificateBonus(value as BonusCertificate)}
+                    />
+                    {value}%
+                  </label>
+                ))}
+              </div>
+              <p className="text-xs text-slate-500">
+                최대 5% 가산 (최종합격 결정 단계 적용). 필기 점수에는 미반영됩니다.
+              </p>
+            </fieldset>
           </div>
         </div>
       </section>
@@ -802,8 +835,8 @@ export default function ExamInputPage({
             <p className="mt-1">더 이상 수정할 수 없습니다. 내 성적 분석에서 제출 결과를 확인하세요.</p>
           </section>
         ) : (
-          <section className="rounded-xl border border-police-200 bg-police-50 p-4 text-sm text-slate-700">
-            <p className="font-semibold text-police-700">기존에 제출한 답안이 불러와졌습니다.</p>
+          <section className="rounded-xl border border-fire-200 bg-fire-50 p-4 text-sm text-slate-700">
+            <p className="font-semibold text-fire-700">기존에 제출한 답안이 불러와졌습니다.</p>
             <p className="mt-1">
               수정할 문항만 변경 후 제출하세요.
               <span className="ml-2 font-medium text-slate-900">
@@ -847,7 +880,7 @@ export default function ExamInputPage({
                 key={subject.name}
                 type="button"
                 className={`rounded-md border px-4 py-2 text-sm font-bold ${index === activeSubjectIndex
-                  ? "border-police-700 bg-police-700 text-white"
+                  ? "border-fire-700 bg-fire-700 text-white"
                   : "border-slate-300 bg-white text-slate-700 hover:border-slate-400"
                   }`}
                 onClick={() => setActiveSubjectIndex(index)}
@@ -855,9 +888,9 @@ export default function ExamInputPage({
                 <span>{subject.name}</span>
                 <span
                   className={`ml-2 rounded-md px-2 py-0.5 text-xs font-semibold ${completed
-                    ? "bg-police-600 text-white"
+                    ? "bg-fire-600 text-white"
                     : "bg-rose-100 text-rose-700"
-                    } ${index === activeSubjectIndex && completed ? "bg-white text-police-700" : ""
+                    } ${index === activeSubjectIndex && completed ? "bg-white text-fire-700" : ""
                     }`}
                 >
                   {filled}/{subject.questionCount}
@@ -865,9 +898,9 @@ export default function ExamInputPage({
                 {rating ? (
                   <span
                     className={`ml-2 rounded-md px-2 py-0.5 text-xs font-semibold ${index === activeSubjectIndex
-                      ? "bg-white text-police-700"
-                      : "bg-blue-100 text-blue-700"
-                      }`}
+                      ? "bg-white text-fire-700"
+                      : "bg-red-100 text-red-700"
+                    }`}
                   >
                     {DIFFICULTY_LABEL[rating]}
                   </span>

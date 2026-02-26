@@ -389,6 +389,9 @@ function buildPopulationWhere(
     examType: ExamType;
     gender?: Gender | null;
   },
+  quota?: {
+    recruitAcademicCombined: number;
+  } | null
 ): Prisma.SubmissionWhereInput {
   const base: Prisma.SubmissionWhereInput = {
     examId: submission.examId,
@@ -412,8 +415,14 @@ function buildPopulationWhere(
       // 구조 경채: 성별 구분 없이 통합 선발
       break;
     case ExamType.CAREER_ACADEMIC:
+      // 소방학과 경채: 양성(통합) 지역은 성별 필터 제거
+      if ((quota?.recruitAcademicCombined ?? 0) > 0) {
+        break;
+      }
+      if (submission.gender) base.gender = submission.gender;
+      break;
     case ExamType.CAREER_EMT:
-      // 소방학과/구급 경채: 성별 분리 선발인 경우 성별 필터
+      // 구급 경채: 성별 분리 선발
       if (submission.gender) base.gender = submission.gender;
       break;
   }
@@ -541,7 +550,7 @@ export async function calculatePrediction(
   const challengeMaxRank = getMaxRankByMultiple(recruitCount, challengeMultiple);
   const applicantCountInfo = getRegionApplicantCount(quota, submission.examType, submission.gender);
 
-  const populationWhere = buildPopulationWhere(submission);
+  const populationWhere = buildPopulationWhere(submission, quota);
 
   const scoreBandRows = await prisma.submission.groupBy({
     by: ["finalScore"],

@@ -13,8 +13,8 @@ interface QuickOmrInputProps {
 
 const cellStyles = {
   empty: "border border-slate-300 bg-white text-slate-700",
-  filled: "border border-blue-600 bg-blue-600 text-white font-semibold",
-  focused: "border-2 border-blue-500 bg-blue-50 text-slate-900 ring-2 ring-blue-100",
+  filled: "border border-red-600 bg-red-600 text-white font-semibold",
+  focused: "border-2 border-red-500 bg-red-50 text-slate-900 ring-2 ring-red-100",
 };
 
 function isValidAnswerKey(value: string): boolean {

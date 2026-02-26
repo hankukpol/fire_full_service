@@ -236,7 +236,7 @@ export default function AdminPassCutPage() {
         <form className="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4" onSubmit={handleRelease}>
           <p className="text-sm font-semibold text-slate-800">
             다음 발표 차수:{" "}
-            <span className="text-police-700">
+            <span className="text-fire-700">
               {nextReleaseNumber ? `${nextReleaseNumber}차` : "완료"}
             </span>
           </p>

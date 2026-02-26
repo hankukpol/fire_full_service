@@ -145,10 +145,21 @@ function isSameScore(left: number, right: number): boolean {
 
 // 성별 분리 선발: 공채(남/여), 소방학과(남/여/양성), 구급(남/여)
 // 구조는 남자만이므로 성별 키 불필요
-function toRankGroupKey(regionId: number, examType: ExamType, gender?: Gender | null): string {
+function toRankGroupKey(
+  regionId: number,
+  examType: ExamType,
+  gender?: Gender | null,
+  academicCombinedRegionIds?: Set<number>
+): string {
   if (examType === ExamType.CAREER_RESCUE) {
     return `${regionId}:${examType}`;
   }
+
+  // 소방학과 양성(통합) 모집 지역은 성별 키를 제거해야 예측 모집단과 일치
+  if (examType === ExamType.CAREER_ACADEMIC && academicCombinedRegionIds?.has(regionId)) {
+    return `${regionId}:${examType}`;
+  }
+
   // 공채, 소방학과, 구급은 성별 분리
   if (gender) {
     return `${regionId}:${examType}:${gender}`;
@@ -157,12 +168,16 @@ function toRankGroupKey(regionId: number, examType: ExamType, gender?: Gender | 
 }
 
 function buildRankMapBySubmission<T extends { id: number; regionId: number; examType: ExamType; gender?: Gender | null; finalScore: number }>(
-  rows: T[]
+  rows: T[],
+  options?: {
+    academicCombinedRegionIds?: Set<number>;
+  }
 ): Map<number, number> {
   const byGroup = new Map<string, T[]>();
+  const academicCombinedRegionIds = options?.academicCombinedRegionIds;
 
   for (const row of rows) {
-    const key = toRankGroupKey(row.regionId, row.examType, row.gender);
+    const key = toRankGroupKey(row.regionId, row.examType, row.gender, academicCombinedRegionIds);
     const group = byGroup.get(key) ?? [];
     group.push(row);
     byGroup.set(key, group);
@@ -546,7 +561,21 @@ export async function rescoreExam(examId: number, options?: RescoreOptions): Pro
     rescoreEventId = event.id;
   }
 
-  const oldRankMap = detailedMode ? buildRankMapBySubmission(allSubmissions) : new Map<number, number>();
+  let academicCombinedRegionIds: Set<number> | undefined;
+  if (detailedMode && options?.examType === ExamType.CAREER_ACADEMIC) {
+    const combinedRegions = await prisma.examRegionQuota.findMany({
+      where: {
+        examId,
+        recruitAcademicCombined: { gt: 0 },
+      },
+      select: { regionId: true },
+    });
+    academicCombinedRegionIds = new Set(combinedRegions.map((row) => row.regionId));
+  }
+
+  const oldRankMap = detailedMode
+    ? buildRankMapBySubmission(allSubmissions, { academicCombinedRegionIds })
+    : new Map<number, number>();
   const detailRows: Array<{
     submissionId: number;
     userId: number;
@@ -707,7 +736,8 @@ export async function rescoreExam(examId: number, options?: RescoreOptions): Pro
       newSubmissionScores.map((row) => ({
         ...row,
         finalScore: Number(row.finalScore),
-      }))
+      })),
+      { academicCombinedRegionIds }
     );
 
     await prisma.rescoreDetail.createMany({

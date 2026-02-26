@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 /* ────────────── 통계 카드 스타일 (6개) ────────────── */
 
 const statCardStyles = [
-  { label: "text-police-600" },
+  { label: "text-fire-600" },
   { label: "text-rose-600" },
   { label: "text-amber-600" },
   { label: "text-cyan-600" },
@@ -22,8 +22,8 @@ const quickActions = [
     num: "1",
     title: "시험 생성/활성화",
     desc: "신규 시험을 만들고 활성화합니다.",
-    color: "text-police-600",
-    hoverBg: "hover:border-police-300",
+    color: "text-fire-600",
+    hoverBg: "hover:border-fire-300",
   },
   {
     href: "/admin/answers",
@@ -367,7 +367,7 @@ export default async function AdminDashboardPage() {
           <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-sm font-semibold text-slate-800">최근 제출 추이</h2>
-              <span className="rounded-full bg-police-50 px-3 py-1 text-xs font-medium text-police-600">
+              <span className="rounded-full bg-fire-50 px-3 py-1 text-xs font-medium text-fire-600">
                 최근 10일
               </span>
             </div>
@@ -399,7 +399,7 @@ export default async function AdminDashboardPage() {
                 <p className="mt-1 text-xs text-slate-500">{activeExam.name}</p>
                 <Link
                   href="/admin/exams"
-                  className="mt-3 inline-block rounded-lg bg-police-50 px-3 py-1.5 text-xs font-medium text-police-600 transition hover:bg-police-100"
+                  className="mt-3 inline-block rounded-lg bg-fire-50 px-3 py-1.5 text-xs font-medium text-fire-600 transition hover:bg-fire-100"
                 >
                   시험 관리
                 </Link>
@@ -416,7 +416,7 @@ export default async function AdminDashboardPage() {
             <h2 className="text-sm font-semibold text-slate-800">지역별 제출 현황 (상위 5개)</h2>
             <Link
               href="/admin/stats"
-              className="text-xs font-medium text-police-600 hover:text-police-700"
+              className="text-xs font-medium text-fire-600 hover:text-fire-700"
             >
               전체 보기
             </Link>

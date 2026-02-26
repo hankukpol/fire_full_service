@@ -17,11 +17,11 @@ interface FinalPredictionGetResponse {
   adminPreviewCandidates?: AdminPreviewCandidate[];
   submissionId: number | null;
   writtenScore: number | null;
+  writtenScoreMax: number | null;
+  submissionCertificateBonus: number | null; // 제출 시 등록한 원본값
+  certificateBonus: number | null;           // 현재 유효 가산점 (재입력 우선)
   finalPrediction: {
-    fitnessPassed: boolean;
-    martialBonusPoint: number;
-    additionalBonusPoint: number;
-    knownBonusPoint: number;
+    fitnessRawScore: number;
     knownFinalScore: number | null;
     finalRank: number | null;
     totalParticipants: number;
@@ -31,9 +31,13 @@ interface FinalPredictionGetResponse {
 
 interface FinalPredictionPostResponse {
   success: boolean;
+  writtenScore: number;
+  writtenScoreMax: number;
+  fitnessRawScore: number;
+  certificateBonus: number;
   calculation: {
-    martialBonusPoint: number;
-    knownBonusPoint: number;
+    writtenConverted: number;
+    fitnessConverted: number;
     knownFinalScore: number | null;
   };
   rank: {
@@ -67,9 +71,8 @@ export default function ExamFinalPage({ embedded = false }: ExamFinalPageProps =
   const [data, setData] = useState<FinalPredictionGetResponse | null>(null);
   const [result, setResult] = useState<FinalPredictionPostResponse | null>(null);
 
-  const [fitnessPassed, setFitnessPassed] = useState(true);
-  const [martialDanLevelInput, setMartialDanLevelInput] = useState("0");
-  const [additionalBonusInput, setAdditionalBonusInput] = useState("0");
+  const [fitnessRawScoreInput, setFitnessRawScoreInput] = useState("0");
+  const [certificateBonusInput, setCertificateBonusInput] = useState(0);
 
   const [adminPreviewCandidates, setAdminPreviewCandidates] = useState<AdminPreviewCandidate[]>([]);
   const [selectedAdminSubmissionId, setSelectedAdminSubmissionId] = useState("");
@@ -121,20 +124,12 @@ export default function ExamFinalPage({ embedded = false }: ExamFinalPageProps =
       }
 
       if (payload.finalPrediction) {
-        setFitnessPassed(payload.finalPrediction.fitnessPassed);
-        setAdditionalBonusInput(String(payload.finalPrediction.additionalBonusPoint));
-        setMartialDanLevelInput(
-          payload.finalPrediction.martialBonusPoint >= 2
-            ? "4"
-            : payload.finalPrediction.martialBonusPoint >= 1
-              ? "2"
-              : "0"
-        );
+        setFitnessRawScoreInput(String(payload.finalPrediction.fitnessRawScore ?? 0));
       } else {
-        setFitnessPassed(true);
-        setMartialDanLevelInput("0");
-        setAdditionalBonusInput("0");
+        setFitnessRawScoreInput("0");
       }
+      // 자격증 가산점: 저장된 재입력 값 우선, 없으면 제출 시 등록값
+      setCertificateBonusInput(payload.certificateBonus ?? payload.submissionCertificateBonus ?? 0);
     } catch (error) {
       const message = error instanceof Error ? error.message : "최종 환산 예측 정보를 불러오지 못했습니다.";
       setErrorMessage(message);
@@ -161,9 +156,8 @@ export default function ExamFinalPage({ embedded = false }: ExamFinalPageProps =
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           submissionId: data.submissionId,
-          fitnessPassed,
-          martialDanLevel: toNumber(martialDanLevelInput, 0),
-          additionalBonusPoint: toNumber(additionalBonusInput, 0),
+          fitnessRawScore: toNumber(fitnessRawScoreInput, 0),
+          certificateBonus: certificateBonusInput,
         }),
       });
       const payload = (await response.json()) as FinalPredictionPostResponse & { error?: string };
@@ -217,6 +211,8 @@ export default function ExamFinalPage({ embedded = false }: ExamFinalPageProps =
   }
 
   const hasTargetSubmission = data.submissionId !== null && data.writtenScore !== null;
+  const writtenScoreMax = data.writtenScoreMax ?? 300;
+  const submissionCertificateBonus = data.submissionCertificateBonus ?? 0;
 
   return (
     <div className="space-y-6">
@@ -248,69 +244,86 @@ export default function ExamFinalPage({ embedded = false }: ExamFinalPageProps =
 
       {!hasTargetSubmission ? (
         <section className="rounded-xl border border-slate-200 bg-white p-8 text-sm text-slate-600">
-          최종 환산 예측 대상 제출이 없습니다. {data.isAdminPreview ? "관리자 미리보기 대상을 선택해 주세요." : "먼저 답안을 제출해 주세요."}
+          최종 환산 예측 대상 제출이 없습니다.{" "}
+          {data.isAdminPreview ? "관리자 미리보기 대상을 선택해 주세요." : "먼저 답안을 제출해 주세요."}
         </section>
       ) : (
         <>
           <section className="rounded-xl border border-slate-200 bg-white p-6">
-            <h1 className="text-lg font-semibold text-slate-900">면접 제외 최종 환산 예측 (준비 기능)</h1>
+            <h1 className="text-lg font-semibold text-slate-900">면접 제외 최종 환산 예측</h1>
             <p className="mt-1 text-sm text-slate-600">
-              현재는 면접 점수 비공개를 전제로 필기점수 + 체력(통과/무도) + 추가 가산점 기준의 임시 순위를 계산합니다.
+              면접 점수 비공개를 전제로, 필기 환산(50점) + 체력 환산(25점) + 자격증 가산점을 합산한 임시 순위를 계산합니다.
             </p>
 
-            <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-              체력 통과 여부가 `통과`가 아니면 면접 제외 최종 환산 예측 순위에서 제외됩니다.
+            {/* 계산 공식 안내 */}
+            <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-700 space-y-1">
+              <p className="font-semibold text-slate-800">소방 최종 환산 공식 (면접 제외, 소방공무원 임용령 기준)</p>
+              <p>
+                • 필기 환산 (50점 만점) = (필기총점 ÷ <span className="font-semibold">{writtenScoreMax}점</span>) × 50
+                <span className="ml-1 text-slate-400">— 전형별 필기 만점 자동 적용 (공채 300점 / 경채 200점)</span>
+              </p>
+              <p>• 체력 환산 (25점 만점) = (체력점수 ÷ 60점) × 25</p>
+              <p>• 자격증 가산점 = 최대 5% 가산 (최종합격 결정 단계 적용, 아래에서 선택)</p>
+              <p className="font-semibold text-slate-900">• 합계 = 최대 80점 (면접 25% 제외 기준) — 면접 포함 시 최대 105점</p>
             </div>
 
+            {/* 저장된 값 표시 */}
             <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
               {data.finalPrediction ? (
                 <>
-                  현재 저장된 체력 통과 여부:{" "}
-                  <span className="font-semibold">{data.finalPrediction.fitnessPassed ? "통과" : "미통과"}</span>{" "}
+                  저장된 체력 점수:{" "}
+                  <span className="font-semibold">{data.finalPrediction.fitnessRawScore}점</span>{" "}
                   (저장 시각: {formatSavedAt(data.finalPrediction.updatedAt)})
                 </>
               ) : (
-                "아직 저장된 최종 환산 예측 정보가 없습니다. 체력 통과 여부를 입력한 뒤 계산 버튼을 누르면 저장됩니다."
+                "아직 저장된 최종 환산 예측 정보가 없습니다. 체력 점수를 입력한 뒤 계산 버튼을 누르면 저장됩니다."
               )}
             </div>
 
-            <div className="mt-5 grid gap-4 sm:grid-cols-3">
+            {/* 입력 폼 */}
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {/* 체력 점수 */}
               <div className="space-y-2">
-                <Label htmlFor="fitness-passed">체력 통과 여부</Label>
-                <select
-                  id="fitness-passed"
-                  value={fitnessPassed ? "pass" : "fail"}
-                  onChange={(event) => setFitnessPassed(event.target.value === "pass")}
-                  className="h-10 w-full rounded-md border border-slate-300 px-3 text-sm"
-                >
-                  <option value="pass">통과</option>
-                  <option value="fail">미통과</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="martial-dan">무도 단수 (0~20)</Label>
+                <Label htmlFor="fitness-raw-score">
+                  체력 점수 <span className="text-slate-400 font-normal">(0~60점)</span>
+                </Label>
                 <Input
-                  id="martial-dan"
+                  id="fitness-raw-score"
                   type="number"
                   min={0}
-                  max={20}
-                  step="1"
-                  value={martialDanLevelInput}
-                  onChange={(event) => setMartialDanLevelInput(event.target.value)}
-                />
-                <p className="text-xs text-slate-500">2~3단 +1점, 4단 이상 +2점</p>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="additional-bonus">추가 가산점 (0~10)</Label>
-                <Input
-                  id="additional-bonus"
-                  type="number"
-                  min={0}
-                  max={10}
+                  max={60}
                   step="0.1"
-                  value={additionalBonusInput}
-                  onChange={(event) => setAdditionalBonusInput(event.target.value)}
+                  value={fitnessRawScoreInput}
+                  onChange={(event) => setFitnessRawScoreInput(event.target.value)}
                 />
+                <p className="text-xs text-slate-500">체력시험 만점은 60점입니다.</p>
+              </div>
+
+              {/* 자격증 가산점 — 재입력 가능 */}
+              <div className="space-y-2">
+                <Label>
+                  자격증 가산점{" "}
+                  <span className="text-slate-400 font-normal">
+                    (답안 입력 시 등록: {submissionCertificateBonus}%)
+                  </span>
+                </Label>
+                <div className="flex flex-wrap gap-3">
+                  {[0, 1, 2, 3, 4, 5].map((value) => (
+                    <label key={value} className="flex cursor-pointer items-center gap-1.5 text-sm text-slate-700">
+                      <input
+                        type="radio"
+                        name="certificate-bonus-final"
+                        checked={certificateBonusInput === value}
+                        onChange={() => setCertificateBonusInput(value)}
+                        className="accent-red-600"
+                      />
+                      {value}%
+                    </label>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">
+                  최대 5% 가산 (100점 환산 시 최대 5점). 필기 이후 자격증 추가 취득 시 변경할 수 있습니다.
+                </p>
               </div>
             </div>
 
@@ -322,20 +335,47 @@ export default function ExamFinalPage({ embedded = false }: ExamFinalPageProps =
           </section>
 
           {result ? (
-            <section className="rounded-xl border border-blue-200 bg-blue-50 p-6">
+            <section className="rounded-xl border border-fire-200 bg-fire-50 p-6">
               <h2 className="text-base font-semibold text-slate-900">계산 결과</h2>
               <div className="mt-3 grid gap-3 rounded-lg bg-white p-4 text-sm sm:grid-cols-2">
-                <p>필기 점수: {(data.writtenScore ?? 0).toFixed(2)}</p>
-                <p>무도 가점: +{result.calculation.martialBonusPoint.toFixed(2)}</p>
-                <p>추가 가산점: +{toNumber(additionalBonusInput, 0).toFixed(2)}</p>
-                <p>합산 가산점: +{result.calculation.knownBonusPoint.toFixed(2)}</p>
-                <p className="font-semibold text-slate-900">
-                  면접 제외 최종 환산 점수:{" "}
-                  {result.calculation.knownFinalScore === null ? "-" : result.calculation.knownFinalScore.toFixed(2)}
-                </p>
+                <div className="space-y-1">
+                  <p className="text-slate-500 text-xs">필기 원점수</p>
+                  <p className="font-medium">
+                    {result.writtenScore.toFixed(2)} / {result.writtenScoreMax}점
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-slate-500 text-xs">필기 환산 (50점 만점)</p>
+                  <p className="font-medium">+{result.calculation.writtenConverted.toFixed(2)}점</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-slate-500 text-xs">체력 점수</p>
+                  <p className="font-medium">{result.fitnessRawScore.toFixed(1)} / 60점</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-slate-500 text-xs">체력 환산 (25점 만점)</p>
+                  <p className="font-medium">+{result.calculation.fitnessConverted.toFixed(2)}점</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-slate-500 text-xs">자격증 가산점 (최대 5% 가산)</p>
+                  <p className="font-medium">+{certificateBonusInput}% (+{certificateBonusInput}점)</p>
+                </div>
+                <div className="space-y-1 rounded-md bg-fire-50 p-2">
+                  <p className="text-slate-500 text-xs">면접 제외 최종 환산 점수 (80점 만점)</p>
+                  <p className="text-lg font-bold text-fire-700">
+                    {result.calculation.knownFinalScore === null
+                      ? "-"
+                      : `${result.calculation.knownFinalScore.toFixed(2)}점`}
+                  </p>
+                </div>
               </div>
               <p className="mt-3 text-sm text-slate-700">
-                임시 순위: {result.rank.finalRank ?? "-"} / {result.rank.totalParticipants}
+                임시 순위: <span className="font-semibold">{result.rank.finalRank ?? "-"}</span>
+                {" / "}
+                {result.rank.totalParticipants}명
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                ※ 면접 점수(25%) 미반영 임시 순위입니다. 자격증 가산점은 최종 환산 단계에서 적용됩니다.
               </p>
             </section>
           ) : null}

@@ -551,7 +551,7 @@ export default function ExamMainOverviewPanel() {
       {sectionVisibility.overview ? (
       <section className="overflow-hidden rounded-lg border border-slate-200 bg-white p-5 sm:p-6 sm:pb-8">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <p className="text-xl font-bold tracking-tight text-police-600">
+          <p className="text-xl font-bold tracking-tight text-fire-600">
             {data.liveStats.examYear}.{String(data.liveStats.examRound).padStart(2, "0")} 시행
           </p>
           <p className="text-xs font-semibold text-slate-400">UPDATE {formatDateTime(data.updatedAt)}</p>
@@ -567,7 +567,7 @@ export default function ExamMainOverviewPanel() {
                 type="button"
                 onClick={() => setSelectedExamType(examType)}
                 className={`rounded-md px-6 py-2 text-sm font-bold transition ${active
-                  ? "bg-white text-police-600 border border-slate-200/50"
+                  ? "bg-white text-fire-600 border border-slate-200/50"
                   : "text-slate-500 hover:text-slate-700"
                   }`}
               >
@@ -587,7 +587,7 @@ export default function ExamMainOverviewPanel() {
                   key={region.id}
                   type="button"
                   className={`rounded-md border px-3 py-2 text-xs font-semibold transition ${active
-                    ? "border-police-600 bg-police-600 text-white"
+                    ? "border-fire-600 bg-fire-600 text-white"
                     : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-100"
                     }`}
                   onClick={() => setSelectedRegionId(region.id)}
@@ -599,7 +599,7 @@ export default function ExamMainOverviewPanel() {
           </div>
         </div>
 
-        <p className="mt-6 text-sm font-bold text-police-600">
+        <p className="mt-6 text-sm font-bold text-fire-600">
           {selectedRow ? `${getExamTypeLabel(selectedExamType)} : ${selectedRow.regionName}` : "지역을 선택해 주세요."}
         </p>
 
@@ -649,7 +649,7 @@ export default function ExamMainOverviewPanel() {
                   <th className="w-[140px] bg-slate-50 px-4 py-3.5 text-left font-bold text-slate-700 sm:w-[170px]">
                     실시간 평균점수
                   </th>
-                  <td className="px-4 py-3.5 font-bold text-police-700">
+                  <td className="px-4 py-3.5 font-bold text-fire-700">
                     {selectedRow ? <>{formatScore(selectedRow.averageFinalScore)}</> : "-"}
                   </td>
                 </tr>
@@ -680,7 +680,7 @@ export default function ExamMainOverviewPanel() {
                   </tr>
                   <tr className="flex flex-1 divide-x divide-slate-200">
                     <th className="flex w-[140px] items-center bg-slate-50 px-4 py-3.5 text-left font-bold text-slate-700 sm:w-[170px]">합격확실권</th>
-                    <td className="flex flex-1 items-center px-4 py-3.5 font-bold text-police-700">
+                    <td className="flex flex-1 items-center px-4 py-3.5 font-bold text-fire-700">
                       {selectedRow
                         ? isCollecting || selectedRow.sureMinScore === null
                           ? "데이터 수집 중"
@@ -715,7 +715,7 @@ export default function ExamMainOverviewPanel() {
       {sectionVisibility.difficulty ? (
       <section className="rounded-lg border border-slate-200 bg-white p-5 sm:p-6">
         <h3 className="text-xl font-bold tracking-tight text-slate-900">
-          과목별 체감난이도 <span className="text-police-600">설문 결과</span>
+          과목별 체감난이도 <span className="text-fire-600">설문 결과</span>
         </h3>
 
         <div className="mt-5 rounded-md bg-slate-50 p-4 sm:p-6">
@@ -792,7 +792,7 @@ export default function ExamMainOverviewPanel() {
                     key={item.key}
                     type="button"
                     className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition ${active
-                      ? "border-police-700 bg-police-700 text-white"
+                      ? "border-fire-700 bg-fire-700 text-white"
                       : "border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:text-slate-700"
                       }`}
                     onClick={() => setSelectedScoreDistributionKey(item.key)}

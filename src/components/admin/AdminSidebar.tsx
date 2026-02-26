@@ -216,7 +216,7 @@ export default function AdminSidebar() {
     <>
       <div className="px-5 py-6">
         <p className="text-lg font-bold text-white">관리자</p>
-        <p className="mt-0.5 text-xs text-police-300">Admin Console</p>
+        <p className="mt-0.5 text-xs text-fire-300">Admin Console</p>
       </div>
 
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 pb-2">
@@ -230,10 +230,10 @@ export default function AdminSidebar() {
                 href={entry.href}
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
-                  active ? "bg-white/15 text-white shadow-sm" : "text-police-200 hover:bg-white/10 hover:text-white"
+                  active ? "bg-white/15 text-white shadow-sm" : "text-fire-200 hover:bg-white/10 hover:text-white"
                 }`}
               >
-                <span className={active ? "text-police-300" : "text-police-400"}>{iconMap[entry.icon]}</span>
+                <span className={active ? "text-fire-300" : "text-fire-400"}>{iconMap[entry.icon]}</span>
                 {entry.label}
               </Link>
             );
@@ -252,10 +252,10 @@ export default function AdminSidebar() {
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-wider transition-all ${
                   hasActiveChild
                     ? "text-white"
-                    : "text-police-400 hover:text-police-200"
+                    : "text-fire-400 hover:text-fire-200"
                 }`}
               >
-                <span className={hasActiveChild ? "text-police-300" : "text-police-500"}>
+                <span className={hasActiveChild ? "text-fire-300" : "text-fire-500"}>
                   {iconMap[entry.icon]}
                 </span>
                 <span className="flex-1 text-left">{entry.label}</span>
@@ -275,10 +275,10 @@ export default function AdminSidebar() {
                         className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
                           active
                             ? "bg-white/15 text-white shadow-sm"
-                            : "text-police-200 hover:bg-white/10 hover:text-white"
+                            : "text-fire-200 hover:bg-white/10 hover:text-white"
                         }`}
                       >
-                        <span className={active ? "text-police-300" : "text-police-400"}>
+                        <span className={active ? "text-fire-300" : "text-fire-400"}>
                           {iconMap[child.icon]}
                         </span>
                         {child.label}
@@ -293,7 +293,7 @@ export default function AdminSidebar() {
       </nav>
 
       <div className="mt-auto border-t border-white/10 px-5 py-4">
-        <Link href="/" className="flex items-center gap-2 text-xs text-police-300 transition hover:text-white">
+        <Link href="/" className="flex items-center gap-2 text-xs text-fire-300 transition hover:text-white">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
           </svg>
@@ -308,7 +308,7 @@ export default function AdminSidebar() {
       <button
         type="button"
         onClick={() => setMobileOpen(true)}
-        className="fixed left-4 top-4 z-40 rounded-lg bg-police-600 p-2 text-white shadow-lg md:hidden"
+        className="fixed left-4 top-4 z-40 rounded-lg bg-fire-600 p-2 text-white shadow-lg md:hidden"
         aria-label="메뉴 열기"
       >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -321,14 +321,14 @@ export default function AdminSidebar() {
       ) : null}
 
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-full w-60 flex-col bg-police-600 transition-transform duration-300 md:hidden ${
+        className={`fixed left-0 top-0 z-50 flex h-full w-60 flex-col bg-fire-600 transition-transform duration-300 md:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <button
           type="button"
           onClick={() => setMobileOpen(false)}
-          className="absolute right-3 top-4 rounded-lg p-1 text-police-300 hover:text-white"
+          className="absolute right-3 top-4 rounded-lg p-1 text-fire-300 hover:text-white"
           aria-label="메뉴 닫기"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -338,7 +338,7 @@ export default function AdminSidebar() {
         {navContent}
       </aside>
 
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-white/5 bg-police-700 md:flex">
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-white/5 bg-fire-700 md:flex">
         {navContent}
       </aside>
     </>
