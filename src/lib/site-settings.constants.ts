@@ -22,7 +22,14 @@ export type SiteSettingKey =
   | "site.autoPassCutCheckIntervalSec"
   | "site.autoPassCutThresholdProfile"
   | "site.commentsEnabled"
-  | "site.autoPassCutReadyRatioProfile";
+  | "site.autoPassCutReadyRatioProfile"
+  | "site.tabMainEnabled"
+  | "site.tabInputEnabled"
+  | "site.tabResultEnabled"
+  | "site.tabPredictionEnabled"
+  | "site.tabNoticesEnabled"
+  | "site.tabFaqEnabled"
+  | "site.tabLockedMessage";
 
 export type SiteSettingValueType = "string" | "nullable-string" | "boolean" | "number";
 
@@ -53,6 +60,13 @@ export const SITE_SETTING_TYPES: Record<SiteSettingKey, SiteSettingValueType> = 
   "site.autoPassCutCheckIntervalSec": "number",
   "site.autoPassCutThresholdProfile": "string",
   "site.autoPassCutReadyRatioProfile": "string",
+  "site.tabMainEnabled": "boolean",
+  "site.tabInputEnabled": "boolean",
+  "site.tabResultEnabled": "boolean",
+  "site.tabPredictionEnabled": "boolean",
+  "site.tabNoticesEnabled": "boolean",
+  "site.tabFaqEnabled": "boolean",
+  "site.tabLockedMessage": "string",
 };
 
 export const SITE_SETTING_DEFAULTS: SiteSettingsMap = {
@@ -82,4 +96,11 @@ export const SITE_SETTING_DEFAULTS: SiteSettingsMap = {
   "site.autoPassCutCheckIntervalSec": 300,
   "site.autoPassCutThresholdProfile": "BALANCED",
   "site.autoPassCutReadyRatioProfile": "BALANCED",
+  "site.tabMainEnabled": true,
+  "site.tabInputEnabled": true,
+  "site.tabResultEnabled": true,
+  "site.tabPredictionEnabled": true,
+  "site.tabNoticesEnabled": true,
+  "site.tabFaqEnabled": true,
+  "site.tabLockedMessage": "시험 후 오픈 예정입니다",
 };

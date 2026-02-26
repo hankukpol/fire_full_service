@@ -36,6 +36,15 @@ export default async function ExamMainPage() {
   const settings = await getSiteSettingsUncached();
   const finalPredictionEnabled = Boolean(settings["site.finalPredictionEnabled"] ?? false);
   const commentsEnabled = Boolean(settings["site.commentsEnabled"] ?? true);
+  const tabEnabled = {
+    main: Boolean(settings["site.tabMainEnabled"] ?? true),
+    input: Boolean(settings["site.tabInputEnabled"] ?? true),
+    result: Boolean(settings["site.tabResultEnabled"] ?? true),
+    prediction: Boolean(settings["site.tabPredictionEnabled"] ?? true),
+    notices: Boolean(settings["site.tabNoticesEnabled"] ?? true),
+    faq: Boolean(settings["site.tabFaqEnabled"] ?? true),
+  };
+  const tabLockedMessage = String(settings["site.tabLockedMessage"] ?? "시험 후 오픈 예정입니다");
 
   return (
     <ExamFunctionArea
@@ -44,6 +53,8 @@ export default async function ExamMainPage() {
       isAdmin={isAdmin}
       finalPredictionEnabled={finalPredictionEnabled}
       commentsEnabled={commentsEnabled}
+      tabEnabled={tabEnabled}
+      tabLockedMessage={tabLockedMessage}
     />
   );
 }

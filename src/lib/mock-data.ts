@@ -20,6 +20,11 @@ const DEFAULT_CAREER_EMT_PER_REGION = 20;
 const MIN_PER_REGION = 1;
 const MAX_PER_REGION = 200;
 
+// 소방 최종 환산 상수
+const FITNESS_MAX = 60;
+const WRITTEN_WEIGHT = 50;
+const FITNESS_WEIGHT = 25;
+
 interface SubjectInfo {
   id: number;
   name: string;
@@ -55,6 +60,7 @@ interface SubmissionDraft {
   bonusType: BonusType;
   bonusRate: number;
   finalScore: number;
+  certificateBonus: number;
   subjectScores: Array<{
     subjectId: number;
     rawScore: number;
@@ -68,13 +74,13 @@ interface FinalPredictionSeedRow {
   userId: number;
   regionId: number;
   examType: ExamType;
+  gender: Gender;
   bonusType: BonusType;
   writtenScore: number;
-  fitnessPassed: boolean;
-  martialBonusPoint: number;
-  additionalBonusPoint: number;
-  knownBonusPoint: number;
-  knownFinalScore: number | null;
+  writtenScoreMax: number;
+  fitnessRawScore: number;
+  certificateBonus: number;
+  knownFinalScore: number;
 }
 
 export interface GenerateMockDataOptions {
@@ -168,66 +174,86 @@ function isVeteranPreferredBonus(type: BonusType): boolean {
   return type === BonusType.VETERAN_5 || type === BonusType.VETERAN_10;
 }
 
-function pickMartialDanLevel(): number {
-  const roll = Math.random();
-  if (roll < 0.16) return 4 + Math.floor(Math.random() * 3); // 4~6단
-  if (roll < 0.38) return 2 + Math.floor(Math.random() * 2); // 2~3단
-  if (roll < 0.52) return 1;
-  return 0;
+/** 직렬별 필기 만점 */
+function getWrittenScoreMaxForMock(examType: ExamType): number {
+  return examType === ExamType.PUBLIC ? 300 : 200;
 }
 
-function martialBonusPointByDanLevel(danLevel: number): number {
-  if (danLevel >= 4) return 2;
-  if (danLevel >= 2) return 1;
-  return 0;
+/** 체력 점수 랜덤 생성 (0~60, 현실적 분포) */
+function pickFitnessRawScore(): number {
+  // 대부분 30~55 구간에 분포, 일부 저점/만점
+  const base = 28 + Math.random() * 27; // 28~55
+  const noise = (Math.random() - 0.5) * 10;
+  return roundOne(clamp(base + noise, 5, 60));
 }
 
-function pickAdditionalBonusPoint(): number {
+/** 자격증 가산점 랜덤 생성 (0~5%) */
+function pickCertificateBonus(): number {
   const roll = Math.random();
-  if (roll < 0.72) return 0;
-  if (roll < 0.92) return roundTwo(0.5 + Math.random() * 1.5); // 0.5 ~ 2.0
-  return roundTwo(2 + Math.random()); // 2.0 ~ 3.0
+  if (roll < 0.40) return 0;
+  if (roll < 0.55) return 1;
+  if (roll < 0.70) return 2;
+  if (roll < 0.82) return 3;
+  if (roll < 0.92) return 4;
+  return 5;
+}
+
+/**
+ * 소방 최종 환산 점수 계산 (mock-data 내장, final-prediction.ts와 동일 공식)
+ *
+ * 필기환산 = min(writtenScore, writtenScoreMax) / writtenScoreMax × 50
+ * 체력환산 = min(fitnessRawScore, 60) / 60 × 25
+ * 최종환산 = 필기환산 + 체력환산 + min(certificateBonus, 5)
+ * 만점 = 80점 (면접 25% 제외)
+ */
+function calcKnownFinalScore(
+  writtenScore: number,
+  writtenScoreMax: number,
+  fitnessRawScore: number,
+  certificateBonus: number
+): number {
+  const w = clamp(writtenScore, 0, writtenScoreMax);
+  const f = clamp(fitnessRawScore, 0, FITNESS_MAX);
+  const c = clamp(certificateBonus, 0, 5);
+  return roundTwo((w / writtenScoreMax) * WRITTEN_WEIGHT + (f / FITNESS_MAX) * FITNESS_WEIGHT + c);
 }
 
 function compareFinalPredictionSeedRow(left: FinalPredictionSeedRow, right: FinalPredictionSeedRow): number {
-  const leftScore = left.knownFinalScore ?? -1;
-  const rightScore = right.knownFinalScore ?? -1;
-  if (rightScore !== leftScore) {
-    return rightScore - leftScore;
+  // 1순위: 최종 환산 점수 내림차순
+  if (right.knownFinalScore !== left.knownFinalScore) {
+    return right.knownFinalScore - left.knownFinalScore;
   }
-
-  const veteranCompare = Number(isVeteranPreferredBonus(right.bonusType)) - Number(isVeteranPreferredBonus(left.bonusType));
-  if (veteranCompare !== 0) {
-    return veteranCompare;
-  }
-
+  // 2순위: 취업지원대상자 우선
+  const veteranCompare =
+    Number(isVeteranPreferredBonus(right.bonusType)) - Number(isVeteranPreferredBonus(left.bonusType));
+  if (veteranCompare !== 0) return veteranCompare;
+  // 3순위: 필기 원점수 내림차순
   if (right.writtenScore !== left.writtenScore) {
     return right.writtenScore - left.writtenScore;
   }
-
-  if (right.knownBonusPoint !== left.knownBonusPoint) {
-    return right.knownBonusPoint - left.knownBonusPoint;
-  }
-
+  // 4순위: 먼저 제출한 순서
   return left.submissionId - right.submissionId;
 }
 
+/** 성별 인식 그룹 키 생성 (소방 모집단 분리 규칙) */
 function buildFinalPredictionRankMap(rows: FinalPredictionSeedRow[]): Map<number, number> {
-  const passRows = rows.filter((row) => row.fitnessPassed && row.knownFinalScore !== null);
   const grouped = new Map<string, FinalPredictionSeedRow[]>();
 
-  for (const row of passRows) {
-    const key = `${row.regionId}:${row.examType}`;
+  for (const row of rows) {
+    // 구조 경채: 통합 선발 (성별 무관)
+    // 공채·구급: 남녀 분리 선발
+    // 소방학과: 양성 지역 여부를 mock에서 완벽히 판단하기 어려우므로 성별 분리로 처리
+    const genderKey = row.examType === ExamType.CAREER_RESCUE ? "ALL" : row.gender;
+    const key = `${row.regionId}:${row.examType}:${genderKey}`;
     const existing = grouped.get(key);
     if (existing) {
       existing.push(row);
-      continue;
+    } else {
+      grouped.set(key, [row]);
     }
-    grouped.set(key, [row]);
   }
 
   const rankMap = new Map<number, number>();
-
   for (const groupRows of grouped.values()) {
     const sorted = [...groupRows].sort(compareFinalPredictionSeedRow);
     for (let index = 0; index < sorted.length; index += 1) {
@@ -273,50 +299,46 @@ function createScoreDraft(
   });
 }
 
+/**
+ * 소방 최종환산 예측 시드 행 생성
+ * - 비과락자의 ~70%가 체력점수를 입력 (FinalPrediction 생성)
+ * - 과락자의 ~8%도 FinalPrediction 생성 (소수 호기심 유저)
+ */
 function buildFinalPredictionSeedRow(params: {
   submissionId: number;
   userId: number;
   draft: SubmissionDraft;
-}): FinalPredictionSeedRow {
+}): FinalPredictionSeedRow | null {
   const hasCutoff = params.draft.subjectScores.some((score) => score.isFailed);
-  const passChance = hasCutoff
-    ? 0.08
-    : clamp(0.58 + (params.draft.finalScore / 250) * 0.35, 0.58, 0.95);
-  const fitnessPassed = Math.random() < passChance;
 
-  if (!fitnessPassed) {
-    return {
-      submissionId: params.submissionId,
-      userId: params.userId,
-      regionId: params.draft.regionId,
-      examType: params.draft.examType,
-      bonusType: params.draft.bonusType,
-      writtenScore: params.draft.finalScore,
-      fitnessPassed: false,
-      martialBonusPoint: 0,
-      additionalBonusPoint: 0,
-      knownBonusPoint: 0,
-      knownFinalScore: null,
-    };
-  }
+  // 과락자의 92%는 체력점수 미입력
+  if (hasCutoff && Math.random() < 0.92) return null;
+  // 비과락자의 30%도 아직 체력점수 미입력
+  if (!hasCutoff && Math.random() < 0.30) return null;
 
-  const martialDanLevel = pickMartialDanLevel();
-  const martialBonusPoint = martialBonusPointByDanLevel(martialDanLevel);
-  const additionalBonusPoint = pickAdditionalBonusPoint();
-  const knownBonusPoint = roundTwo(martialBonusPoint + additionalBonusPoint);
+  const writtenScoreMax = getWrittenScoreMaxForMock(params.draft.examType);
+  const fitnessRawScore = pickFitnessRawScore();
+  const certificateBonus = params.draft.certificateBonus;
+
+  const knownFinalScore = calcKnownFinalScore(
+    params.draft.finalScore,
+    writtenScoreMax,
+    fitnessRawScore,
+    certificateBonus
+  );
 
   return {
     submissionId: params.submissionId,
     userId: params.userId,
     regionId: params.draft.regionId,
     examType: params.draft.examType,
+    gender: params.draft.gender,
     bonusType: params.draft.bonusType,
     writtenScore: params.draft.finalScore,
-    fitnessPassed: true,
-    martialBonusPoint,
-    additionalBonusPoint,
-    knownBonusPoint,
-    knownFinalScore: roundTwo(params.draft.finalScore + knownBonusPoint),
+    writtenScoreMax,
+    fitnessRawScore,
+    certificateBonus,
+    knownFinalScore,
   };
 }
 
@@ -612,6 +634,7 @@ export async function generateMockData(
           }, 0)
         );
         const finalScore = roundTwo(totalScore + bonusScore);
+        const certificateBonus = pickCertificateBonus();
 
         const phone = `${MOCK_PHONE_PREFIX}${runPhoneSeed}${String(serial).padStart(4, "0")}`;
         const examNumber = `${MOCK_EXAM_NUMBER_PREFIX}-${targetExam.id}-${runKey}-${region.id}-${examType}-${String(
@@ -635,6 +658,7 @@ export async function generateMockData(
           bonusType,
           bonusRate,
           finalScore: clamp(finalScore, 0, maxTotal * 1.12),
+          certificateBonus,
           subjectScores,
         });
       }
@@ -689,6 +713,7 @@ export async function generateMockData(
         bonusType: draft.bonusType,
         bonusRate: draft.bonusRate,
         finalScore: draft.finalScore,
+        certificateBonus: draft.certificateBonus,
       };
     });
 
@@ -746,13 +771,14 @@ export async function generateMockData(
       }
 
       if (includeFinalPredictionMock) {
-        finalPredictionSeeds.push(
-          buildFinalPredictionSeedRow({
-            submissionId,
-            userId,
-            draft,
-          })
-        );
+        const seedRow = buildFinalPredictionSeedRow({
+          submissionId,
+          userId,
+          draft,
+        });
+        if (seedRow) {
+          finalPredictionSeeds.push(seedRow);
+        }
       }
     }
 
@@ -774,14 +800,11 @@ export async function generateMockData(
       const finalPredictionRows: Prisma.FinalPredictionCreateManyInput[] = finalPredictionSeeds.map((row) => ({
         submissionId: row.submissionId,
         userId: row.userId,
-        fitnessScore: row.martialBonusPoint,
-        interviewScore: row.additionalBonusPoint,
-        interviewGrade: row.fitnessPassed ? "PASS" : "FAIL",
-        finalScore: row.knownFinalScore,
-        finalRank:
-          row.fitnessPassed && row.knownFinalScore !== null
-            ? (rankMap.get(row.submissionId) ?? null)
-            : null,
+        fitnessScore: row.fitnessRawScore,       // 체력 원점수 (0~60)
+        interviewScore: row.certificateBonus,     // 자격증 가산점 (0~5, 컬럼 재사용)
+        interviewGrade: null,                     // 미사용
+        finalScore: row.knownFinalScore,          // 소방 환산점수 (max 80)
+        finalRank: rankMap.get(row.submissionId) ?? null,
       }));
 
       for (const chunk of chunkArray(finalPredictionRows, 1000)) {

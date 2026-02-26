@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { parsePositiveInt } from "@/lib/exam-utils";
 import {
+  calculateFinalRankingDetails,
   calculateKnownFinalRank,
   calculateKnownFinalScore,
   getWrittenScoreMax,
@@ -33,6 +34,7 @@ const submissionSelect = {
   examId: true,
   regionId: true,
   examType: true,
+  gender: true,
   finalScore: true,
   examNumber: true,
   certificateBonus: true, // 자격증 가산점 (최종 환산에 사용)
@@ -189,6 +191,7 @@ export async function GET(request: NextRequest) {
         writtenScoreMax: null,
         certificateBonus: null,
         finalPrediction: null,
+        ranking: null,
       });
     }
     return NextResponse.json({ error: "최종 환산 예측을 조회할 제출 데이터가 없습니다." }, { status: 404 });
@@ -230,6 +233,17 @@ export async function GET(request: NextRequest) {
           submissionId: submission.id,
         });
 
+  // 경쟁자·1배수 합격 판정 포함 상세 순위 계산
+  const rankingDetails = !saved?.finalScore
+    ? null
+    : await calculateFinalRankingDetails({
+        examId: submission.examId,
+        regionId: submission.regionId,
+        examType: submission.examType,
+        gender: submission.gender,
+        submissionId: submission.id,
+      });
+
   return NextResponse.json({
     isAdminPreview: isAdmin,
     ...(isAdmin ? { adminPreviewCandidates } : {}),
@@ -247,6 +261,7 @@ export async function GET(request: NextRequest) {
           updatedAt: saved.updatedAt.toISOString(),
         }
       : null,
+    ranking: rankingDetails,
   });
 }
 
@@ -344,6 +359,15 @@ export async function POST(request: NextRequest) {
     data: { finalRank: rankInfo.finalRank },
   });
 
+  // 경쟁자·1배수 합격 판정 포함 상세 순위 계산
+  const rankingDetails = await calculateFinalRankingDetails({
+    examId: submission.examId,
+    regionId: submission.regionId,
+    examType: submission.examType,
+    gender: submission.gender,
+    submissionId: submission.id,
+  });
+
   return NextResponse.json({
     success: true,
     submissionId: submission.id,
@@ -357,5 +381,6 @@ export async function POST(request: NextRequest) {
       knownFinalScore: calculated.knownFinalScore,
     },
     rank: rankInfo,
+    ranking: rankingDetails,
   });
 }

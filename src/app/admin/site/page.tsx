@@ -101,6 +101,7 @@ export default function AdminSitePage() {
   const [notices, setNotices] = useState<NoticeItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingBasic, setIsSavingBasic] = useState(false);
+  const [isSavingTabs, setIsSavingTabs] = useState(false);
   const [isSavingSystem, setIsSavingSystem] = useState(false);
   const [notice, setNotice] = useState<NoticeState>(null);
   const { confirm, modalProps } = useConfirmModal();
@@ -205,6 +206,43 @@ export default function AdminSitePage() {
     }
   }
 
+  async function handleSaveTabSettings() {
+    const ok = await confirm({ title: "컨텐츠 메뉴 설정 저장", description: "컨텐츠 메뉴 공개 설정을 저장하시겠습니까?" });
+    if (!ok) return;
+
+    setIsSavingTabs(true);
+    setNotice(null);
+    try {
+      const tabLockedMessage = asString(settings["site.tabLockedMessage"], "시험 후 오픈 예정입니다").trim();
+      if (!tabLockedMessage) {
+        throw new Error("잠금 안내 메시지를 입력해 주세요.");
+      }
+
+      await saveSettings(
+        {
+          "site.tabMainEnabled": asBoolean(settings["site.tabMainEnabled"], true),
+          "site.tabInputEnabled": asBoolean(settings["site.tabInputEnabled"], true),
+          "site.tabResultEnabled": asBoolean(settings["site.tabResultEnabled"], true),
+          "site.finalPredictionEnabled": asBoolean(settings["site.finalPredictionEnabled"], false),
+          "site.tabPredictionEnabled": asBoolean(settings["site.tabPredictionEnabled"], true),
+          "site.commentsEnabled": asBoolean(settings["site.commentsEnabled"], true),
+          "site.tabNoticesEnabled": asBoolean(settings["site.tabNoticesEnabled"], true),
+          "site.tabFaqEnabled": asBoolean(settings["site.tabFaqEnabled"], true),
+          "site.tabLockedMessage": tabLockedMessage,
+        },
+        "컨텐츠 메뉴 설정이 저장되었습니다."
+      );
+      await loadSettings();
+    } catch (error) {
+      setNotice({
+        type: "error",
+        message: error instanceof Error ? error.message : "컨텐츠 메뉴 설정 저장에 실패했습니다.",
+      });
+    } finally {
+      setIsSavingTabs(false);
+    }
+  }
+
   async function handleSaveSystemSettings() {
     const ok = await confirm({ title: "시스템 설정 저장", description: "시스템 설정을 저장하시겠습니까?" });
     if (!ok) return;
@@ -237,6 +275,11 @@ export default function AdminSitePage() {
         asString(settings["site.autoPassCutReadyRatioProfile"], "BALANCED")
       );
 
+      const tabLockedMessage = asString(settings["site.tabLockedMessage"], "시험 후 오픈 예정입니다").trim();
+      if (!tabLockedMessage) {
+        throw new Error("잠금 안내 메시지를 입력해 주세요.");
+      }
+
       await saveSettings(
         {
           "site.commentsEnabled": asBoolean(settings["site.commentsEnabled"], true),
@@ -265,6 +308,13 @@ export default function AdminSitePage() {
           "site.autoPassCutCheckIntervalSec": autoPassCutCheckIntervalSec,
           "site.autoPassCutThresholdProfile": autoPassCutThresholdProfile,
           "site.autoPassCutReadyRatioProfile": autoPassCutReadyRatioProfile,
+          "site.tabMainEnabled": asBoolean(settings["site.tabMainEnabled"], true),
+          "site.tabInputEnabled": asBoolean(settings["site.tabInputEnabled"], true),
+          "site.tabResultEnabled": asBoolean(settings["site.tabResultEnabled"], true),
+          "site.tabPredictionEnabled": asBoolean(settings["site.tabPredictionEnabled"], true),
+          "site.tabNoticesEnabled": asBoolean(settings["site.tabNoticesEnabled"], true),
+          "site.tabFaqEnabled": asBoolean(settings["site.tabFaqEnabled"], true),
+          "site.tabLockedMessage": tabLockedMessage,
         },
         "시스템 설정이 저장되었습니다."
       );
@@ -624,6 +674,135 @@ export default function AdminSitePage() {
       </section>
 
       <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-6">
+        <h2 className="text-base font-semibold text-slate-900">컨텐츠 메뉴 공개 설정</h2>
+        <p className="text-xs text-slate-500">
+          비활성화된 메뉴는 탭에 잠금 아이콘과 함께 블러 오버레이가 표시됩니다.
+          시험 전에는 비활성화하여 홍보 페이지만 노출하고, 시험 후 활성화하세요.
+        </p>
+
+        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <div className="space-y-2">
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={asBoolean(settings["site.tabMainEnabled"], true)}
+                onChange={(event) => updateSettingBoolean("site.tabMainEnabled", event.target.checked)}
+              />
+              풀서비스 메인
+            </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={asBoolean(settings["site.tabInputEnabled"], true)}
+                onChange={(event) => updateSettingBoolean("site.tabInputEnabled", event.target.checked)}
+              />
+              응시정보 입력
+            </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={asBoolean(settings["site.tabResultEnabled"], true)}
+                onChange={(event) => updateSettingBoolean("site.tabResultEnabled", event.target.checked)}
+              />
+              내 성적 분석
+            </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={asBoolean(settings["site.finalPredictionEnabled"], false)}
+                onChange={(event) => updateSettingBoolean("site.finalPredictionEnabled", event.target.checked)}
+              />
+              최종 환산 예측
+            </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={asBoolean(settings["site.tabPredictionEnabled"], true)}
+                onChange={(event) => updateSettingBoolean("site.tabPredictionEnabled", event.target.checked)}
+              />
+              합격 컷/경쟁자 정보
+            </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={asBoolean(settings["site.commentsEnabled"], true)}
+                onChange={(event) => updateSettingBoolean("site.commentsEnabled", event.target.checked)}
+              />
+              실시간 댓글
+            </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={asBoolean(settings["site.tabNoticesEnabled"], true)}
+                onChange={(event) => updateSettingBoolean("site.tabNoticesEnabled", event.target.checked)}
+              />
+              공지사항
+            </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                checked={asBoolean(settings["site.tabFaqEnabled"], true)}
+                onChange={(event) => updateSettingBoolean("site.tabFaqEnabled", event.target.checked)}
+              />
+              FAQ
+            </label>
+          </div>
+
+          <div className="mt-4 flex items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                updateSettingBoolean("site.tabMainEnabled", true);
+                updateSettingBoolean("site.tabInputEnabled", true);
+                updateSettingBoolean("site.tabResultEnabled", true);
+                updateSettingBoolean("site.finalPredictionEnabled", true);
+                updateSettingBoolean("site.tabPredictionEnabled", true);
+                updateSettingBoolean("site.commentsEnabled", true);
+                updateSettingBoolean("site.tabNoticesEnabled", true);
+                updateSettingBoolean("site.tabFaqEnabled", true);
+              }}
+            >
+              전체 활성화
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                updateSettingBoolean("site.tabMainEnabled", false);
+                updateSettingBoolean("site.tabInputEnabled", false);
+                updateSettingBoolean("site.tabResultEnabled", false);
+                updateSettingBoolean("site.finalPredictionEnabled", false);
+                updateSettingBoolean("site.tabPredictionEnabled", false);
+                updateSettingBoolean("site.commentsEnabled", false);
+                updateSettingBoolean("site.tabNoticesEnabled", false);
+                updateSettingBoolean("site.tabFaqEnabled", false);
+              }}
+            >
+              전체 비활성화
+            </Button>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="tab-locked-message">잠금 안내 메시지</Label>
+          <Input
+            id="tab-locked-message"
+            value={asString(settings["site.tabLockedMessage"], "시험 후 오픈 예정입니다")}
+            onChange={(event) => updateSettingString("site.tabLockedMessage", event.target.value)}
+            placeholder="시험 후 오픈 예정입니다"
+          />
+          <p className="text-xs text-slate-500">비활성 탭 클릭 시 블러 오버레이에 표시되는 메시지입니다.</p>
+        </div>
+
+        <Button type="button" onClick={handleSaveTabSettings} disabled={isSavingTabs}>
+          {isSavingTabs ? "저장 중..." : "컨텐츠 메뉴 설정 저장"}
+        </Button>
+      </section>
+
+      <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-6">
         <h2 className="text-base font-semibold text-slate-900">시스템 설정</h2>
 
         <label className="flex items-center gap-2 text-sm text-slate-700">
@@ -633,15 +812,6 @@ export default function AdminSitePage() {
             onChange={(event) => updateSettingBoolean("site.careerExamEnabled", event.target.checked)}
           />
           경채 시험 활성화 (구조, 소방학과, 구급 경채)
-        </label>
-
-        <label className="flex items-center gap-2 text-sm text-slate-700">
-          <input
-            type="checkbox"
-            checked={asBoolean(settings["site.commentsEnabled"], true)}
-            onChange={(event) => updateSettingBoolean("site.commentsEnabled", event.target.checked)}
-          />
-          실시간 댓글 활성화
         </label>
 
         <label className="flex items-center gap-2 text-sm text-slate-700">
@@ -660,15 +830,6 @@ export default function AdminSitePage() {
             onChange={(event) => updateSettingBoolean("site.mainPageAutoRefresh", event.target.checked)}
           />
           메인 페이지 자동 새로고침
-        </label>
-
-        <label className="flex items-center gap-2 text-sm text-slate-700">
-          <input
-            type="checkbox"
-            checked={asBoolean(settings["site.finalPredictionEnabled"], false)}
-            onChange={(event) => updateSettingBoolean("site.finalPredictionEnabled", event.target.checked)}
-          />
-          최종 환산 예측 공개
         </label>
 
         <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">

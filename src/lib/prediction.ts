@@ -174,7 +174,7 @@ export function getLikelyMultiple(passMultiple: number): number {
   return Math.min(LIKELY_MULTIPLE_STANDARD, passMultiple);
 }
 
-function getRecruitCount(
+export function getRecruitCount(
   quota: {
     recruitPublicMale: number;
     recruitPublicFemale: number;
