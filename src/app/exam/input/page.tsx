@@ -389,7 +389,7 @@ export default function ExamInputPage({
 
   // 응시번호 실시간 검증 (디바운스 500ms)
   const checkExamNumber = useCallback(
-    async (num: string, regId: number, exId: number, exType: string) => {
+    async (num: string, regId: number, exId: number, exType: string, userGender: Gender) => {
       setExamNumberStatus("checking");
       setExamNumberMessage("");
       try {
@@ -398,6 +398,7 @@ export default function ExamInputPage({
           regionId: String(regId),
           examNumber: num,
           examType: exType,
+          gender: userGender,
         });
         const res = await fetch(`/api/exam-number/check?${params.toString()}`);
         const data = (await res.json()) as { available?: boolean; reason?: string; error?: string };
@@ -426,14 +427,14 @@ export default function ExamInputPage({
     }
 
     const trimmed = examNumber.trim();
-    if (!trimmed || !regionId || !meta?.activeExam) {
+    if (!trimmed || trimmed.length !== 10 || !regionId || !meta?.activeExam || !gender) {
       setExamNumberStatus("idle");
       setExamNumberMessage("");
       return;
     }
 
     examNumberTimerRef.current = setTimeout(() => {
-      void checkExamNumber(trimmed, regionId as number, meta.activeExam!.id, examType);
+      void checkExamNumber(trimmed, regionId as number, meta.activeExam!.id, examType, gender);
     }, 500);
 
     return () => {
@@ -441,7 +442,7 @@ export default function ExamInputPage({
         clearTimeout(examNumberTimerRef.current);
       }
     };
-  }, [examNumber, regionId, examType, meta?.activeExam, checkExamNumber]);
+  }, [examNumber, regionId, examType, gender, meta?.activeExam, checkExamNumber]);
 
   useEffect(() => {
     setActiveSubjectIndex(0);
@@ -563,6 +564,10 @@ export default function ExamInputPage({
     const normalizedExamNumber = examNumber.trim();
     if (!normalizedExamNumber) {
       setErrorMessage("응시번호는 필수 입력 항목입니다.");
+      return;
+    }
+    if (!/^\d{10}$/.test(normalizedExamNumber)) {
+      setErrorMessage("응시번호는 10자리 숫자로 입력해 주세요.");
       return;
     }
 
@@ -746,8 +751,10 @@ export default function ExamInputPage({
             <Input
               id="examNumber"
               value={examNumber}
-              onChange={(event) => setExamNumber(event.target.value)}
+              onChange={(event) => setExamNumber(event.target.value.replace(/\D/g, "").slice(0, 10))}
               placeholder="응시번호 입력"
+              inputMode="numeric"
+              maxLength={10}
               required
             />
             {examNumberStatus === "checking" && (

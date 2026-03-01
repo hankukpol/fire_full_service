@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { ExamType, Gender, Prisma, Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
@@ -17,6 +17,44 @@ function toSafeNumber(value: number): number {
   return Number(value.toFixed(2));
 }
 
+function buildPopulationWhere(params: {
+  examId: number;
+  regionId: number;
+  examType: ExamType;
+  gender: Gender | null;
+  recruitAcademicCombined: number;
+}): Prisma.SubmissionWhereInput {
+  const where: Prisma.SubmissionWhereInput = {
+    examId: params.examId,
+    regionId: params.regionId,
+    examType: params.examType,
+    isSuspicious: false,
+    subjectScores: {
+      some: {},
+      none: {
+        isFailed: true,
+      },
+    },
+  };
+
+  switch (params.examType) {
+    case ExamType.PUBLIC:
+    case ExamType.CAREER_EMT:
+      if (params.gender) where.gender = params.gender;
+      break;
+    case ExamType.CAREER_ACADEMIC:
+      if (params.recruitAcademicCombined <= 0 && params.gender) {
+        where.gender = params.gender;
+      }
+      break;
+    case ExamType.CAREER_RESCUE:
+      where.gender = Gender.MALE;
+      break;
+  }
+
+  return where;
+}
+
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -30,6 +68,7 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const targetSubmissionId = parsePositiveInteger(searchParams.get("submissionId"));
+  const baseSubmissionId = parsePositiveInteger(searchParams.get("baseSubmissionId"));
   if (!targetSubmissionId) {
     return NextResponse.json({ error: "조회할 제출 ID가 필요합니다." }, { status: 400 });
   }
@@ -37,19 +76,48 @@ export async function GET(request: NextRequest) {
   const requesterRole = session.user.role === "ADMIN" ? Role.ADMIN : Role.USER;
 
   try {
-    const prediction = await calculatePrediction(userId, {}, requesterRole);
+    const prediction = await calculatePrediction(
+      userId,
+      baseSubmissionId ? { submissionId: baseSubmissionId } : {},
+      requesterRole
+    );
 
-    const populationWhere = {
-      examId: prediction.summary.examId,
-      regionId: prediction.summary.regionId,
-      examType: prediction.summary.examType,
-      subjectScores: {
-        some: {},
-        none: {
-          isFailed: true,
+    const baseSubmission = await prisma.submission.findUnique({
+      where: { id: prediction.summary.submissionId },
+      select: {
+        examId: true,
+        regionId: true,
+        examType: true,
+        gender: true,
+      },
+    });
+
+    if (!baseSubmission) {
+      return NextResponse.json(
+        { error: "기준 제출 데이터를 찾을 수 없습니다." },
+        { status: 404 }
+      );
+    }
+
+    const quota = await prisma.examRegionQuota.findUnique({
+      where: {
+        examId_regionId: {
+          examId: baseSubmission.examId,
+          regionId: baseSubmission.regionId,
         },
       },
-    };
+      select: {
+        recruitAcademicCombined: true,
+      },
+    });
+
+    const populationWhere = buildPopulationWhere({
+      examId: baseSubmission.examId,
+      regionId: baseSubmission.regionId,
+      examType: baseSubmission.examType,
+      gender: baseSubmission.gender,
+      recruitAcademicCombined: quota?.recruitAcademicCombined ?? 0,
+    });
 
     const target = await prisma.submission.findFirst({
       where: {
@@ -135,3 +203,4 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "세부 성적 조회에 실패했습니다." }, { status: 500 });
   }
 }
+

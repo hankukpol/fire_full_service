@@ -5,7 +5,8 @@
       "Bash(cd \"d:/앱 프로그램/합격예측 프로그램/fire\" && npx tsc --noEmit 2>&1)",
       "Bash(echo EXIT:$?:*)",
       "Bash(cd:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(pushd:*)"
     ]
   }
 }

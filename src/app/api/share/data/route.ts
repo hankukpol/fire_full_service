@@ -1,4 +1,4 @@
-import { Prisma, Role } from "@prisma/client";
+import { ExamType, Gender, Prisma, Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
@@ -42,6 +42,24 @@ function getPopulationConditionSql(submissionHasCutoff: boolean): Prisma.Sql {
   `;
 }
 
+function getGenderConditionSql(params: {
+  examType: ExamType;
+  gender: Gender;
+  recruitAcademicCombined: number;
+}): Prisma.Sql {
+  const { examType, gender, recruitAcademicCombined } = params;
+
+  if (examType === ExamType.CAREER_RESCUE) {
+    return Prisma.sql`AND s."gender"::text = ${Gender.MALE}`;
+  }
+
+  if (examType === ExamType.CAREER_ACADEMIC && recruitAcademicCombined > 0) {
+    return Prisma.empty;
+  }
+
+  return Prisma.sql`AND s."gender"::text = ${gender}`;
+}
+
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -70,6 +88,7 @@ export async function GET(request: NextRequest) {
     select: {
       id: true,
       examType: true,
+      gender: true,
       totalScore: true,
       finalScore: true,
       subjectScores: {
@@ -108,6 +127,22 @@ export async function GET(request: NextRequest) {
     ? "ALL_PARTICIPANTS"
     : "NON_CUTOFF_PARTICIPANTS";
   const populationConditionSql = getPopulationConditionSql(submissionHasCutoff);
+  const quota = await prisma.examRegionQuota.findUnique({
+    where: {
+      examId_regionId: {
+        examId: submission.exam.id,
+        regionId: submission.region.id,
+      },
+    },
+    select: {
+      recruitAcademicCombined: true,
+    },
+  });
+  const genderConditionSql = getGenderConditionSql({
+    examType: submission.examType,
+    gender: submission.gender,
+    recruitAcademicCombined: quota?.recruitAcademicCombined ?? 0,
+  });
 
   const [rankRow] = await prisma.$queryRaw<CountRow[]>(Prisma.sql`
     SELECT
@@ -117,6 +152,7 @@ export async function GET(request: NextRequest) {
     WHERE s."examId" = ${submission.exam.id}
       AND s."regionId" = ${submission.region.id}
       AND s."examType"::text = ${submission.examType}
+      ${genderConditionSql}
       ${populationConditionSql}
   `);
 

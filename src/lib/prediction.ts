@@ -1,4 +1,5 @@
-import { ExamType, Gender, Prisma, Role } from "@prisma/client";
+import { ExamType, Gender, Prisma, Role, SubmissionScoringStatus } from "@prisma/client";
+import { estimateApplicants } from "@/lib/policy";
 import { prisma } from "@/lib/prisma";
 
 const SMALL_RECRUIT_PASS_COUNTS: Record<number, number> = {
@@ -47,6 +48,7 @@ export interface PredictionSummary {
   examRound: number;
   userName: string;
   examType: ExamType;
+  gender: Gender;
   examTypeLabel: string;
   regionId: number;
   regionName: string;
@@ -151,6 +153,10 @@ function getPublicPassMultiple(recruitCount: number): number {
 
 // 소방 경채 합격배수
 function getCareerPassMultiple(recruitCount: number): number {
+  if (!Number.isInteger(recruitCount) || recruitCount < 1) {
+    throw new PredictionError("선발인원은 1 이상의 정수여야 합니다.", 500);
+  }
+
   if (recruitCount >= 51) return 1.5;
   if (recruitCount >= 6) return 1.8;
 
@@ -290,6 +296,15 @@ function getMinScoreWithinRank(scoreBands: ScoreBand[], maxRank: number): number
   return null;
 }
 
+function getEndRankWithinTie(scoreBands: ScoreBand[], rank: number): number | null {
+  const atRank = getScoreBandAtRank(scoreBands, rank);
+  if (atRank) {
+    return atRank.endRank;
+  }
+
+  return null;
+}
+
 function getMaxScoreWithinRank(scoreBands: ScoreBand[], minRank: number): number | null {
   const selected = scoreBands.find((band) => band.endRank >= minRank);
   return selected ? selected.score : null;
@@ -412,7 +427,7 @@ function buildPopulationWhere(
       if (submission.gender) base.gender = submission.gender;
       break;
     case ExamType.CAREER_RESCUE:
-      // 구조 경채: 성별 구분 없이 통합 선발
+      base.gender = Gender.MALE;
       break;
     case ExamType.CAREER_ACADEMIC:
       // 소방학과 경채: 양성(통합) 지역은 성별 필터 제거
@@ -445,6 +460,7 @@ export async function calculatePrediction(
     regionId: true,
     examType: true,
     gender: true,
+    scoringStatus: true,
     finalScore: true,
     exam: {
       select: {
@@ -510,6 +526,10 @@ export async function calculatePrediction(
     throw new PredictionError("합격예측을 위한 제출 데이터가 없습니다.", 404);
   }
 
+  if (submission.scoringStatus === SubmissionScoringStatus.PENDING) {
+    throw new PredictionError("채점 대기 중입니다. 가답안 발표 후 자동 채점 결과를 확인해 주세요.", 409);
+  }
+
   if (submission.subjectScores.some((subjectScore) => subjectScore.isFailed)) {
     throw new PredictionError("과락으로 인해 합격예측을 제공할 수 없습니다.", 400);
   }
@@ -544,6 +564,7 @@ export async function calculatePrediction(
 
   const passMultiple = getPassMultiple(recruitCount, submission.examType);
   const likelyMultiple = getLikelyMultiple(passMultiple);
+  // "challenge" is an operational guidance band, not a legal pass-multiple cutoff.
   const challengeMultiple = passMultiple * 1.3;
   const passCount = Math.ceil(recruitCount * passMultiple);
   const likelyMaxRank = getMaxRankByMultiple(recruitCount, likelyMultiple);
@@ -590,6 +611,7 @@ export async function calculatePrediction(
   const myMultiple = myRank / recruitCount;
   const predictionGrade = classifyGrade(myMultiple, passMultiple);
   const passLineScore = getMinScoreWithinRank(scoreBands, passCount);
+  const passActualRank = getEndRankWithinTie(scoreBands, passCount) ?? passCount;
   const oneMultipleBand = getScoreBandAtRank(scoreBands, recruitCount) ?? getLastScoreBand(scoreBands);
   const isOneMultipleCutConfirmed = totalParticipants >= recruitCount;
   const oneMultipleActualRank = oneMultipleBand?.endRank ?? null;
@@ -598,8 +620,8 @@ export async function calculatePrediction(
 
   const sureCount = countByRankRange(scoreBands, 0, recruitCount);
   const likelyCount = countByRankRange(scoreBands, recruitCount, likelyMaxRank);
-  const possibleCount = countByRankRange(scoreBands, likelyMaxRank, passCount);
-  const challengeCount = countByRankRange(scoreBands, passCount, challengeMaxRank);
+  const possibleCount = countByRankRange(scoreBands, likelyMaxRank, passActualRank);
+  const challengeCount = countByRankRange(scoreBands, passActualRank, challengeMaxRank);
   const aboveChallengeCount = countByRankRange(scoreBands, 0, challengeMaxRank);
   const belowChallengeCount = Math.max(0, totalParticipants - aboveChallengeCount);
 
@@ -639,7 +661,7 @@ export async function calculatePrediction(
       "possible",
       "가능권",
       possibleCount,
-      getMinScoreWithinRank(scoreBands, passCount),
+      passLineScore,
       getMaxScoreWithinRank(scoreBands, likelyMaxRank + 1),
       likelyMultiple,
       passMultiple,
@@ -650,7 +672,7 @@ export async function calculatePrediction(
       "도전권",
       challengeCount,
       getMinScoreWithinRank(scoreBands, challengeMaxRank),
-      getMaxScoreWithinRank(scoreBands, passCount + 1),
+      getMaxScoreWithinRank(scoreBands, passActualRank + 1),
       passMultiple,
       challengeMultiple,
       myLevelKey === "challenge"
@@ -718,12 +740,16 @@ export async function calculatePrediction(
       examRound: submission.exam.round,
       userName: submission.user.name,
       examType: submission.examType,
+      gender: submission.gender,
       examTypeLabel: toExamTypeLabel(submission.examType, submission.gender),
       regionId: submission.region.id,
       regionName: submission.region.name,
       recruitCount,
       applicantCount: applicantCountInfo.applicantCount,
-      estimatedApplicants: applicantCountInfo.applicantCount ?? 0,
+      estimatedApplicants: estimateApplicants({
+        applicantCount: applicantCountInfo.applicantCount,
+        recruitCount,
+      }),
       isApplicantCountExact: applicantCountInfo.isExact,
       totalParticipants,
       myScore,
@@ -761,3 +787,4 @@ export async function calculatePrediction(
     updatedAt: new Date().toISOString(),
   };
 }
+

@@ -7,15 +7,23 @@ import { validateRegisterInput } from "@/lib/validations";
 export const runtime = "nodejs";
 
 interface RegisterRequestBody {
-  name?: string;
-  phone?: string;
-  password?: string;
+  name?: unknown;
+  phone?: unknown;
+  password?: unknown;
+  agreedToTerms?: unknown;
+  agreedToPrivacy?: unknown;
 }
 
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as RegisterRequestBody;
-    const validationResult = validateRegisterInput(body);
+    const validationResult = validateRegisterInput({
+      name: typeof body.name === "string" ? body.name : undefined,
+      phone: typeof body.phone === "string" ? body.phone : undefined,
+      password: typeof body.password === "string" ? body.password : undefined,
+      agreedToTerms: body.agreedToTerms === true,
+      agreedToPrivacy: body.agreedToPrivacy === true,
+    });
 
     if (!validationResult.isValid || !validationResult.data) {
       return NextResponse.json(
@@ -32,12 +40,15 @@ export async function POST(request: Request) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
+    const now = new Date();
 
     await prisma.user.create({
       data: {
         name,
         phone,
         password: hashedPassword,
+        termsAgreedAt: now,
+        privacyAgreedAt: now,
       },
     });
 

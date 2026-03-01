@@ -1,6 +1,7 @@
-import { ExamType } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { SubmissionScoringStatus } from "@prisma/client";
+import { type AdminPreviewCandidate, buildAdminPreviewCandidates } from "@/lib/admin-preview";
 import { authOptions } from "@/lib/auth";
 import { parsePositiveInt } from "@/lib/exam-utils";
 import {
@@ -17,13 +18,8 @@ export const dynamic = "force-dynamic";
 
 interface FinalPredictionRequestBody {
   submissionId?: unknown;
-  fitnessRawScore?: unknown;    // 체력 원점수 (0~60)
-  certificateBonus?: unknown;   // 자격증 가산점 재입력 (0~5, 미입력 시 제출 시 등록값 사용)
-}
-
-interface AdminPreviewCandidate {
-  submissionId: number;
-  label: string;
+  fitnessRawScore?: unknown;
+  certificateBonus?: unknown;
 }
 
 const MOCK_EXAM_NUMBER_PREFIX = "MOCK-";
@@ -36,20 +32,23 @@ const submissionSelect = {
   examType: true,
   gender: true,
   finalScore: true,
+  scoringStatus: true,
   examNumber: true,
-  certificateBonus: true, // 자격증 가산점 (최종 환산에 사용)
+  certificateBonus: true,
 } as const;
 
 function parseFiniteNumber(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) {
     return value;
   }
+
   if (typeof value === "string" && value.trim()) {
     const parsed = Number(value);
     if (Number.isFinite(parsed)) {
       return parsed;
     }
   }
+
   return null;
 }
 
@@ -60,62 +59,13 @@ function parseNumberInRange(value: unknown, minValue: number, maxValue: number):
   return parsed;
 }
 
-function examTypeLabel(examType: ExamType): string {
-  if (examType === ExamType.CAREER_RESCUE) return "구조 경채";
-  if (examType === ExamType.CAREER_ACADEMIC) return "소방학과 경채";
-  if (examType === ExamType.CAREER_EMT) return "구급 경채";
-  return "공채";
-}
-
 function isMockSubmissionExamNumber(value: string): boolean {
   return value.startsWith(MOCK_EXAM_NUMBER_PREFIX);
 }
 
 async function ensureFinalPredictionEnabled() {
   const settings = await getSiteSettingsUncached();
-  const enabled = Boolean(settings["site.finalPredictionEnabled"] ?? false);
-  return enabled;
-}
-
-async function buildAdminPreviewCandidates(): Promise<AdminPreviewCandidate[]> {
-  const activeExam = await prisma.exam.findFirst({
-    where: { isActive: true },
-    orderBy: [{ examDate: "desc" }, { id: "desc" }],
-    select: { id: true },
-  });
-
-  const loadRows = async (examId?: number) =>
-    prisma.submission.findMany({
-      where: {
-        examNumber: { startsWith: MOCK_EXAM_NUMBER_PREFIX },
-        ...(examId ? { examId } : {}),
-      },
-      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      take: 120,
-      select: {
-        id: true,
-        examNumber: true,
-        examType: true,
-        user: {
-          select: { name: true, phone: true },
-        },
-        region: {
-          select: { name: true },
-        },
-        exam: {
-          select: { year: true, round: true, name: true },
-        },
-      },
-    });
-
-  const rows = activeExam ? await loadRows(activeExam.id) : await loadRows();
-  const fallbackRows = rows.length < 1 && activeExam ? await loadRows() : [];
-  const targetRows = rows.length > 0 ? rows : fallbackRows;
-
-  return targetRows.map((row) => ({
-    submissionId: row.id,
-    label: `#${row.id} | ${row.exam.year}-${row.exam.round} ${examTypeLabel(row.examType)} | ${row.region.name} | ${row.user.name}(${row.user.phone}) | ${row.examNumber}`,
-  }));
+  return Boolean(settings["site.finalPredictionEnabled"] ?? false);
 }
 
 async function findTargetSubmission(params: {
@@ -194,6 +144,7 @@ export async function GET(request: NextRequest) {
         ranking: null,
       });
     }
+
     return NextResponse.json({ error: "최종 환산 예측을 조회할 제출 데이터가 없습니다." }, { status: 404 });
   }
 
@@ -204,11 +155,19 @@ export async function GET(request: NextRequest) {
     );
   }
 
+
+  if (submission.scoringStatus === SubmissionScoringStatus.PENDING) {
+    return NextResponse.json(
+      { error: "채점 대기 중입니다. 가답안 발표 후 자동 채점 결과를 확인해 주세요." },
+      { status: 409 }
+    );
+  }
+
   const saved = await prisma.finalPrediction.findUnique({
     where: { submissionId: submission.id },
     select: {
-      fitnessScore: true,    // 체력 원점수 (0~60)
-      interviewScore: true,  // 자격증 가산점 재입력 값 (재사용 컬럼, null이면 제출 시 등록값 사용)
+      fitnessScore: true,
+      interviewScore: true,
       finalScore: true,
       finalRank: true,
       updatedAt: true,
@@ -216,8 +175,7 @@ export async function GET(request: NextRequest) {
   });
 
   const writtenScoreMax = getWrittenScoreMax(submission.examType);
-  const submissionCertificateBonus = Number(submission.certificateBonus); // 제출 시 등록 원본값
-  // 최종 환산 페이지에서 재입력한 값이 있으면 우선 사용, 없으면 제출 시 등록값 사용
+  const submissionCertificateBonus = Number(submission.certificateBonus);
   const effectiveCertificateBonus =
     saved?.interviewScore !== null && saved?.interviewScore !== undefined
       ? Number(saved.interviewScore)
@@ -230,10 +188,10 @@ export async function GET(request: NextRequest) {
           examId: submission.examId,
           regionId: submission.regionId,
           examType: submission.examType,
+          gender: submission.gender,
           submissionId: submission.id,
         });
 
-  // 경쟁자·1배수 합격 판정 포함 상세 순위 계산
   const rankingDetails = !saved?.finalScore
     ? null
     : await calculateFinalRankingDetails({
@@ -250,8 +208,8 @@ export async function GET(request: NextRequest) {
     submissionId: submission.id,
     writtenScore: Number(submission.finalScore),
     writtenScoreMax,
-    submissionCertificateBonus,   // 제출 시 등록한 원본값 (참고용 표시)
-    certificateBonus: effectiveCertificateBonus, // 현재 유효 가산점 (재입력 우선)
+    submissionCertificateBonus,
+    certificateBonus: effectiveCertificateBonus,
     finalPrediction: saved
       ? {
           fitnessRawScore: saved.fitnessScore === null ? 0 : Number(saved.fitnessScore),
@@ -302,7 +260,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "체력 점수는 0 이상 60 이하 숫자여야 합니다." }, { status: 400 });
   }
 
-  // 자격증 가산점: 재입력 값(0~5) 우선, 미입력 시 null → 제출 시 등록값 사용
   const certBonusOverride = parseNumberInRange(body.certificateBonus, 0, 5);
 
   const submission = await prisma.submission.findFirst({
@@ -316,9 +273,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "해당 제출 데이터를 찾을 수 없습니다." }, { status: 404 });
   }
 
+
+  if (submission.scoringStatus === SubmissionScoringStatus.PENDING) {
+    return NextResponse.json(
+      { error: "채점 대기 중입니다. 가답안 발표 후 자동 채점 결과를 확인해 주세요." },
+      { status: 409 }
+    );
+  }
   const writtenScore = Number(submission.finalScore);
   const writtenScoreMax = getWrittenScoreMax(submission.examType);
-  // 재입력 값이 있으면 우선 사용, 없으면 제출 시 등록값 사용
   const certificateBonus = certBonusOverride !== null ? certBonusOverride : Number(submission.certificateBonus);
 
   const calculated = calculateKnownFinalScore({
@@ -332,16 +295,16 @@ export async function POST(request: NextRequest) {
     where: { submissionId: submission.id },
     update: {
       userId: submission.userId,
-      fitnessScore: fitnessRawScore,       // 체력 원점수 저장
-      interviewScore: certificateBonus,    // 자격증 가산점 재입력 값 저장 (컬럼 재사용)
+      fitnessScore: fitnessRawScore,
+      interviewScore: certificateBonus,
       interviewGrade: null,
       finalScore: calculated.knownFinalScore,
     },
     create: {
       submissionId: submission.id,
       userId: submission.userId,
-      fitnessScore: fitnessRawScore,       // 체력 원점수 저장
-      interviewScore: certificateBonus,    // 자격증 가산점 재입력 값 저장 (컬럼 재사용)
+      fitnessScore: fitnessRawScore,
+      interviewScore: certificateBonus,
       interviewGrade: null,
       finalScore: calculated.knownFinalScore,
     },
@@ -351,6 +314,7 @@ export async function POST(request: NextRequest) {
     examId: submission.examId,
     regionId: submission.regionId,
     examType: submission.examType,
+    gender: submission.gender,
     submissionId: submission.id,
   });
 
@@ -359,7 +323,6 @@ export async function POST(request: NextRequest) {
     data: { finalRank: rankInfo.finalRank },
   });
 
-  // 경쟁자·1배수 합격 판정 포함 상세 순위 계산
   const rankingDetails = await calculateFinalRankingDetails({
     examId: submission.examId,
     regionId: submission.regionId,

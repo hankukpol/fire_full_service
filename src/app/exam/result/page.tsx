@@ -31,15 +31,21 @@ export default function ExamResultPage({ embedded = false }: ExamResultPageProps
       try {
         const fromQuery = searchParams.get("submissionId");
         const fromStorage =
-          typeof window !== "undefined" ? sessionStorage.getItem("latestSubmissionId") : null;
+          !embedded && typeof window !== "undefined"
+            ? sessionStorage.getItem("latestSubmissionId")
+            : null;
         const submissionId = fromQuery ?? fromStorage ?? "";
-        const query = submissionId ? `?submissionId=${encodeURIComponent(submissionId)}` : "";
+        const fetchResult = async (id: string) => {
+          const query = id ? `?submissionId=${encodeURIComponent(id)}` : "";
+          const response = await fetch(`/api/result${query}`, {
+            method: "GET",
+            cache: "no-store",
+          });
+          const data = (await response.json()) as ResultResponse & { error?: string };
+          return { response, data };
+        };
 
-        const response = await fetch(`/api/result${query}`, {
-          method: "GET",
-          cache: "no-store",
-        });
-        const data = (await response.json()) as ResultResponse & { error?: string };
+        const { response, data } = await fetchResult(submissionId);
 
         if (!response.ok) {
           if (response.status === 404) {
@@ -58,7 +64,7 @@ export default function ExamResultPage({ embedded = false }: ExamResultPageProps
 
         if (!mounted) return;
         setResult(data);
-        if (typeof window !== "undefined") {
+        if (!embedded && typeof window !== "undefined") {
           sessionStorage.setItem("latestSubmissionId", String(data.submission.id));
         }
       } catch (error) {
@@ -103,12 +109,14 @@ export default function ExamResultPage({ embedded = false }: ExamResultPageProps
     );
   }
 
+  const isPending = result.submission.scoringStatus === "PENDING";
+
   return (
     <div className="space-y-6">
       <section className="rounded-xl border border-slate-200 bg-white p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h1 className="text-lg font-semibold text-slate-900">내 성적 분석</h1>
-          <ShareButton submissionId={result.submission.id} sharePath="/exam/result" />
+          {!isPending ? <ShareButton submissionId={result.submission.id} sharePath="/exam/result" /> : null}
         </div>
         <p className="mt-1 text-sm text-slate-600">
           {result.submission.examYear}년 {result.submission.examRound}차 ·{" "}
@@ -117,7 +125,19 @@ export default function ExamResultPage({ embedded = false }: ExamResultPageProps
         <p className="mt-1 text-xs text-slate-500">응시번호: {result.submission.examNumber ?? "-"}</p>
       </section>
 
-      <AnalysisSubTabs result={result} />
+      {isPending ? (
+        <section className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-900">
+          <p className="font-semibold">채점 대기 중</p>
+          <p className="mt-1">
+            {result.pending?.message ?? "답안 접수가 완료되었습니다. 가답안 발표 후 자동 채점됩니다."}
+          </p>
+          <p className="mt-2 text-xs text-amber-700">
+            정답키가 등록되면 자동으로 채점되며, 이 페이지 새로고침 시 결과를 바로 확인할 수 있습니다.
+          </p>
+        </section>
+      ) : (
+        <AnalysisSubTabs result={result} />
+      )}
 
       {!embedded ? (
         <div className="mt-8 flex flex-wrap justify-end gap-3">
@@ -133,18 +153,20 @@ export default function ExamResultPage({ embedded = false }: ExamResultPageProps
               {result.submission.maxEditLimit}회 남음)
             </Button>
           ) : null}
-          {result.features.finalPredictionEnabled ? (
+          {result.features.finalPredictionEnabled && !isPending ? (
             <Button type="button" variant="outline" onClick={() => router.push("/exam/final")}>
               최종 환산 예측
             </Button>
           ) : null}
-          <Button
-            type="button"
-            className="rounded-none border border-transparent bg-slate-900 text-white shadow-sm hover:bg-slate-800"
-            onClick={() => router.push("/exam/prediction")}
-          >
-            합격예측 분석 보기
-          </Button>
+          {!isPending ? (
+            <Button
+              type="button"
+              className="rounded-none border border-transparent bg-slate-900 text-white shadow-sm hover:bg-slate-800"
+              onClick={() => router.push("/exam/prediction")}
+            >
+              합격예측 분석 보기
+            </Button>
+          ) : null}
         </div>
       ) : null}
     </div>

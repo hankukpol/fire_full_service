@@ -1,6 +1,7 @@
 import { ExamType } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminRoute } from "@/lib/admin-auth";
+import { validateAdminExamNumberRange } from "@/lib/exam-number";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -24,8 +25,22 @@ interface QuotaUpdateItem {
   applicantAcademicCombined?: unknown;
   applicantEmtMale?: unknown;
   applicantEmtFemale?: unknown;
-  examNumberStart?: unknown;
-  examNumberEnd?: unknown;
+  examNumberStartPublicMale?: unknown;
+  examNumberEndPublicMale?: unknown;
+  examNumberStartPublicFemale?: unknown;
+  examNumberEndPublicFemale?: unknown;
+  examNumberStartCareerRescue?: unknown;
+  examNumberEndCareerRescue?: unknown;
+  examNumberStartCareerAcademicMale?: unknown;
+  examNumberEndCareerAcademicMale?: unknown;
+  examNumberStartCareerAcademicFemale?: unknown;
+  examNumberEndCareerAcademicFemale?: unknown;
+  examNumberStartCareerAcademicCombined?: unknown;
+  examNumberEndCareerAcademicCombined?: unknown;
+  examNumberStartCareerEmtMale?: unknown;
+  examNumberEndCareerEmtMale?: unknown;
+  examNumberStartCareerEmtFemale?: unknown;
+  examNumberEndCareerEmtFemale?: unknown;
 }
 
 interface QuotaUpdatePayload {
@@ -90,16 +105,18 @@ function parsePositiveInt(value: unknown): number | null {
   return null;
 }
 
-// 소방 공채 합격배수
+function parseStringOrNull(value: unknown): string | null {
+  return typeof value === "string" ? value.trim() || null : null;
+}
+
 function formatPublicPassMultiple(recruitCount: number): string {
   if (recruitCount <= 0) return "-";
   if (recruitCount >= 51) return "1.5배";
   if (recruitCount >= 21) return "2배";
   if (recruitCount >= 11) return "2.5배";
-  return "3배"; // 1~10명
+  return "3배";
 }
 
-// 소방 경채 합격배수
 function formatCareerPassMultiple(recruitCount: number): string {
   if (recruitCount <= 0) return "-";
   if (recruitCount >= 51) return "1.5배";
@@ -112,43 +129,149 @@ function formatCareerPassMultiple(recruitCount: number): string {
   return `${(passCount / recruitCount).toFixed(1)}배`;
 }
 
-function parseStringOrNull(value: unknown): string | null {
-  return typeof value === "string" ? value.trim() || null : null;
+function selectLegacyRange(row: {
+  examNumberStartPublicMale: string | null;
+  examNumberEndPublicMale: string | null;
+  examNumberStartPublicFemale: string | null;
+  examNumberEndPublicFemale: string | null;
+  examNumberStartCareerRescue: string | null;
+  examNumberEndCareerRescue: string | null;
+  examNumberStartCareerAcademicMale: string | null;
+  examNumberEndCareerAcademicMale: string | null;
+  examNumberStartCareerAcademicFemale: string | null;
+  examNumberEndCareerAcademicFemale: string | null;
+  examNumberStartCareerAcademicCombined: string | null;
+  examNumberEndCareerAcademicCombined: string | null;
+  examNumberStartCareerEmtMale: string | null;
+  examNumberEndCareerEmtMale: string | null;
+  examNumberStartCareerEmtFemale: string | null;
+  examNumberEndCareerEmtFemale: string | null;
+}): { start: string | null; end: string | null } {
+  const pairs = [
+    [row.examNumberStartPublicMale, row.examNumberEndPublicMale],
+    [row.examNumberStartPublicFemale, row.examNumberEndPublicFemale],
+    [row.examNumberStartCareerRescue, row.examNumberEndCareerRescue],
+    [row.examNumberStartCareerAcademicMale, row.examNumberEndCareerAcademicMale],
+    [row.examNumberStartCareerAcademicFemale, row.examNumberEndCareerAcademicFemale],
+    [row.examNumberStartCareerAcademicCombined, row.examNumberEndCareerAcademicCombined],
+    [row.examNumberStartCareerEmtMale, row.examNumberEndCareerEmtMale],
+    [row.examNumberStartCareerEmtFemale, row.examNumberEndCareerEmtFemale],
+  ] as const;
+
+  const first = pairs.find(([start, end]) => start && end);
+  if (!first) {
+    return { start: null, end: null };
+  }
+  return { start: first[0], end: first[1] };
 }
 
-// GET: 시험 목록 + 선택된 시험의 지역별 모집인원 조회
-// ?examId=N (없으면 활성 시험 자동 선택)
+function validateRangeRow(row: {
+  examNumberStartPublicMale: string | null;
+  examNumberEndPublicMale: string | null;
+  examNumberStartPublicFemale: string | null;
+  examNumberEndPublicFemale: string | null;
+  examNumberStartCareerRescue: string | null;
+  examNumberEndCareerRescue: string | null;
+  examNumberStartCareerAcademicMale: string | null;
+  examNumberEndCareerAcademicMale: string | null;
+  examNumberStartCareerAcademicFemale: string | null;
+  examNumberEndCareerAcademicFemale: string | null;
+  examNumberStartCareerAcademicCombined: string | null;
+  examNumberEndCareerAcademicCombined: string | null;
+  examNumberStartCareerEmtMale: string | null;
+  examNumberEndCareerEmtMale: string | null;
+  examNumberStartCareerEmtFemale: string | null;
+  examNumberEndCareerEmtFemale: string | null;
+}): string | null {
+  const checks = [
+    {
+      label: "공채(남)",
+      cohort: "PUBLIC_MALE" as const,
+      start: row.examNumberStartPublicMale,
+      end: row.examNumberEndPublicMale,
+    },
+    {
+      label: "공채(여)",
+      cohort: "PUBLIC_FEMALE" as const,
+      start: row.examNumberStartPublicFemale,
+      end: row.examNumberEndPublicFemale,
+    },
+    {
+      label: "구조",
+      cohort: "CAREER_RESCUE" as const,
+      start: row.examNumberStartCareerRescue,
+      end: row.examNumberEndCareerRescue,
+    },
+    {
+      label: "소방관련학과(남)",
+      cohort: "CAREER_ACADEMIC_MALE" as const,
+      start: row.examNumberStartCareerAcademicMale,
+      end: row.examNumberEndCareerAcademicMale,
+    },
+    {
+      label: "소방관련학과(여)",
+      cohort: "CAREER_ACADEMIC_FEMALE" as const,
+      start: row.examNumberStartCareerAcademicFemale,
+      end: row.examNumberEndCareerAcademicFemale,
+    },
+    {
+      label: "소방관련학과(양성)",
+      cohort: "CAREER_ACADEMIC_COMBINED" as const,
+      start: row.examNumberStartCareerAcademicCombined,
+      end: row.examNumberEndCareerAcademicCombined,
+    },
+    {
+      label: "구급(남)",
+      cohort: "CAREER_EMT_MALE" as const,
+      start: row.examNumberStartCareerEmtMale,
+      end: row.examNumberEndCareerEmtMale,
+    },
+    {
+      label: "구급(여)",
+      cohort: "CAREER_EMT_FEMALE" as const,
+      start: row.examNumberStartCareerEmtFemale,
+      end: row.examNumberEndCareerEmtFemale,
+    },
+  ];
+
+  for (const check of checks) {
+    const error = validateAdminExamNumberRange({
+      cohort: check.cohort,
+      label: check.label,
+      start: check.start,
+      end: check.end,
+    });
+    if (error) return error;
+  }
+
+  return null;
+}
+
 export async function GET(request: NextRequest) {
   const guard = await requireAdminRoute();
   if ("error" in guard) return guard.error;
 
   try {
-    // 시험 목록 조회
     const exams = await prisma.exam.findMany({
       orderBy: [{ isActive: "desc" }, { examDate: "desc" }],
       select: { id: true, name: true, year: true, round: true, isActive: true },
     });
 
-    // examId 결정
     const examIdParam = request.nextUrl.searchParams.get("examId");
     let examId: number | null = null;
-
     if (examIdParam) {
       examId = parsePositiveInt(examIdParam);
     }
-
     if (!examId) {
       const activeExam = exams.find((e) => e.isActive);
       examId = activeExam?.id ?? exams[0]?.id ?? null;
     }
 
-    // 지역 목록 조회
     const regions = await prisma.region.findMany({
       orderBy: [{ isActive: "desc" }, { name: "asc" }],
       select: { id: true, name: true, isActive: true },
     });
 
-    // 선택된 시험의 ExamRegionQuota 조회
     const quotas = examId
       ? await prisma.examRegionQuota.findMany({
           where: { examId },
@@ -170,15 +293,28 @@ export async function GET(request: NextRequest) {
             applicantAcademicCombined: true,
             applicantEmtMale: true,
             applicantEmtFemale: true,
-            examNumberStart: true,
-            examNumberEnd: true,
+            examNumberStartPublicMale: true,
+            examNumberEndPublicMale: true,
+            examNumberStartPublicFemale: true,
+            examNumberEndPublicFemale: true,
+            examNumberStartCareerRescue: true,
+            examNumberEndCareerRescue: true,
+            examNumberStartCareerAcademicMale: true,
+            examNumberEndCareerAcademicMale: true,
+            examNumberStartCareerAcademicFemale: true,
+            examNumberEndCareerAcademicFemale: true,
+            examNumberStartCareerAcademicCombined: true,
+            examNumberEndCareerAcademicCombined: true,
+            examNumberStartCareerEmtMale: true,
+            examNumberEndCareerEmtMale: true,
+            examNumberStartCareerEmtFemale: true,
+            examNumberEndCareerEmtFemale: true,
           },
         })
       : [];
 
     const quotaByRegionId = new Map(quotas.map((q) => [q.regionId, q]));
 
-    // 제출 통계 조회
     const groupedCounts = examId
       ? await prisma.submission.groupBy({
           by: ["regionId", "examType"],
@@ -212,7 +348,6 @@ export async function GET(request: NextRequest) {
       } else if (row.examType === ExamType.CAREER_EMT) {
         existing.careerEmtCount += count;
       }
-
       countByRegion.set(row.regionId, existing);
     }
 
@@ -257,8 +392,22 @@ export async function GET(request: NextRequest) {
           passMultipleAcademicCombined: formatCareerPassMultiple(quota?.recruitAcademicCombined ?? 0),
           passMultipleEmtMale: formatCareerPassMultiple(quota?.recruitEmtMale ?? 0),
           passMultipleEmtFemale: formatCareerPassMultiple(quota?.recruitEmtFemale ?? 0),
-          examNumberStart: quota?.examNumberStart ?? null,
-          examNumberEnd: quota?.examNumberEnd ?? null,
+          examNumberStartPublicMale: quota?.examNumberStartPublicMale ?? null,
+          examNumberEndPublicMale: quota?.examNumberEndPublicMale ?? null,
+          examNumberStartPublicFemale: quota?.examNumberStartPublicFemale ?? null,
+          examNumberEndPublicFemale: quota?.examNumberEndPublicFemale ?? null,
+          examNumberStartCareerRescue: quota?.examNumberStartCareerRescue ?? null,
+          examNumberEndCareerRescue: quota?.examNumberEndCareerRescue ?? null,
+          examNumberStartCareerAcademicMale: quota?.examNumberStartCareerAcademicMale ?? null,
+          examNumberEndCareerAcademicMale: quota?.examNumberEndCareerAcademicMale ?? null,
+          examNumberStartCareerAcademicFemale: quota?.examNumberStartCareerAcademicFemale ?? null,
+          examNumberEndCareerAcademicFemale: quota?.examNumberEndCareerAcademicFemale ?? null,
+          examNumberStartCareerAcademicCombined: quota?.examNumberStartCareerAcademicCombined ?? null,
+          examNumberEndCareerAcademicCombined: quota?.examNumberEndCareerAcademicCombined ?? null,
+          examNumberStartCareerEmtMale: quota?.examNumberStartCareerEmtMale ?? null,
+          examNumberEndCareerEmtMale: quota?.examNumberEndCareerEmtMale ?? null,
+          examNumberStartCareerEmtFemale: quota?.examNumberStartCareerEmtFemale ?? null,
+          examNumberEndCareerEmtFemale: quota?.examNumberEndCareerEmtFemale ?? null,
           submissionCount: counts.total,
           submissionCountPublic: counts.publicCount,
           submissionCountCareerRescue: counts.careerRescueCount,
@@ -273,7 +422,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PUT: 시험별 지역 모집인원 저장 (ExamRegionQuota upsert) + Region isActive 업데이트
 export async function PUT(request: NextRequest) {
   const guard = await requireAdminRoute();
   if ("error" in guard) return guard.error;
@@ -290,7 +438,6 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "수정할 지역 데이터가 없습니다." }, { status: 400 });
     }
 
-    // 시험 존재 확인
     const exam = await prisma.exam.findUnique({ where: { id: examId }, select: { id: true } });
     if (!exam) {
       return NextResponse.json({ error: "존재하지 않는 시험입니다." }, { status: 404 });
@@ -344,8 +491,22 @@ export async function PUT(request: NextRequest) {
           applicantAcademicCombinedParsed.ok &&
           applicantEmtMaleParsed.ok &&
           applicantEmtFemaleParsed.ok,
-        examNumberStart: parseStringOrNull(item.examNumberStart),
-        examNumberEnd: parseStringOrNull(item.examNumberEnd),
+        examNumberStartPublicMale: parseStringOrNull(item.examNumberStartPublicMale),
+        examNumberEndPublicMale: parseStringOrNull(item.examNumberEndPublicMale),
+        examNumberStartPublicFemale: parseStringOrNull(item.examNumberStartPublicFemale),
+        examNumberEndPublicFemale: parseStringOrNull(item.examNumberEndPublicFemale),
+        examNumberStartCareerRescue: parseStringOrNull(item.examNumberStartCareerRescue),
+        examNumberEndCareerRescue: parseStringOrNull(item.examNumberEndCareerRescue),
+        examNumberStartCareerAcademicMale: parseStringOrNull(item.examNumberStartCareerAcademicMale),
+        examNumberEndCareerAcademicMale: parseStringOrNull(item.examNumberEndCareerAcademicMale),
+        examNumberStartCareerAcademicFemale: parseStringOrNull(item.examNumberStartCareerAcademicFemale),
+        examNumberEndCareerAcademicFemale: parseStringOrNull(item.examNumberEndCareerAcademicFemale),
+        examNumberStartCareerAcademicCombined: parseStringOrNull(item.examNumberStartCareerAcademicCombined),
+        examNumberEndCareerAcademicCombined: parseStringOrNull(item.examNumberEndCareerAcademicCombined),
+        examNumberStartCareerEmtMale: parseStringOrNull(item.examNumberStartCareerEmtMale),
+        examNumberEndCareerEmtMale: parseStringOrNull(item.examNumberEndCareerEmtMale),
+        examNumberStartCareerEmtFemale: parseStringOrNull(item.examNumberStartCareerEmtFemale),
+        examNumberEndCareerEmtFemale: parseStringOrNull(item.examNumberEndCareerEmtFemale),
       };
     });
 
@@ -369,7 +530,12 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: "모집인원은 0 이상의 정수여야 합니다." }, { status: 400 });
       }
       if (!row.applicantCountValid) {
-        return NextResponse.json({ error: "출원인원은 비워두거나 0 이상의 정수여야 합니다." }, { status: 400 });
+        return NextResponse.json({ error: "응시인원은 비우거나 0 이상의 정수여야 합니다." }, { status: 400 });
+      }
+
+      const rangeError = validateRangeRow(row);
+      if (rangeError) {
+        return NextResponse.json({ error: rangeError }, { status: 400 });
       }
     }
 
@@ -382,22 +548,18 @@ export async function PUT(request: NextRequest) {
       uniqueIds.add(rowId);
     }
 
-    // 지역 존재 확인
     const existingRegions = await prisma.region.findMany({
       where: { id: { in: Array.from(uniqueIds) } },
       select: { id: true },
     });
-
     if (existingRegions.length !== uniqueIds.size) {
       return NextResponse.json({ error: "존재하지 않는 지역 ID가 포함되어 있습니다." }, { status: 404 });
     }
 
-    // 트랜잭션: Region isActive 업데이트 + ExamRegionQuota upsert
     const operations = normalized.flatMap((row) => {
       const regionId = row.regionId as number;
       const ops = [];
 
-      // Region isActive 업데이트 (값이 있는 경우만)
       if (row.isActive !== undefined) {
         ops.push(
           prisma.region.update({
@@ -407,6 +569,7 @@ export async function PUT(request: NextRequest) {
         );
       }
 
+      const legacyRange = selectLegacyRange(row);
       const quotaData = {
         recruitPublicMale: row.recruitPublicMale as number,
         recruitPublicFemale: row.recruitPublicFemale as number,
@@ -424,11 +587,26 @@ export async function PUT(request: NextRequest) {
         applicantAcademicCombined: row.applicantAcademicCombined,
         applicantEmtMale: row.applicantEmtMale,
         applicantEmtFemale: row.applicantEmtFemale,
-        examNumberStart: row.examNumberStart,
-        examNumberEnd: row.examNumberEnd,
+        examNumberStartPublicMale: row.examNumberStartPublicMale,
+        examNumberEndPublicMale: row.examNumberEndPublicMale,
+        examNumberStartPublicFemale: row.examNumberStartPublicFemale,
+        examNumberEndPublicFemale: row.examNumberEndPublicFemale,
+        examNumberStartCareerRescue: row.examNumberStartCareerRescue,
+        examNumberEndCareerRescue: row.examNumberEndCareerRescue,
+        examNumberStartCareerAcademicMale: row.examNumberStartCareerAcademicMale,
+        examNumberEndCareerAcademicMale: row.examNumberEndCareerAcademicMale,
+        examNumberStartCareerAcademicFemale: row.examNumberStartCareerAcademicFemale,
+        examNumberEndCareerAcademicFemale: row.examNumberEndCareerAcademicFemale,
+        examNumberStartCareerAcademicCombined: row.examNumberStartCareerAcademicCombined,
+        examNumberEndCareerAcademicCombined: row.examNumberEndCareerAcademicCombined,
+        examNumberStartCareerEmtMale: row.examNumberStartCareerEmtMale,
+        examNumberEndCareerEmtMale: row.examNumberEndCareerEmtMale,
+        examNumberStartCareerEmtFemale: row.examNumberStartCareerEmtFemale,
+        examNumberEndCareerEmtFemale: row.examNumberEndCareerEmtFemale,
+        examNumberStart: legacyRange.start,
+        examNumberEnd: legacyRange.end,
       };
 
-      // ExamRegionQuota upsert
       ops.push(
         prisma.examRegionQuota.upsert({
           where: {
@@ -451,7 +629,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       success: true,
       updatedCount: normalized.length,
-      message: `${normalized.length}개 지역 설정이 업데이트되었습니다.`,
+      message: `${normalized.length}개 지역의 설정을 업데이트했습니다.`,
     });
   } catch (error) {
     console.error("모집인원 저장 중 오류가 발생했습니다.", error);
@@ -459,7 +637,6 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-// POST: 다른 시험의 모집인원을 현재 시험으로 복사
 export async function POST(request: NextRequest) {
   const guard = await requireAdminRoute();
   if ("error" in guard) return guard.error;
@@ -472,7 +649,6 @@ export async function POST(request: NextRequest) {
     if (!sourceExamId || !targetExamId) {
       return NextResponse.json({ error: "원본 시험 ID와 대상 시험 ID가 필요합니다." }, { status: 400 });
     }
-
     if (sourceExamId === targetExamId) {
       return NextResponse.json({ error: "같은 시험으로 복사할 수 없습니다." }, { status: 400 });
     }
@@ -480,7 +656,6 @@ export async function POST(request: NextRequest) {
     const sourceQuotas = await prisma.examRegionQuota.findMany({
       where: { examId: sourceExamId },
     });
-
     if (sourceQuotas.length === 0) {
       return NextResponse.json({ error: "원본 시험에 모집인원 데이터가 없습니다." }, { status: 404 });
     }
@@ -507,6 +682,22 @@ export async function POST(request: NextRequest) {
           applicantAcademicCombined: sq.applicantAcademicCombined,
           applicantEmtMale: sq.applicantEmtMale,
           applicantEmtFemale: sq.applicantEmtFemale,
+          examNumberStartPublicMale: sq.examNumberStartPublicMale,
+          examNumberEndPublicMale: sq.examNumberEndPublicMale,
+          examNumberStartPublicFemale: sq.examNumberStartPublicFemale,
+          examNumberEndPublicFemale: sq.examNumberEndPublicFemale,
+          examNumberStartCareerRescue: sq.examNumberStartCareerRescue,
+          examNumberEndCareerRescue: sq.examNumberEndCareerRescue,
+          examNumberStartCareerAcademicMale: sq.examNumberStartCareerAcademicMale,
+          examNumberEndCareerAcademicMale: sq.examNumberEndCareerAcademicMale,
+          examNumberStartCareerAcademicFemale: sq.examNumberStartCareerAcademicFemale,
+          examNumberEndCareerAcademicFemale: sq.examNumberEndCareerAcademicFemale,
+          examNumberStartCareerAcademicCombined: sq.examNumberStartCareerAcademicCombined,
+          examNumberEndCareerAcademicCombined: sq.examNumberEndCareerAcademicCombined,
+          examNumberStartCareerEmtMale: sq.examNumberStartCareerEmtMale,
+          examNumberEndCareerEmtMale: sq.examNumberEndCareerEmtMale,
+          examNumberStartCareerEmtFemale: sq.examNumberStartCareerEmtFemale,
+          examNumberEndCareerEmtFemale: sq.examNumberEndCareerEmtFemale,
           examNumberStart: sq.examNumberStart,
           examNumberEnd: sq.examNumberEnd,
         },
@@ -529,6 +720,22 @@ export async function POST(request: NextRequest) {
           applicantAcademicCombined: sq.applicantAcademicCombined,
           applicantEmtMale: sq.applicantEmtMale,
           applicantEmtFemale: sq.applicantEmtFemale,
+          examNumberStartPublicMale: sq.examNumberStartPublicMale,
+          examNumberEndPublicMale: sq.examNumberEndPublicMale,
+          examNumberStartPublicFemale: sq.examNumberStartPublicFemale,
+          examNumberEndPublicFemale: sq.examNumberEndPublicFemale,
+          examNumberStartCareerRescue: sq.examNumberStartCareerRescue,
+          examNumberEndCareerRescue: sq.examNumberEndCareerRescue,
+          examNumberStartCareerAcademicMale: sq.examNumberStartCareerAcademicMale,
+          examNumberEndCareerAcademicMale: sq.examNumberEndCareerAcademicMale,
+          examNumberStartCareerAcademicFemale: sq.examNumberStartCareerAcademicFemale,
+          examNumberEndCareerAcademicFemale: sq.examNumberEndCareerAcademicFemale,
+          examNumberStartCareerAcademicCombined: sq.examNumberStartCareerAcademicCombined,
+          examNumberEndCareerAcademicCombined: sq.examNumberEndCareerAcademicCombined,
+          examNumberStartCareerEmtMale: sq.examNumberStartCareerEmtMale,
+          examNumberEndCareerEmtMale: sq.examNumberEndCareerEmtMale,
+          examNumberStartCareerEmtFemale: sq.examNumberStartCareerEmtFemale,
+          examNumberEndCareerEmtFemale: sq.examNumberEndCareerEmtFemale,
           examNumberStart: sq.examNumberStart,
           examNumberEnd: sq.examNumberEnd,
         },
@@ -540,10 +747,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       copiedCount: sourceQuotas.length,
-      message: `${sourceQuotas.length}개 지역 모집인원이 복사되었습니다.`,
+      message: `${sourceQuotas.length}개 지역 모집인원을 복사했습니다.`,
     });
   } catch (error) {
     console.error("모집인원 복사 중 오류가 발생했습니다.", error);
     return NextResponse.json({ error: "모집인원 복사에 실패했습니다." }, { status: 500 });
   }
 }
+

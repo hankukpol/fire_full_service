@@ -1,0 +1,1819 @@
+
+> police@0.1.0 dev
+> next dev -p 3100
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3100
+- Network:       http://100.104.86.32:3100
+- Environments: .env.local, .env
+
+✓ Starting...
+○ Compiling proxy ...
+✓ Ready in 33s
+○ Compiling /api/site-settings ...
+ GET /api/site-settings 200 in 7.9s (compile: 7.4s, proxy.ts: 12ms, render: 507ms)
+○ Compiling / ...
+ GET / 200 in 45s (compile: 35.3s, proxy.ts: 8.3s, render: 1090ms)
+ GET /api/site-settings 200 in 155ms (compile: 6ms, proxy.ts: 7ms, render: 143ms)
+ GET / 200 in 532ms (compile: 6ms, proxy.ts: 188ms, render: 339ms)
+ GET /api/site-settings 200 in 32ms (compile: 11ms, proxy.ts: 14ms, render: 7ms)
+ GET /api/site-settings 200 in 38ms (compile: 19ms, proxy.ts: 14ms, render: 6ms)
+ GET /api/site-settings 200 in 110ms (compile: 5ms, proxy.ts: 41ms, render: 64ms)
+ GET /api/auth/session 200 in 2.3s (compile: 2.1s, proxy.ts: 130ms, render: 26ms)
+ GET /api/site-settings 200 in 82ms (compile: 5ms, proxy.ts: 6ms, render: 71ms)
+ GET /login 200 in 464ms (compile: 341ms, proxy.ts: 94ms, render: 30ms)
+ GET /api/site-settings 200 in 62ms (compile: 3ms, proxy.ts: 4ms, render: 55ms)
+ GET /api/auth/providers 200 in 108ms (compile: 15ms, proxy.ts: 72ms, render: 21ms)
+ GET /api/site-settings 200 in 63ms (compile: 3ms, proxy.ts: 3ms, render: 57ms)
+ GET /api/auth/csrf 200 in 101ms (compile: 5ms, proxy.ts: 69ms, render: 28ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 5ms, render: 58ms)
+ POST /api/auth/callback/credentials 200 in 489ms (compile: 5ms, proxy.ts: 75ms, render: 408ms)
+ GET /api/site-settings 200 in 60ms (compile: 3ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/auth/session 200 in 108ms (compile: 5ms, proxy.ts: 67ms, render: 37ms)
+ GET /api/site-settings 200 in 81ms (compile: 11ms, proxy.ts: 11ms, render: 58ms)
+ GET /api/site-settings 200 in 104ms (compile: 5ms, proxy.ts: 16ms, render: 84ms)
+ GET /api/site-settings 200 in 106ms (compile: 10ms, proxy.ts: 16ms, render: 80ms)
+ GET /api/site-settings 200 in 64ms (compile: 2ms, proxy.ts: 3ms, render: 58ms)
+ GET / 200 in 298ms (compile: 4ms, proxy.ts: 94ms, render: 199ms)
+ GET / 200 in 277ms (compile: 3ms, proxy.ts: 70ms, render: 203ms)
+ GET /api/notifications/rescore 200 in 522ms (compile: 316ms, proxy.ts: 129ms, render: 77ms)
+ GET /api/notifications/rescore 200 in 525ms (compile: 313ms, proxy.ts: 127ms, render: 85ms)
+ GET /api/site-settings 200 in 61ms (compile: 4ms, proxy.ts: 6ms, render: 51ms)
+ GET /api/site-settings 200 in 75ms (compile: 7ms, proxy.ts: 6ms, render: 62ms)
+ GET /api/main-stats 200 in 1403ms (compile: 906ms, proxy.ts: 70ms, render: 428ms)
+ GET /api/main-stats 200 in 1405ms (compile: 898ms, proxy.ts: 84ms, render: 423ms)
+ GET /api/site-settings 200 in 72ms (compile: 8ms, proxy.ts: 11ms, render: 53ms)
+ GET /api/site-settings 200 in 78ms (compile: 17ms, proxy.ts: 12ms, render: 49ms)
+ GET /api/site-settings 200 in 86ms (compile: 12ms, proxy.ts: 11ms, render: 63ms)
+ GET /api/site-settings 200 in 87ms (compile: 21ms, proxy.ts: 12ms, render: 55ms)
+ GET /api/exams?active=true 200 in 955ms (compile: 670ms, proxy.ts: 99ms, render: 185ms)
+ GET /api/exams?active=true 200 in 954ms (compile: 672ms, proxy.ts: 104ms, render: 178ms)
+ GET /api/result 200 in 1455ms (compile: 711ms, proxy.ts: 113ms, render: 631ms)
+ GET /api/result 200 in 1506ms (compile: 708ms, proxy.ts: 112ms, render: 687ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 4ms, render: 60ms)
+ GET /api/exam-number/check?examId=1&regionId=4&examNumber=MOCK-1-1772010354212-4-PUBLIC-039&examType=PUBLIC 200 in 443ms (compile: 237ms, proxy.ts: 75ms, render: 131ms)
+ GET /api/site-settings 200 in 60ms (compile: 9ms, proxy.ts: 5ms, render: 45ms)
+ GET /api/site-settings 200 in 74ms (compile: 5ms, proxy.ts: 6ms, render: 64ms)
+ GET /api/result 200 in 621ms (compile: 2ms, proxy.ts: 88ms, render: 531ms)
+ GET /api/result 200 in 741ms (compile: 3ms, proxy.ts: 73ms, render: 664ms)
+ GET /api/site-settings 200 in 58ms (compile: 8ms, proxy.ts: 5ms, render: 46ms)
+ GET /api/site-settings 200 in 72ms (compile: 4ms, proxy.ts: 5ms, render: 63ms)
+ GET /api/analysis/answer-change-impact?submissionId=2600 200 in 560ms (compile: 292ms, proxy.ts: 83ms, render: 185ms)
+ GET /api/analysis/answer-change-impact?submissionId=2600 200 in 605ms (compile: 299ms, proxy.ts: 70ms, render: 237ms)
+ GET /api/site-settings 200 in 87ms (compile: 15ms, proxy.ts: 15ms, render: 57ms)
+ GET /api/site-settings 200 in 97ms (compile: 16ms, proxy.ts: 15ms, render: 65ms)
+ GET /api/site-settings 200 in 98ms (compile: 19ms, proxy.ts: 14ms, render: 66ms)
+ GET /api/site-settings 200 in 110ms (compile: 12ms, proxy.ts: 15ms, render: 83ms)
+ GET /api/site-settings 200 in 103ms (compile: 27ms, proxy.ts: 13ms, render: 63ms)
+ GET /api/site-settings 200 in 105ms (compile: 23ms, proxy.ts: 13ms, render: 68ms)
+ GET /api/analysis/score-distribution?submissionId=2600 200 in 585ms (compile: 312ms, proxy.ts: 130ms, render: 143ms)
+ GET /api/analysis/score-distribution?submissionId=2600 200 in 585ms (compile: 306ms, proxy.ts: 136ms, render: 143ms)
+ GET /api/analysis/subject-stats?submissionId=2600 200 in 705ms (compile: 350ms, proxy.ts: 144ms, render: 211ms)
+ GET /api/analysis/subject-stats?submissionId=2600 200 in 707ms (compile: 348ms, proxy.ts: 133ms, render: 226ms)
+ GET /api/analysis/wrong-rate-top?submissionId=2600 200 in 793ms (compile: 528ms, proxy.ts: 121ms, render: 145ms)
+ GET /api/analysis/wrong-rate-top?submissionId=2600 200 in 815ms (compile: 497ms, proxy.ts: 138ms, render: 180ms)
+ GET /api/site-settings 200 in 57ms (compile: 6ms, proxy.ts: 5ms, render: 46ms)
+ GET /api/site-settings 200 in 63ms (compile: 3ms, proxy.ts: 5ms, render: 55ms)
+ GET /api/final-prediction 403 in 558ms (compile: 438ms, proxy.ts: 68ms, render: 51ms)
+ GET /api/final-prediction 403 in 568ms (compile: 428ms, proxy.ts: 75ms, render: 66ms)
+ GET /api/site-settings 200 in 59ms (compile: 7ms, proxy.ts: 5ms, render: 47ms)
+ GET /api/site-settings 200 in 64ms (compile: 4ms, proxy.ts: 5ms, render: 56ms)
+ GET /api/prediction?page=1&limit=20 200 in 700ms (compile: 278ms, proxy.ts: 74ms, render: 349ms)
+ GET /api/prediction?page=1&limit=20 200 in 754ms (compile: 276ms, proxy.ts: 68ms, render: 410ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 4ms, render: 58ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 6ms, render: 55ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 694ms (compile: 365ms, proxy.ts: 72ms, render: 257ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 636ms (compile: 309ms, proxy.ts: 74ms, render: 253ms)
+ GET /api/site-settings 200 in 82ms (compile: 12ms, proxy.ts: 7ms, render: 62ms)
+ GET /api/site-settings 200 in 84ms (compile: 7ms, proxy.ts: 7ms, render: 69ms)
+ GET /api/comments?page=1&limit=20 403 in 501ms (compile: 394ms, proxy.ts: 100ms, render: 6ms)
+ GET /api/comments?page=1&limit=20 403 in 506ms (compile: 404ms, proxy.ts: 98ms, render: 4ms)
+ GET /api/site-settings 200 in 74ms (compile: 7ms, proxy.ts: 6ms, render: 60ms)
+ GET /api/site-settings 200 in 76ms (compile: 4ms, proxy.ts: 6ms, render: 66ms)
+ GET /api/notices 200 in 452ms (compile: 361ms, proxy.ts: 85ms, render: 5ms)
+ GET /api/notices 200 in 458ms (compile: 367ms, proxy.ts: 87ms, render: 4ms)
+ GET /api/site-settings 200 in 81ms (compile: 3ms, proxy.ts: 4ms, render: 74ms)
+ GET /admin 200 in 1566ms (compile: 1047ms, proxy.ts: 91ms, render: 428ms)
+ GET /api/site-settings 200 in 63ms (compile: 3ms, proxy.ts: 4ms, render: 56ms)
+ GET /admin/site 200 in 807ms (compile: 717ms, proxy.ts: 72ms, render: 18ms)
+ GET /api/site-settings 200 in 77ms (compile: 9ms, proxy.ts: 11ms, render: 57ms)
+ GET /api/site-settings 200 in 79ms (compile: 10ms, proxy.ts: 10ms, render: 58ms)
+ GET /api/site-settings 200 in 79ms (compile: 14ms, proxy.ts: 10ms, render: 55ms)
+ GET /api/site-settings 200 in 82ms (compile: 3ms, proxy.ts: 20ms, render: 59ms)
+ GET /api/admin/notices 200 in 774ms (compile: 553ms, proxy.ts: 109ms, render: 112ms)
+ GET /api/admin/notices 200 in 789ms (compile: 561ms, proxy.ts: 108ms, render: 121ms)
+ GET /api/admin/site 200 in 794ms (compile: 618ms, proxy.ts: 101ms, render: 75ms)
+ GET /api/admin/site 200 in 793ms (compile: 612ms, proxy.ts: 109ms, render: 71ms)
+ GET /api/site-settings 200 in 68ms (compile: 3ms, proxy.ts: 4ms, render: 62ms)
+ GET /api/notifications/rescore 200 in 162ms (compile: 3ms, proxy.ts: 76ms, render: 83ms)
+ GET /api/site-settings 200 in 76ms (compile: 3ms, proxy.ts: 4ms, render: 69ms)
+ PUT /api/admin/site 200 in 423ms (compile: 3ms, proxy.ts: 86ms, render: 334ms)
+ GET /api/site-settings 200 in 67ms (compile: 3ms, proxy.ts: 8ms, render: 55ms)
+ GET /api/admin/site 200 in 149ms (compile: 3ms, proxy.ts: 73ms, render: 74ms)
+ GET /api/site-settings 200 in 62ms (compile: 2ms, proxy.ts: 3ms, render: 57ms)
+ PUT /api/admin/site 200 in 576ms (compile: 3ms, proxy.ts: 70ms, render: 504ms)
+ GET /api/site-settings 200 in 67ms (compile: 3ms, proxy.ts: 4ms, render: 61ms)
+ GET /api/admin/site 200 in 144ms (compile: 3ms, proxy.ts: 74ms, render: 67ms)
+ GET /api/site-settings 200 in 65ms (compile: 3ms, proxy.ts: 5ms, render: 58ms)
+ GET /api/auth/session 200 in 111ms (compile: 15ms, proxy.ts: 73ms, render: 23ms)
+ GET /api/site-settings 200 in 73ms (compile: 4ms, proxy.ts: 8ms, render: 62ms)
+ GET / 200 in 308ms (compile: 4ms, proxy.ts: 84ms, render: 220ms)
+ GET /api/site-settings 200 in 25ms (compile: 10ms, proxy.ts: 11ms, render: 4ms)
+ GET /api/site-settings 200 in 31ms (compile: 16ms, proxy.ts: 11ms, render: 4ms)
+ GET /api/site-settings 200 in 72ms (compile: 10ms, proxy.ts: 6ms, render: 57ms)
+ GET /api/site-settings 200 in 94ms (compile: 6ms, proxy.ts: 23ms, render: 66ms)
+ GET /api/auth/session 200 in 140ms (compile: 22ms, proxy.ts: 108ms, render: 10ms)
+ GET /api/site-settings 200 in 62ms (compile: 6ms, proxy.ts: 4ms, render: 52ms)
+ GET /api/auth/session 200 in 90ms (compile: 5ms, proxy.ts: 68ms, render: 17ms)
+ GET /api/site-settings 200 in 62ms (compile: 4ms, proxy.ts: 6ms, render: 52ms)
+ GET /api/site-settings 200 in 72ms (compile: 8ms, proxy.ts: 5ms, render: 59ms)
+ GET /api/notifications/rescore 200 in 143ms (compile: 8ms, proxy.ts: 71ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 155ms (compile: 4ms, proxy.ts: 84ms, render: 67ms)
+ GET /api/site-settings 200 in 74ms (compile: 3ms, proxy.ts: 4ms, render: 67ms)
+ GET /api/main-stats 200 in 427ms (compile: 4ms, proxy.ts: 112ms, render: 311ms)
+ GET /api/auth/session 200 in 103ms (compile: 8ms, proxy.ts: 82ms, render: 13ms)
+ GET /api/site-settings 200 in 68ms (compile: 3ms, proxy.ts: 5ms, render: 60ms)
+ GET /api/auth/session 200 in 90ms (compile: 5ms, proxy.ts: 77ms, render: 8ms)
+ GET /api/site-settings 200 in 79ms (compile: 9ms, proxy.ts: 11ms, render: 58ms)
+ GET /api/site-settings 200 in 85ms (compile: 16ms, proxy.ts: 9ms, render: 59ms)
+ GET /api/site-settings 200 in 101ms (compile: 13ms, proxy.ts: 11ms, render: 77ms)
+ GET /api/site-settings 200 in 97ms (compile: 19ms, proxy.ts: 9ms, render: 69ms)
+ GET /api/exams?active=true 200 in 289ms (compile: 3ms, proxy.ts: 107ms, render: 180ms)
+ GET /api/exams?active=true 200 in 298ms (compile: 4ms, proxy.ts: 113ms, render: 181ms)
+ GET /api/site-settings 200 in 71ms (compile: 5ms, proxy.ts: 10ms, render: 56ms)
+ GET /api/site-settings 200 in 82ms (compile: 9ms, proxy.ts: 9ms, render: 64ms)
+ GET /api/site-settings 200 in 61ms (compile: 7ms, proxy.ts: 5ms, render: 48ms)
+ GET /api/site-settings 200 in 73ms (compile: 4ms, proxy.ts: 5ms, render: 64ms)
+ GET /api/final-prediction 403 in 135ms (compile: 6ms, proxy.ts: 73ms, render: 56ms)
+ GET /api/final-prediction 403 in 146ms (compile: 4ms, proxy.ts: 84ms, render: 57ms)
+ GET /api/result 200 in 771ms (compile: 4ms, proxy.ts: 129ms, render: 638ms)
+ GET /api/result 200 in 769ms (compile: 9ms, proxy.ts: 124ms, render: 635ms)
+ GET /api/site-settings 200 in 60ms (compile: 5ms, proxy.ts: 6ms, render: 50ms)
+ GET /api/site-settings 200 in 74ms (compile: 10ms, proxy.ts: 6ms, render: 58ms)
+ GET /api/result 200 in 726ms (compile: 3ms, proxy.ts: 99ms, render: 624ms)
+ GET /api/result 200 in 733ms (compile: 3ms, proxy.ts: 87ms, render: 644ms)
+ GET /api/site-settings 200 in 71ms (compile: 4ms, proxy.ts: 6ms, render: 61ms)
+ GET /api/site-settings 200 in 72ms (compile: 9ms, proxy.ts: 5ms, render: 58ms)
+ GET /api/comments?page=1&limit=20 403 in 89ms (compile: 4ms, proxy.ts: 81ms, render: 4ms)
+ GET /api/comments?page=1&limit=20 403 in 96ms (compile: 10ms, proxy.ts: 81ms, render: 4ms)
+ GET /api/prediction?page=1&limit=20 200 in 455ms (compile: 3ms, proxy.ts: 86ms, render: 366ms)
+ GET /api/prediction?page=1&limit=20 200 in 490ms (compile: 4ms, proxy.ts: 72ms, render: 415ms)
+ GET /api/site-settings 200 in 71ms (compile: 7ms, proxy.ts: 5ms, render: 58ms)
+ GET /api/site-settings 200 in 72ms (compile: 4ms, proxy.ts: 5ms, render: 63ms)
+ GET /api/notices 200 in 88ms (compile: 4ms, proxy.ts: 79ms, render: 4ms)
+ GET /api/notices 200 in 94ms (compile: 10ms, proxy.ts: 81ms, render: 4ms)
+ GET /api/site-settings 200 in 77ms (compile: 3ms, proxy.ts: 5ms, render: 69ms)
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5871:15)\n' +
+    '    at decrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5894:20)\n' +
+    '    at flattenedDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7391:52)\n' +
+    '    at async compactDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7445:23)\n' +
+    '    at async jwtDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:8907:23)\n' +
+    '    at async Object.decode (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:725:25)\n' +
+    '    at async Object.session (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:2038:34)\n' +
+    '    at async AuthHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3184:37)\n' +
+    '    at async NextAuthRouteHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3501:30)\n' +
+    '    at async NextAuth._args$ (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3536:24)\n' +
+    '    at async AppRouteRouteModule.do (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:37866)\n' +
+    '    at async AppRouteRouteModule.handle (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:45156)\n' +
+    '    at async responseGenerator (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12522:38)\n' +
+    '    at async AppRouteRouteModule.handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:1:191938)\n' +
+    '    at async handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12585:32)\n' +
+    '    at async Module.handler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12638:13)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1442:9)\n' +
+    '    at async DevServer.renderPageComponent (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1494:24)\n' +
+    '    at async DevServer.renderToResponseImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1544:32)\n' +
+    '    at async DevServer.pipeImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1038:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\next-server.js:395:17)\n' +
+    '    at async DevServer.handleRequestImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:929:17)\n' +
+    '    at async D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:387:20\n' +
+    '    at async Span.traceAsyncFn (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:383:24)\n' +
+    '    at async invokeRender (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:248:21)\n' +
+    '    at async handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:447:24)\n' +
+    '    at async requestHandlerImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:496:13)\n' +
+    '    at async Server.requestListener (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)',
+  name: 'JWEDecryptionFailed'
+}
+ GET /api/auth/session 200 in 120ms (compile: 14ms, proxy.ts: 86ms, render: 20ms)
+ GET /api/site-settings 200 in 67ms (compile: 4ms, proxy.ts: 4ms, render: 59ms)
+ GET /api/auth/session 200 in 95ms (compile: 7ms, proxy.ts: 76ms, render: 13ms)
+ GET /api/site-settings 200 in 74ms (compile: 2ms, proxy.ts: 3ms, render: 68ms)
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5871:15)\n' +
+    '    at decrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5894:20)\n' +
+    '    at flattenedDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7391:52)\n' +
+    '    at async compactDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7445:23)\n' +
+    '    at async jwtDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:8907:23)\n' +
+    '    at async Object.decode (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:725:25)\n' +
+    '    at async Object.session (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:2038:34)\n' +
+    '    at async AuthHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3184:37)\n' +
+    '    at async getServerSession (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3576:21)\n' +
+    '    at async requireAdminRoute (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\[root-of-the-server]__6e6ba3bc._.js:557:21)\n' +
+    '    at async PUT (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\[root-of-the-server]__be683839._.js:986:19)\n' +
+    '    at async AppRouteRouteModule.do (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:37866)\n' +
+    '    at async AppRouteRouteModule.handle (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:45156)\n' +
+    '    at async responseGenerator (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_6eb6beb3._.js:22521:38)\n' +
+    '    at async AppRouteRouteModule.handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:1:191938)\n' +
+    '    at async handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_6eb6beb3._.js:22584:32)\n' +
+    '    at async Module.handler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_6eb6beb3._.js:22637:13)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1442:9)\n' +
+    '    at async DevServer.renderPageComponent (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1494:24)\n' +
+    '    at async DevServer.renderToResponseImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1544:32)\n' +
+    '    at async DevServer.pipeImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1038:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\next-server.js:395:17)\n' +
+    '    at async DevServer.handleRequestImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:929:17)\n' +
+    '    at async D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:387:20\n' +
+    '    at async Span.traceAsyncFn (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:383:24)\n' +
+    '    at async invokeRender (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:248:21)\n' +
+    '    at async handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:447:24)\n' +
+    '    at async requestHandlerImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:496:13)\n' +
+    '    at async Server.requestListener (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)',
+  name: 'JWEDecryptionFailed'
+}
+ PUT /api/admin/site 401 in 112ms (compile: 3ms, proxy.ts: 82ms, render: 27ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 3ms, render: 58ms)
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5871:15)\n' +
+    '    at decrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5894:20)\n' +
+    '    at flattenedDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7391:52)\n' +
+    '    at async compactDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7445:23)\n' +
+    '    at async jwtDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:8907:23)\n' +
+    '    at async Object.decode (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:725:25)\n' +
+    '    at async Object.session (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:2038:34)\n' +
+    '    at async AuthHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3184:37)\n' +
+    '    at async getServerSession (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3576:21)\n' +
+    '    at async requireAdminRoute (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\[root-of-the-server]__6e6ba3bc._.js:557:21)\n' +
+    '    at async PUT (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\[root-of-the-server]__be683839._.js:986:19)\n' +
+    '    at async AppRouteRouteModule.do (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:37866)\n' +
+    '    at async AppRouteRouteModule.handle (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:45156)\n' +
+    '    at async responseGenerator (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_6eb6beb3._.js:22521:38)\n' +
+    '    at async AppRouteRouteModule.handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:1:191938)\n' +
+    '    at async handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_6eb6beb3._.js:22584:32)\n' +
+    '    at async Module.handler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_6eb6beb3._.js:22637:13)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1442:9)\n' +
+    '    at async DevServer.renderPageComponent (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1494:24)\n' +
+    '    at async DevServer.renderToResponseImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1544:32)\n' +
+    '    at async DevServer.pipeImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1038:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\next-server.js:395:17)\n' +
+    '    at async DevServer.handleRequestImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:929:17)\n' +
+    '    at async D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:387:20\n' +
+    '    at async Span.traceAsyncFn (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:383:24)\n' +
+    '    at async invokeRender (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:248:21)\n' +
+    '    at async handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:447:24)\n' +
+    '    at async requestHandlerImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:496:13)\n' +
+    '    at async Server.requestListener (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)',
+  name: 'JWEDecryptionFailed'
+}
+ PUT /api/admin/site 401 in 103ms (compile: 3ms, proxy.ts: 70ms, render: 30ms)
+ GET /api/site-settings 200 in 64ms (compile: 2ms, proxy.ts: 4ms, render: 58ms)
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\ssr\\node_modules_b20cc885._.js:5871:15)\n' +
+    '    at decrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\ssr\\node_modules_b20cc885._.js:5894:20)\n' +
+    '    at flattenedDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\ssr\\node_modules_b20cc885._.js:7391:52)\n' +
+    '    at async compactDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\ssr\\node_modules_b20cc885._.js:7445:23)\n' +
+    '    at async jwtDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\ssr\\node_modules_b20cc885._.js:8907:23)\n' +
+    '    at async Object.decode (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\ssr\\node_modules_next-auth_489f0482._.js:725:25)\n' +
+    '    at async Object.session (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\ssr\\node_modules_next-auth_489f0482._.js:2038:34)\n' +
+    '    at async AuthHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\ssr\\node_modules_next-auth_489f0482._.js:3184:37)\n' +
+    '    at async getServerSession (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\ssr\\node_modules_next-auth_489f0482._.js:3576:21)\n' +
+    '    at async HomePage (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\ssr\\[root-of-the-server]__c261b848._.js:2486:21)',
+  name: 'JWEDecryptionFailed'
+}
+ GET / 200 in 257ms (compile: 4ms, proxy.ts: 70ms, render: 183ms)
+ GET /api/site-settings 200 in 20ms (compile: 8ms, proxy.ts: 9ms, render: 3ms)
+ GET /api/site-settings 200 in 24ms (compile: 12ms, proxy.ts: 9ms, render: 3ms)
+ GET /api/site-settings 200 in 73ms (compile: 3ms, proxy.ts: 14ms, render: 55ms)
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5871:15)\n' +
+    '    at decrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5894:20)\n' +
+    '    at flattenedDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7391:52)\n' +
+    '    at async compactDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7445:23)\n' +
+    '    at async jwtDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:8907:23)\n' +
+    '    at async Object.decode (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:725:25)\n' +
+    '    at async Object.session (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:2038:34)\n' +
+    '    at async AuthHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3184:37)\n' +
+    '    at async NextAuthRouteHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3501:30)\n' +
+    '    at async NextAuth._args$ (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3536:24)\n' +
+    '    at async AppRouteRouteModule.do (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:37866)\n' +
+    '    at async AppRouteRouteModule.handle (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:45156)\n' +
+    '    at async responseGenerator (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12522:38)\n' +
+    '    at async AppRouteRouteModule.handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:1:191938)\n' +
+    '    at async handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12585:32)\n' +
+    '    at async Module.handler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12638:13)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1442:9)\n' +
+    '    at async DevServer.renderPageComponent (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1494:24)\n' +
+    '    at async DevServer.renderToResponseImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1544:32)\n' +
+    '    at async DevServer.pipeImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1038:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\next-server.js:395:17)\n' +
+    '    at async DevServer.handleRequestImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:929:17)\n' +
+    '    at async D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:387:20\n' +
+    '    at async Span.traceAsyncFn (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:383:24)\n' +
+    '    at async invokeRender (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:248:21)\n' +
+    '    at async handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:447:24)\n' +
+    '    at async requestHandlerImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:496:13)\n' +
+    '    at async Server.requestListener (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)',
+  name: 'JWEDecryptionFailed'
+}
+ GET /api/auth/session 200 in 126ms (compile: 12ms, proxy.ts: 84ms, render: 30ms)
+ GET /api/site-settings 200 in 67ms (compile: 3ms, proxy.ts: 5ms, render: 59ms)
+ GET /api/auth/session 200 in 107ms (compile: 5ms, proxy.ts: 74ms, render: 28ms)
+ GET /api/site-settings 200 in 62ms (compile: 3ms, proxy.ts: 4ms, render: 55ms)
+ GET /login 200 in 93ms (compile: 4ms, proxy.ts: 70ms, render: 19ms)
+ GET /api/site-settings 200 in 67ms (compile: 3ms, proxy.ts: 3ms, render: 61ms)
+ GET /api/auth/providers 200 in 113ms (compile: 12ms, proxy.ts: 76ms, render: 25ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 3ms, render: 60ms)
+ GET /api/auth/csrf 200 in 100ms (compile: 5ms, proxy.ts: 72ms, render: 23ms)
+ GET /api/site-settings 200 in 66ms (compile: 2ms, proxy.ts: 3ms, render: 61ms)
+ POST /api/auth/callback/credentials 200 in 414ms (compile: 5ms, proxy.ts: 73ms, render: 337ms)
+ GET /api/site-settings 200 in 65ms (compile: 3ms, proxy.ts: 4ms, render: 58ms)
+ GET /api/auth/session 200 in 105ms (compile: 5ms, proxy.ts: 71ms, render: 29ms)
+ GET /api/site-settings 200 in 101ms (compile: 11ms, proxy.ts: 11ms, render: 80ms)
+ GET /api/site-settings 200 in 88ms (compile: 18ms, proxy.ts: 14ms, render: 55ms)
+ GET /api/site-settings 200 in 126ms (compile: 8ms, proxy.ts: 15ms, render: 103ms)
+ GET /api/notifications/rescore 200 in 201ms (compile: 24ms, proxy.ts: 110ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 214ms (compile: 3ms, proxy.ts: 149ms, render: 63ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 3ms, render: 60ms)
+ GET / 200 in 274ms (compile: 6ms, proxy.ts: 115ms, render: 153ms)
+ GET / 200 in 214ms (compile: 4ms, proxy.ts: 74ms, render: 136ms)
+ GET /api/site-settings 200 in 64ms (compile: 7ms, proxy.ts: 5ms, render: 51ms)
+ GET /api/site-settings 200 in 66ms (compile: 4ms, proxy.ts: 5ms, render: 57ms)
+ GET /api/main-stats 200 in 370ms (compile: 10ms, proxy.ts: 75ms, render: 285ms)
+ GET /api/main-stats 200 in 372ms (compile: 7ms, proxy.ts: 72ms, render: 293ms)
+ GET /api/site-settings 200 in 63ms (compile: 4ms, proxy.ts: 5ms, render: 55ms)
+ GET /api/site-settings 200 in 74ms (compile: 8ms, proxy.ts: 5ms, render: 61ms)
+ GET /api/final-prediction 403 in 138ms (compile: 3ms, proxy.ts: 73ms, render: 62ms)
+ GET /api/final-prediction 403 in 172ms (compile: 3ms, proxy.ts: 84ms, render: 85ms)
+ GET /api/site-settings 200 in 77ms (compile: 3ms, proxy.ts: 6ms, render: 68ms)
+ GET /login 200 in 110ms (compile: 4ms, proxy.ts: 86ms, render: 20ms)
+ GET /api/site-settings 200 in 70ms (compile: 4ms, proxy.ts: 9ms, render: 57ms)
+ GET /api/auth/session 200 in 126ms (compile: 14ms, proxy.ts: 80ms, render: 32ms)
+ GET /api/site-settings 200 in 64ms (compile: 4ms, proxy.ts: 5ms, render: 56ms)
+The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+ GET /admin 200 in 581ms (compile: 4ms, proxy.ts: 73ms, render: 504ms)
+ GET /api/site-settings 200 in 75ms (compile: 4ms, proxy.ts: 4ms, render: 67ms)
+ GET /api/auth/session 200 in 109ms (compile: 13ms, proxy.ts: 85ms, render: 12ms)
+ GET /api/site-settings 200 in 25ms (compile: 7ms, proxy.ts: 13ms, render: 5ms)
+ GET /api/site-settings 200 in 31ms (compile: 14ms, proxy.ts: 12ms, render: 5ms)
+ GET /api/site-settings 200 in 91ms (compile: 3ms, proxy.ts: 19ms, render: 69ms)
+ GET /api/auth/session 200 in 131ms (compile: 6ms, proxy.ts: 107ms, render: 18ms)
+ GET /api/site-settings 200 in 72ms (compile: 4ms, proxy.ts: 5ms, render: 64ms)
+ GET /api/auth/session 200 in 104ms (compile: 5ms, proxy.ts: 78ms, render: 20ms)
+ GET /api/site-settings 200 in 90ms (compile: 4ms, proxy.ts: 6ms, render: 80ms)
+ GET /api/site-settings 200 in 90ms (compile: 9ms, proxy.ts: 6ms, render: 75ms)
+ GET /api/notifications/rescore 200 in 205ms (compile: 11ms, proxy.ts: 104ms, render: 89ms)
+ GET /api/notifications/rescore 200 in 213ms (compile: 18ms, proxy.ts: 104ms, render: 91ms)
+ GET /api/site-settings 200 in 69ms (compile: 3ms, proxy.ts: 6ms, render: 61ms)
+ GET /api/auth/session 200 in 93ms (compile: 5ms, proxy.ts: 79ms, render: 10ms)
+ GET /api/site-settings 200 in 62ms (compile: 3ms, proxy.ts: 3ms, render: 56ms)
+ GET /admin/site 200 in 89ms (compile: 4ms, proxy.ts: 68ms, render: 17ms)
+ GET /api/site-settings 200 in 76ms (compile: 9ms, proxy.ts: 11ms, render: 57ms)
+ GET /api/site-settings 200 in 93ms (compile: 12ms, proxy.ts: 12ms, render: 69ms)
+ GET /api/site-settings 200 in 86ms (compile: 7ms, proxy.ts: 17ms, render: 62ms)
+ GET /api/site-settings 200 in 109ms (compile: 17ms, proxy.ts: 12ms, render: 81ms)
+ GET /api/admin/site 200 in 172ms (compile: 3ms, proxy.ts: 102ms, render: 68ms)
+ GET /api/admin/notices 200 in 183ms (compile: 3ms, proxy.ts: 121ms, render: 58ms)
+ GET /api/admin/notices 200 in 189ms (compile: 4ms, proxy.ts: 118ms, render: 67ms)
+ GET /api/admin/site 200 in 224ms (compile: 3ms, proxy.ts: 134ms, render: 87ms)
+ GET /api/site-settings 200 in 70ms (compile: 4ms, proxy.ts: 4ms, render: 62ms)
+ PUT /api/admin/site 200 in 332ms (compile: 3ms, proxy.ts: 79ms, render: 250ms)
+ GET /api/site-settings 200 in 63ms (compile: 3ms, proxy.ts: 4ms, render: 56ms)
+ GET /api/admin/site 200 in 147ms (compile: 3ms, proxy.ts: 68ms, render: 75ms)
+ GET /api/site-settings 200 in 78ms (compile: 3ms, proxy.ts: 4ms, render: 71ms)
+ PUT /api/admin/site 200 in 641ms (compile: 3ms, proxy.ts: 86ms, render: 552ms)
+ GET /api/site-settings 200 in 61ms (compile: 3ms, proxy.ts: 3ms, render: 56ms)
+ GET /api/admin/site 200 in 142ms (compile: 3ms, proxy.ts: 67ms, render: 72ms)
+ GET /api/site-settings 200 in 69ms (compile: 3ms, proxy.ts: 4ms, render: 62ms)
+ GET /api/auth/session 200 in 113ms (compile: 12ms, proxy.ts: 76ms, render: 24ms)
+ GET /api/site-settings 200 in 61ms (compile: 3ms, proxy.ts: 3ms, render: 56ms)
+ GET /api/auth/session 200 in 100ms (compile: 5ms, proxy.ts: 68ms, render: 27ms)
+ GET /api/site-settings 200 in 61ms (compile: 3ms, proxy.ts: 3ms, render: 55ms)
+ GET / 200 in 249ms (compile: 4ms, proxy.ts: 67ms, render: 178ms)
+ GET /api/site-settings 200 in 24ms (compile: 10ms, proxy.ts: 10ms, render: 4ms)
+ GET /api/site-settings 200 in 28ms (compile: 15ms, proxy.ts: 10ms, render: 3ms)
+ GET /api/site-settings 200 in 68ms (compile: 3ms, proxy.ts: 9ms, render: 56ms)
+ GET /api/site-settings 200 in 84ms (compile: 3ms, proxy.ts: 17ms, render: 63ms)
+ GET /api/auth/session 200 in 131ms (compile: 18ms, proxy.ts: 99ms, render: 13ms)
+ GET /api/site-settings 200 in 77ms (compile: 7ms, proxy.ts: 9ms, render: 62ms)
+ GET /api/site-settings 200 in 72ms (compile: 9ms, proxy.ts: 6ms, render: 56ms)
+ GET /api/auth/session 200 in 116ms (compile: 18ms, proxy.ts: 89ms, render: 9ms)
+ GET /api/site-settings 200 in 97ms (compile: 5ms, proxy.ts: 15ms, render: 77ms)
+ GET /api/notifications/rescore 200 in 179ms (compile: 4ms, proxy.ts: 87ms, render: 89ms)
+ GET /api/notifications/rescore 200 in 230ms (compile: 3ms, proxy.ts: 114ms, render: 113ms)
+ GET /api/main-stats 200 in 439ms (compile: 3ms, proxy.ts: 102ms, render: 334ms)
+ GET /api/site-settings 200 in 72ms (compile: 5ms, proxy.ts: 6ms, render: 62ms)
+ GET /api/site-settings 200 in 90ms (compile: 9ms, proxy.ts: 6ms, render: 75ms)
+ GET /api/final-prediction 200 in 516ms (compile: 3ms, proxy.ts: 100ms, render: 414ms)
+ GET /api/final-prediction 200 in 519ms (compile: 4ms, proxy.ts: 82ms, render: 433ms)
+ GET /api/site-settings 200 in 92ms (compile: 7ms, proxy.ts: 8ms, render: 78ms)
+ GET /api/notifications/rescore 200 in 214ms (compile: 7ms, proxy.ts: 106ms, render: 101ms)
+ GET /api/site-settings 200 in 167ms (compile: 4ms, proxy.ts: 3ms, render: 160ms)
+ GET /api/notifications/rescore 200 in 360ms (compile: 3ms, proxy.ts: 177ms, render: 180ms)
+ GET /api/site-settings 200 in 76ms (compile: 3ms, proxy.ts: 4ms, render: 69ms)
+ GET /api/auth/session 200 in 128ms (compile: 14ms, proxy.ts: 84ms, render: 30ms)
+ GET /api/site-settings 200 in 63ms (compile: 4ms, proxy.ts: 3ms, render: 56ms)
+ GET /api/auth/session 200 in 87ms (compile: 5ms, proxy.ts: 71ms, render: 11ms)
+ GET /api/site-settings 200 in 206ms (compile: 14ms, proxy.ts: 7ms, render: 185ms)
+ GET /api/prediction?page=1&limit=20 401 in 230ms (compile: 3ms, proxy.ts: 220ms, render: 8ms)
+ GET /api/site-settings 200 in 219ms (compile: 37ms, proxy.ts: 7ms, render: 175ms)
+ GET /api/prediction?page=1&limit=20 401 in 239ms (compile: 3ms, proxy.ts: 232ms, render: 5ms)
+ GET /api/site-settings 200 in 57ms (compile: 5ms, proxy.ts: 5ms, render: 48ms)
+ GET /api/comments?page=1&limit=20 403 in 78ms (compile: 3ms, proxy.ts: 69ms, render: 6ms)
+ GET /api/site-settings 200 in 73ms (compile: 8ms, proxy.ts: 5ms, render: 60ms)
+ GET /api/comments?page=1&limit=20 403 in 92ms (compile: 3ms, proxy.ts: 85ms, render: 4ms)
+ GET /api/site-settings 200 in 65ms (compile: 9ms, proxy.ts: 6ms, render: 49ms)
+ GET /api/site-settings 200 in 76ms (compile: 4ms, proxy.ts: 7ms, render: 65ms)
+ GET /api/prediction?page=1&limit=20 401 in 86ms (compile: 4ms, proxy.ts: 76ms, render: 6ms)
+ GET /api/prediction?page=1&limit=20 401 in 104ms (compile: 4ms, proxy.ts: 88ms, render: 13ms)
+ GET /api/site-settings 200 in 61ms (compile: 8ms, proxy.ts: 5ms, render: 48ms)
+ GET /api/final-prediction 401 in 80ms (compile: 3ms, proxy.ts: 70ms, render: 6ms)
+ GET /api/site-settings 200 in 75ms (compile: 4ms, proxy.ts: 5ms, render: 66ms)
+ GET /api/final-prediction 401 in 110ms (compile: 3ms, proxy.ts: 84ms, render: 22ms)
+ GET /api/site-settings 200 in 61ms (compile: 8ms, proxy.ts: 5ms, render: 48ms)
+ GET /api/result 401 in 84ms (compile: 4ms, proxy.ts: 72ms, render: 8ms)
+ GET /api/site-settings 200 in 77ms (compile: 4ms, proxy.ts: 5ms, render: 67ms)
+ GET /api/result 401 in 126ms (compile: 3ms, proxy.ts: 88ms, render: 35ms)
+ GET /api/site-settings 200 in 82ms (compile: 17ms, proxy.ts: 12ms, render: 53ms)
+ GET /api/result 401 in 113ms (compile: 3ms, proxy.ts: 103ms, render: 6ms)
+ GET /api/site-settings 200 in 95ms (compile: 11ms, proxy.ts: 13ms, render: 71ms)
+ GET /api/site-settings 200 in 177ms (compile: 45ms, proxy.ts: 11ms, render: 121ms)
+ GET /api/result 401 in 220ms (compile: 5ms, proxy.ts: 207ms, render: 8ms)
+ GET /api/site-settings 200 in 195ms (compile: 42ms, proxy.ts: 10ms, render: 143ms)
+ GET /api/site-settings 200 in 98ms (compile: 4ms, proxy.ts: 11ms, render: 83ms)
+ GET /api/site-settings 200 in 96ms (compile: 8ms, proxy.ts: 9ms, render: 78ms)
+ GET /api/main-stats 401 in 123ms (compile: 5ms, proxy.ts: 109ms, render: 9ms)
+ GET /api/exams?active=true 200 in 371ms (compile: 3ms, proxy.ts: 116ms, render: 253ms)
+ GET /api/main-stats 401 in 137ms (compile: 9ms, proxy.ts: 109ms, render: 19ms)
+ GET /api/exams?active=true 200 in 443ms (compile: 3ms, proxy.ts: 224ms, render: 215ms)
+✓ Compiled in 473ms
+ GET /api/site-settings 200 in 241ms (compile: 7ms, proxy.ts: 13ms, render: 221ms)
+ GET /api/site-settings 200 in 267ms (compile: 14ms, proxy.ts: 11ms, render: 243ms)
+ GET /api/final-prediction 401 in 2.8s (compile: 2.5s, proxy.ts: 275ms, render: 23ms)
+ GET /api/final-prediction 401 in 2.8s (compile: 2.5s, proxy.ts: 299ms, render: 15ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 4ms, render: 58ms)
+ GET /login 200 in 347ms (compile: 164ms, proxy.ts: 73ms, render: 110ms)
+ GET /api/site-settings 200 in 88ms (compile: 4ms, proxy.ts: 7ms, render: 77ms)
+ GET /api/auth/providers 200 in 133ms (compile: 16ms, proxy.ts: 100ms, render: 17ms)
+ GET /api/site-settings 200 in 81ms (compile: 3ms, proxy.ts: 3ms, render: 75ms)
+ GET /api/auth/csrf 200 in 117ms (compile: 5ms, proxy.ts: 88ms, render: 24ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 3ms, render: 56ms)
+ POST /api/auth/callback/credentials 200 in 471ms (compile: 4ms, proxy.ts: 67ms, render: 400ms)
+ GET /api/site-settings 200 in 67ms (compile: 3ms, proxy.ts: 4ms, render: 60ms)
+ GET /api/auth/session 200 in 104ms (compile: 5ms, proxy.ts: 74ms, render: 25ms)
+ GET /api/site-settings 200 in 70ms (compile: 7ms, proxy.ts: 7ms, render: 56ms)
+ GET /api/site-settings 200 in 1103ms (compile: 6ms, proxy.ts: 9ms, render: 1088ms)
+ GET /api/site-settings 200 in 1106ms (compile: 3ms, proxy.ts: 10ms, render: 1094ms)
+ GET /api/notifications/rescore 200 in 1304ms (compile: 7ms, proxy.ts: 1127ms, render: 170ms)
+ GET /api/notifications/rescore 200 in 1348ms (compile: 12ms, proxy.ts: 1130ms, render: 206ms)
+ GET /api/site-settings 200 in 172ms (compile: 5ms, proxy.ts: 7ms, render: 160ms)
+ GET / 200 in 1445ms (compile: 884ms, proxy.ts: 86ms, render: 475ms)
+ GET / 200 in 417ms (compile: 26ms, proxy.ts: 217ms, render: 174ms)
+ GET /api/site-settings 200 in 76ms (compile: 8ms, proxy.ts: 7ms, render: 60ms)
+ GET /api/site-settings 200 in 78ms (compile: 5ms, proxy.ts: 7ms, render: 66ms)
+ GET /api/main-stats 200 in 413ms (compile: 4ms, proxy.ts: 90ms, render: 318ms)
+ GET /api/main-stats 200 in 482ms (compile: 11ms, proxy.ts: 88ms, render: 383ms)
+ GET /api/site-settings 200 in 78ms (compile: 8ms, proxy.ts: 7ms, render: 63ms)
+ GET /api/site-settings 200 in 82ms (compile: 5ms, proxy.ts: 7ms, render: 70ms)
+ GET /api/final-prediction 200 in 535ms (compile: 5ms, proxy.ts: 93ms, render: 438ms)
+ GET /api/final-prediction 200 in 539ms (compile: 8ms, proxy.ts: 104ms, render: 427ms)
+ GET /api/site-settings 200 in 78ms (compile: 3ms, proxy.ts: 5ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 159ms (compile: 3ms, proxy.ts: 87ms, render: 69ms)
+ GET /api/site-settings 200 in 70ms (compile: 4ms, proxy.ts: 4ms, render: 62ms)
+ GET /api/auth/session 200 in 106ms (compile: 13ms, proxy.ts: 78ms, render: 15ms)
+ GET /api/site-settings 200 in 60ms (compile: 4ms, proxy.ts: 4ms, render: 52ms)
+ GET /api/auth/session 200 in 85ms (compile: 4ms, proxy.ts: 66ms, render: 15ms)
+ GET /api/site-settings 200 in 78ms (compile: 6ms, proxy.ts: 6ms, render: 67ms)
+ GET /api/site-settings 200 in 107ms (compile: 3ms, proxy.ts: 9ms, render: 95ms)
+ GET /api/notifications/rescore 200 in 178ms (compile: 3ms, proxy.ts: 88ms, render: 87ms)
+ GET /api/notifications/rescore 200 in 223ms (compile: 3ms, proxy.ts: 120ms, render: 100ms)
+ GET /api/site-settings 200 in 74ms (compile: 3ms, proxy.ts: 4ms, render: 67ms)
+ GET /api/auth/session 200 in 103ms (compile: 12ms, proxy.ts: 83ms, render: 8ms)
+ GET /api/site-settings 200 in 61ms (compile: 3ms, proxy.ts: 3ms, render: 56ms)
+ GET /api/auth/session 200 in 87ms (compile: 4ms, proxy.ts: 67ms, render: 17ms)
+ GET /api/site-settings 200 in 72ms (compile: 3ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 165ms (compile: 3ms, proxy.ts: 79ms, render: 83ms)
+ GET /api/site-settings 200 in 81ms (compile: 5ms, proxy.ts: 5ms, render: 71ms)
+ GET /api/notifications/rescore 200 in 208ms (compile: 3ms, proxy.ts: 94ms, render: 111ms)
+ GET /api/site-settings 200 in 72ms (compile: 3ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 164ms (compile: 4ms, proxy.ts: 79ms, render: 82ms)
+ GET /api/site-settings 200 in 72ms (compile: 3ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 165ms (compile: 3ms, proxy.ts: 79ms, render: 83ms)
+ GET /api/site-settings 200 in 72ms (compile: 3ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 167ms (compile: 3ms, proxy.ts: 80ms, render: 85ms)
+ GET /api/site-settings 200 in 72ms (compile: 3ms, proxy.ts: 4ms, render: 65ms)
+ GET /api/auth/session 200 in 124ms (compile: 12ms, proxy.ts: 81ms, render: 32ms)
+ GET /api/site-settings 200 in 63ms (compile: 3ms, proxy.ts: 4ms, render: 56ms)
+ GET /api/auth/session 200 in 103ms (compile: 6ms, proxy.ts: 68ms, render: 29ms)
+ GET /api/site-settings 200 in 62ms (compile: 3ms, proxy.ts: 3ms, render: 56ms)
+ GET /api/notifications/rescore 200 in 163ms (compile: 3ms, proxy.ts: 70ms, render: 91ms)
+ GET /api/site-settings 200 in 89ms (compile: 4ms, proxy.ts: 6ms, render: 79ms)
+ GET /api/auth/session 200 in 155ms (compile: 16ms, proxy.ts: 102ms, render: 36ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 6ms, render: 55ms)
+ GET /api/auth/session 200 in 102ms (compile: 6ms, proxy.ts: 71ms, render: 25ms)
+ GET /api/site-settings 200 in 65ms (compile: 3ms, proxy.ts: 4ms, render: 58ms)
+ GET /api/notifications/rescore 200 in 276ms (compile: 2ms, proxy.ts: 74ms, render: 200ms)
+ GET /api/site-settings 200 in 73ms (compile: 2ms, proxy.ts: 4ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 231ms (compile: 3ms, proxy.ts: 81ms, render: 148ms)
+ GET /api/site-settings 200 in 82ms (compile: 4ms, proxy.ts: 5ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 168ms (compile: 2ms, proxy.ts: 91ms, render: 75ms)
+ GET /api/site-settings 200 in 75ms (compile: 3ms, proxy.ts: 5ms, render: 67ms)
+ GET /api/auth/session 200 in 122ms (compile: 12ms, proxy.ts: 84ms, render: 26ms)
+ GET /api/site-settings 200 in 63ms (compile: 3ms, proxy.ts: 5ms, render: 55ms)
+ GET /api/auth/session 200 in 101ms (compile: 6ms, proxy.ts: 70ms, render: 26ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 3ms, render: 56ms)
+ GET /api/notifications/rescore 200 in 162ms (compile: 2ms, proxy.ts: 67ms, render: 92ms)
+ GET /api/site-settings 200 in 127ms (compile: 2ms, proxy.ts: 4ms, render: 120ms)
+ GET /api/notifications/rescore 200 in 251ms (compile: 2ms, proxy.ts: 135ms, render: 113ms)
+ GET /api/site-settings 200 in 65ms (compile: 2ms, proxy.ts: 6ms, render: 57ms)
+ GET /api/auth/session 200 in 112ms (compile: 12ms, proxy.ts: 75ms, render: 25ms)
+ GET /api/site-settings 200 in 60ms (compile: 3ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/auth/session 200 in 101ms (compile: 5ms, proxy.ts: 65ms, render: 31ms)
+ GET /api/site-settings 200 in 87ms (compile: 8ms, proxy.ts: 10ms, render: 69ms)
+ GET /api/site-settings 200 in 120ms (compile: 12ms, proxy.ts: 10ms, render: 98ms)
+ GET /api/site-settings 200 in 158ms (compile: 14ms, proxy.ts: 11ms, render: 132ms)
+ GET /api/site-settings 200 in 191ms (compile: 19ms, proxy.ts: 10ms, render: 163ms)
+ GET /api/exams?active=true 200 in 411ms (compile: 2ms, proxy.ts: 180ms, render: 229ms)
+ GET /api/exams?active=true 200 in 416ms (compile: 2ms, proxy.ts: 111ms, render: 302ms)
+ GET /api/result 200 in 854ms (compile: 3ms, proxy.ts: 213ms, render: 638ms)
+ GET /api/result 200 in 1063ms (compile: 15ms, proxy.ts: 143ms, render: 905ms)
+ GET /api/site-settings 200 in 58ms (compile: 3ms, proxy.ts: 5ms, render: 51ms)
+ GET /api/exam-number/check?examId=1&regionId=4&examNumber=MOCK-1-1772010354212-4-PUBLIC-039&examType=PUBLIC 200 in 193ms (compile: 3ms, proxy.ts: 64ms, render: 126ms)
+ GET /api/site-settings 200 in 57ms (compile: 2ms, proxy.ts: 5ms, render: 50ms)
+ GET /api/notifications/rescore 200 in 156ms (compile: 2ms, proxy.ts: 64ms, render: 90ms)
+ GET /api/site-settings 200 in 88ms (compile: 3ms, proxy.ts: 4ms, render: 81ms)
+ GET /api/notifications/rescore 200 in 171ms (compile: 3ms, proxy.ts: 98ms, render: 70ms)
+ GET /api/site-settings 200 in 58ms (compile: 2ms, proxy.ts: 4ms, render: 52ms)
+ GET /api/auth/session 200 in 109ms (compile: 11ms, proxy.ts: 67ms, render: 31ms)
+ GET /api/site-settings 200 in 59ms (compile: 3ms, proxy.ts: 5ms, render: 51ms)
+ GET /api/auth/session 200 in 88ms (compile: 6ms, proxy.ts: 64ms, render: 18ms)
+ GET /api/site-settings 200 in 69ms (compile: 2ms, proxy.ts: 5ms, render: 63ms)
+ GET /api/auth/session 200 in 113ms (compile: 12ms, proxy.ts: 79ms, render: 22ms)
+ GET /api/site-settings 200 in 58ms (compile: 4ms, proxy.ts: 4ms, render: 51ms)
+ GET /api/auth/session 200 in 101ms (compile: 5ms, proxy.ts: 64ms, render: 31ms)
+ GET /api/site-settings 200 in 59ms (compile: 4ms, proxy.ts: 5ms, render: 50ms)
+ GET /api/auth/session 200 in 79ms (compile: 5ms, proxy.ts: 65ms, render: 8ms)
+ GET /api/site-settings 200 in 56ms (compile: 2ms, proxy.ts: 3ms, render: 51ms)
+ GET /api/notifications/rescore 200 in 159ms (compile: 2ms, proxy.ts: 64ms, render: 92ms)
+ GET /api/site-settings 200 in 69ms (compile: 3ms, proxy.ts: 4ms, render: 62ms)
+ GET /api/notifications/rescore 200 in 147ms (compile: 4ms, proxy.ts: 79ms, render: 64ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 3ms, render: 59ms)
+ GET /api/auth/session 200 in 125ms (compile: 13ms, proxy.ts: 77ms, render: 36ms)
+ GET /api/site-settings 200 in 58ms (compile: 3ms, proxy.ts: 5ms, render: 50ms)
+ GET /api/auth/session 200 in 101ms (compile: 5ms, proxy.ts: 62ms, render: 33ms)
+ GET /api/site-settings 200 in 68ms (compile: 6ms, proxy.ts: 10ms, render: 51ms)
+ GET /api/site-settings 200 in 82ms (compile: 5ms, proxy.ts: 10ms, render: 67ms)
+ GET /api/final-prediction 200 in 468ms (compile: 8ms, proxy.ts: 88ms, render: 372ms)
+ GET /api/final-prediction 200 in 467ms (compile: 2ms, proxy.ts: 105ms, render: 360ms)
+ GET /api/site-settings 200 in 70ms (compile: 2ms, proxy.ts: 3ms, render: 65ms)
+ POST /api/final-prediction 200 in 1406ms (compile: 647ms, proxy.ts: 77ms, render: 682ms)
+ GET /api/site-settings 200 in 60ms (compile: 6ms, proxy.ts: 3ms, render: 51ms)
+ GET /api/final-prediction?submissionId=2600 200 in 440ms (compile: 3ms, proxy.ts: 66ms, render: 372ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 5ms, render: 54ms)
+ GET /api/notifications/rescore 200 in 160ms (compile: 16ms, proxy.ts: 71ms, render: 72ms)
+ GET /api/site-settings 200 in 59ms (compile: 3ms, proxy.ts: 4ms, render: 52ms)
+ GET /api/notifications/rescore 200 in 135ms (compile: 2ms, proxy.ts: 65ms, render: 67ms)
+✓ Compiled in 116ms
+ GET /api/site-settings 200 in 70ms (compile: 4ms, proxy.ts: 3ms, render: 62ms)
+ GET /api/final-prediction 200 in 712ms (compile: 142ms, proxy.ts: 78ms, render: 492ms)
+✓ Compiled in 110ms
+ GET /api/site-settings 200 in 56ms (compile: 2ms, proxy.ts: 4ms, render: 50ms)
+ GET /api/final-prediction 200 in 589ms (compile: 3ms, proxy.ts: 64ms, render: 523ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 4ms, render: 60ms)
+ GET /api/auth/session 200 in 110ms (compile: 15ms, proxy.ts: 76ms, render: 19ms)
+ GET /api/site-settings 200 in 60ms (compile: 3ms, proxy.ts: 4ms, render: 53ms)
+ GET /api/auth/session 200 in 100ms (compile: 6ms, proxy.ts: 65ms, render: 29ms)
+ GET /api/site-settings 200 in 79ms (compile: 5ms, proxy.ts: 6ms, render: 68ms)
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5871:15)\n' +
+    '    at decrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5894:20)\n' +
+    '    at flattenedDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7391:52)\n' +
+    '    at async compactDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7445:23)\n' +
+    '    at async jwtDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:8907:23)\n' +
+    '    at async Object.decode (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:725:25)\n' +
+    '    at async Object.session (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:2038:34)\n' +
+    '    at async AuthHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3184:37)\n' +
+    '    at async NextAuthRouteHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3501:30)\n' +
+    '    at async NextAuth._args$ (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3536:24)\n' +
+    '    at async AppRouteRouteModule.do (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:37866)\n' +
+    '    at async AppRouteRouteModule.handle (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:45156)\n' +
+    '    at async responseGenerator (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12522:38)\n' +
+    '    at async AppRouteRouteModule.handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:1:191938)\n' +
+    '    at async handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12585:32)\n' +
+    '    at async Module.handler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12638:13)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1442:9)\n' +
+    '    at async DevServer.renderPageComponent (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1494:24)\n' +
+    '    at async DevServer.renderToResponseImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1544:32)\n' +
+    '    at async DevServer.pipeImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1038:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\next-server.js:395:17)\n' +
+    '    at async DevServer.handleRequestImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:929:17)\n' +
+    '    at async D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:387:20\n' +
+    '    at async Span.traceAsyncFn (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:383:24)\n' +
+    '    at async invokeRender (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:248:21)\n' +
+    '    at async handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:447:24)\n' +
+    '    at async requestHandlerImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:496:13)\n' +
+    '    at async Server.requestListener (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)',
+  name: 'JWEDecryptionFailed'
+}
+ GET /api/auth/session 200 in 139ms (compile: 17ms, proxy.ts: 93ms, render: 29ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 5ms, render: 58ms)
+ GET /api/auth/session 200 in 93ms (compile: 8ms, proxy.ts: 74ms, render: 11ms)
+✓ Compiled in 173ms
+ GET /api/site-settings 200 in 67ms (compile: 2ms, proxy.ts: 4ms, render: 60ms)
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5871:15)\n' +
+    '    at decrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5894:20)\n' +
+    '    at flattenedDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7391:52)\n' +
+    '    at async compactDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7445:23)\n' +
+    '    at async jwtDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:8907:23)\n' +
+    '    at async Object.decode (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:725:25)\n' +
+    '    at async Object.session (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:2038:34)\n' +
+    '    at async AuthHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3184:37)\n' +
+    '    at async getServerSession (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3576:21)\n' +
+    '    at async GET (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\[root-of-the-server]__23d0718e._.js:1865:21)\n' +
+    '    at async AppRouteRouteModule.do (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:37866)\n' +
+    '    at async AppRouteRouteModule.handle (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:45156)\n' +
+    '    at async responseGenerator (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_e67d4be3._.js:22521:38)\n' +
+    '    at async AppRouteRouteModule.handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:1:191938)\n' +
+    '    at async handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_e67d4be3._.js:22584:32)\n' +
+    '    at async Module.handler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_e67d4be3._.js:22637:13)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1442:9)\n' +
+    '    at async DevServer.renderPageComponent (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1494:24)\n' +
+    '    at async DevServer.renderToResponseImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1544:32)\n' +
+    '    at async DevServer.pipeImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1038:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\next-server.js:395:17)\n' +
+    '    at async DevServer.handleRequestImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:929:17)\n' +
+    '    at async D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:387:20\n' +
+    '    at async Span.traceAsyncFn (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:383:24)\n' +
+    '    at async invokeRender (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:248:21)\n' +
+    '    at async handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:447:24)\n' +
+    '    at async requestHandlerImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:496:13)\n' +
+    '    at async Server.requestListener (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)',
+  name: 'JWEDecryptionFailed'
+}
+ GET /api/final-prediction 401 in 101ms (compile: 3ms, proxy.ts: 75ms, render: 23ms)
+ GET /api/site-settings 200 in 69ms (compile: 3ms, proxy.ts: 4ms, render: 63ms)
+ GET /login 200 in 109ms (compile: 5ms, proxy.ts: 80ms, render: 24ms)
+ GET /api/site-settings 200 in 58ms (compile: 3ms, proxy.ts: 3ms, render: 52ms)
+ GET /api/auth/providers 200 in 110ms (compile: 12ms, proxy.ts: 69ms, render: 29ms)
+ GET /api/site-settings 200 in 61ms (compile: 3ms, proxy.ts: 5ms, render: 54ms)
+ GET /api/auth/csrf 200 in 101ms (compile: 5ms, proxy.ts: 68ms, render: 29ms)
+ GET /api/site-settings 200 in 61ms (compile: 4ms, proxy.ts: 3ms, render: 54ms)
+ POST /api/auth/callback/credentials 200 in 421ms (compile: 6ms, proxy.ts: 68ms, render: 347ms)
+ GET /api/site-settings 200 in 57ms (compile: 2ms, proxy.ts: 4ms, render: 51ms)
+ GET /api/auth/session 200 in 89ms (compile: 4ms, proxy.ts: 63ms, render: 22ms)
+ GET /api/site-settings 200 in 87ms (compile: 6ms, proxy.ts: 9ms, render: 72ms)
+ GET /api/site-settings 200 in 336ms (compile: 5ms, proxy.ts: 14ms, render: 317ms)
+ GET /api/site-settings 200 in 335ms (compile: 9ms, proxy.ts: 14ms, render: 313ms)
+ GET /api/notifications/rescore 200 in 443ms (compile: 4ms, proxy.ts: 355ms, render: 85ms)
+ GET /api/notifications/rescore 200 in 502ms (compile: 8ms, proxy.ts: 353ms, render: 141ms)
+ GET /api/site-settings 200 in 137ms (compile: 1923µs, proxy.ts: 3ms, render: 131ms)
+ GET / 200 in 576ms (compile: 156ms, proxy.ts: 100ms, render: 319ms)
+ GET / 200 in 309ms (compile: 3ms, proxy.ts: 148ms, render: 158ms)
+ GET /api/site-settings 200 in 65ms (compile: 3ms, proxy.ts: 5ms, render: 57ms)
+ GET /api/site-settings 200 in 65ms (compile: 7ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/main-stats 200 in 707ms (compile: 322ms, proxy.ts: 77ms, render: 309ms)
+ GET /api/main-stats 200 in 818ms (compile: 331ms, proxy.ts: 73ms, render: 414ms)
+ GET /api/site-settings 200 in 61ms (compile: 3ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/auth/session 200 in 114ms (compile: 12ms, proxy.ts: 71ms, render: 31ms)
+ GET /api/site-settings 200 in 68ms (compile: 9ms, proxy.ts: 5ms, render: 54ms)
+ GET /api/final-prediction 401 in 86ms (compile: 2ms, proxy.ts: 78ms, render: 5ms)
+ GET /api/site-settings 200 in 75ms (compile: 7ms, proxy.ts: 9ms, render: 59ms)
+ GET /api/final-prediction 401 in 114ms (compile: 2ms, proxy.ts: 87ms, render: 24ms)
+ GET /api/site-settings 200 in 67ms (compile: 3ms, proxy.ts: 4ms, render: 60ms)
+ GET /login 200 in 108ms (compile: 7ms, proxy.ts: 78ms, render: 23ms)
+ GET /api/site-settings 200 in 61ms (compile: 1895µs, proxy.ts: 4ms, render: 55ms)
+ GET /api/auth/providers 200 in 113ms (compile: 13ms, proxy.ts: 67ms, render: 33ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 4ms, render: 57ms)
+ GET /api/auth/csrf 200 in 104ms (compile: 4ms, proxy.ts: 70ms, render: 30ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 3ms, render: 56ms)
+ POST /api/auth/callback/credentials 200 in 415ms (compile: 6ms, proxy.ts: 67ms, render: 343ms)
+ GET /api/site-settings 200 in 64ms (compile: 2ms, proxy.ts: 4ms, render: 58ms)
+ GET /api/auth/session 200 in 97ms (compile: 4ms, proxy.ts: 70ms, render: 23ms)
+ GET /api/site-settings 200 in 70ms (compile: 8ms, proxy.ts: 7ms, render: 55ms)
+ GET /api/site-settings 200 in 89ms (compile: 3ms, proxy.ts: 11ms, render: 75ms)
+ GET /api/site-settings 200 in 88ms (compile: 8ms, proxy.ts: 8ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 173ms (compile: 3ms, proxy.ts: 108ms, render: 63ms)
+ GET /api/notifications/rescore 200 in 174ms (compile: 5ms, proxy.ts: 111ms, render: 58ms)
+ GET /api/site-settings 200 in 59ms (compile: 2ms, proxy.ts: 4ms, render: 54ms)
+ GET / 200 in 238ms (compile: 3ms, proxy.ts: 82ms, render: 152ms)
+ GET / 200 in 226ms (compile: 3ms, proxy.ts: 74ms, render: 149ms)
+ GET /api/site-settings 200 in 60ms (compile: 3ms, proxy.ts: 5ms, render: 52ms)
+ GET /api/site-settings 200 in 70ms (compile: 6ms, proxy.ts: 4ms, render: 60ms)
+ GET /api/main-stats 200 in 331ms (compile: 7ms, proxy.ts: 68ms, render: 257ms)
+ GET /api/main-stats 200 in 351ms (compile: 3ms, proxy.ts: 78ms, render: 270ms)
+ GET /api/site-settings 200 in 78ms (compile: 9ms, proxy.ts: 5ms, render: 64ms)
+ GET /api/site-settings 200 in 88ms (compile: 14ms, proxy.ts: 5ms, render: 70ms)
+ GET /api/final-prediction 200 in 596ms (compile: 3ms, proxy.ts: 88ms, render: 505ms)
+ GET /api/final-prediction 200 in 634ms (compile: 2ms, proxy.ts: 99ms, render: 534ms)
+ GET /api/site-settings 200 in 159ms (compile: 3ms, proxy.ts: 3ms, render: 152ms)
+ GET /api/auth/session 200 in 197ms (compile: 12ms, proxy.ts: 166ms, render: 18ms)
+ GET /api/site-settings 200 in 72ms (compile: 2ms, proxy.ts: 3ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 159ms (compile: 2ms, proxy.ts: 78ms, render: 79ms)
+ GET /api/site-settings 200 in 68ms (compile: 2ms, proxy.ts: 3ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 166ms (compile: 3ms, proxy.ts: 75ms, render: 88ms)
+ GET /api/site-settings 200 in 71ms (compile: 1923µs, proxy.ts: 3ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 163ms (compile: 2ms, proxy.ts: 78ms, render: 83ms)
+ GET /api/site-settings 200 in 67ms (compile: 3ms, proxy.ts: 3ms, render: 62ms)
+ GET /api/notifications/rescore 200 in 170ms (compile: 3ms, proxy.ts: 73ms, render: 94ms)
+ GET /api/site-settings 200 in 148ms (compile: 4ms, proxy.ts: 3ms, render: 141ms)
+ GET /api/notifications/rescore 200 in 320ms (compile: 3ms, proxy.ts: 155ms, render: 162ms)
+ GET /api/site-settings 200 in 65ms (compile: 2ms, proxy.ts: 4ms, render: 59ms)
+ GET /api/notifications/rescore 200 in 228ms (compile: 3ms, proxy.ts: 71ms, render: 154ms)
+ GET /api/site-settings 200 in 74ms (compile: 3ms, proxy.ts: 4ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 193ms (compile: 3ms, proxy.ts: 82ms, render: 109ms)
+ GET /api/site-settings 200 in 65ms (compile: 2ms, proxy.ts: 3ms, render: 59ms)
+ GET /api/notifications/rescore 200 in 190ms (compile: 3ms, proxy.ts: 73ms, render: 114ms)
+ GET /api/site-settings 200 in 73ms (compile: 2ms, proxy.ts: 3ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 168ms (compile: 3ms, proxy.ts: 80ms, render: 84ms)
+ GET /api/site-settings 200 in 70ms (compile: 2ms, proxy.ts: 4ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 155ms (compile: 3ms, proxy.ts: 77ms, render: 76ms)
+ GET /api/site-settings 200 in 71ms (compile: 3ms, proxy.ts: 3ms, render: 65ms)
+ GET /api/notifications/rescore 200 in 218ms (compile: 2ms, proxy.ts: 78ms, render: 137ms)
+ GET /api/site-settings 200 in 73ms (compile: 2ms, proxy.ts: 3ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 241ms (compile: 2ms, proxy.ts: 80ms, render: 159ms)
+ GET /api/site-settings 200 in 70ms (compile: 2ms, proxy.ts: 4ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 141ms (compile: 2ms, proxy.ts: 77ms, render: 62ms)
+ GET /api/site-settings 200 in 67ms (compile: 2ms, proxy.ts: 4ms, render: 61ms)
+ GET /api/notifications/rescore 200 in 144ms (compile: 2ms, proxy.ts: 75ms, render: 66ms)
+ GET /api/site-settings 200 in 121ms (compile: 2ms, proxy.ts: 4ms, render: 115ms)
+ GET / 200 in 1401ms (compile: 3ms, proxy.ts: 129ms, render: 1269ms)
+ GET /api/site-settings 200 in 22ms (compile: 9ms, proxy.ts: 10ms, render: 4ms)
+ GET /api/site-settings 200 in 25ms (compile: 13ms, proxy.ts: 10ms, render: 3ms)
+ GET /api/site-settings 200 in 70ms (compile: 6ms, proxy.ts: 4ms, render: 59ms)
+ GET /api/site-settings 200 in 87ms (compile: 4ms, proxy.ts: 16ms, render: 67ms)
+ GET /api/auth/session 200 in 133ms (compile: 19ms, proxy.ts: 98ms, render: 15ms)
+ GET /api/site-settings 200 in 65ms (compile: 4ms, proxy.ts: 6ms, render: 55ms)
+ GET /api/site-settings 200 in 80ms (compile: 8ms, proxy.ts: 6ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 149ms (compile: 3ms, proxy.ts: 74ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 158ms (compile: 3ms, proxy.ts: 89ms, render: 66ms)
+ GET /api/main-stats 200 in 489ms (compile: 4ms, proxy.ts: 103ms, render: 382ms)
+ GET /api/site-settings 200 in 63ms (compile: 5ms, proxy.ts: 5ms, render: 53ms)
+ GET /api/site-settings 200 in 76ms (compile: 9ms, proxy.ts: 5ms, render: 63ms)
+ GET /api/final-prediction 200 in 614ms (compile: 2ms, proxy.ts: 91ms, render: 521ms)
+ GET /api/final-prediction 200 in 710ms (compile: 3ms, proxy.ts: 78ms, render: 629ms)
+ GET /api/site-settings 200 in 90ms (compile: 15ms, proxy.ts: 9ms, render: 66ms)
+ GET /api/site-settings 200 in 100ms (compile: 10ms, proxy.ts: 9ms, render: 82ms)
+ GET /api/auth/session 200 in 159ms (compile: 16ms, proxy.ts: 119ms, render: 24ms)
+ GET /api/notifications/rescore 200 in 178ms (compile: 4ms, proxy.ts: 109ms, render: 65ms)
+ GET /api/site-settings 200 in 67ms (compile: 3ms, proxy.ts: 3ms, render: 62ms)
+ GET /api/auth/session 200 in 105ms (compile: 11ms, proxy.ts: 76ms, render: 18ms)
+ GET /api/site-settings 200 in 80ms (compile: 3ms, proxy.ts: 3ms, render: 74ms)
+ GET /api/auth/session 200 in 132ms (compile: 14ms, proxy.ts: 87ms, render: 31ms)
+ GET /api/site-settings 200 in 70ms (compile: 3ms, proxy.ts: 3ms, render: 65ms)
+ GET /api/auth/session 200 in 104ms (compile: 12ms, proxy.ts: 78ms, render: 15ms)
+ GET /api/site-settings 200 in 83ms (compile: 2ms, proxy.ts: 4ms, render: 77ms)
+ GET /api/notifications/rescore 200 in 242ms (compile: 2ms, proxy.ts: 91ms, render: 148ms)
+✓ Compiled in 109ms
+ GET /api/site-settings 200 in 83ms (compile: 3ms, proxy.ts: 5ms, render: 75ms)
+ GET /api/final-prediction 200 in 665ms (compile: 3ms, proxy.ts: 96ms, render: 567ms)
+ GET /api/site-settings 200 in 75ms (compile: 2ms, proxy.ts: 4ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 172ms (compile: 3ms, proxy.ts: 84ms, render: 86ms)
+ GET /api/site-settings 200 in 78ms (compile: 2ms, proxy.ts: 3ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 171ms (compile: 2ms, proxy.ts: 86ms, render: 83ms)
+ GET /api/site-settings 200 in 138ms (compile: 3ms, proxy.ts: 3ms, render: 131ms)
+ GET /api/notifications/rescore 200 in 222ms (compile: 3ms, proxy.ts: 145ms, render: 75ms)
+ GET /api/site-settings 200 in 74ms (compile: 2ms, proxy.ts: 4ms, render: 67ms)
+ GET /api/auth/session 200 in 129ms (compile: 16ms, proxy.ts: 86ms, render: 27ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 4ms, render: 57ms)
+ GET /api/auth/session 200 in 103ms (compile: 13ms, proxy.ts: 72ms, render: 18ms)
+ GET /api/site-settings 200 in 73ms (compile: 4ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 161ms (compile: 2ms, proxy.ts: 80ms, render: 79ms)
+ GET /api/site-settings 200 in 64ms (compile: 4ms, proxy.ts: 3ms, render: 57ms)
+ GET /api/auth/session 200 in 113ms (compile: 12ms, proxy.ts: 72ms, render: 29ms)
+ GET /api/site-settings 200 in 63ms (compile: 2ms, proxy.ts: 4ms, render: 57ms)
+ GET /api/notifications/rescore 200 in 151ms (compile: 3ms, proxy.ts: 70ms, render: 78ms)
+ GET /api/site-settings 200 in 141ms (compile: 2ms, proxy.ts: 4ms, render: 135ms)
+ GET /api/notifications/rescore 200 in 218ms (compile: 3ms, proxy.ts: 150ms, render: 65ms)
+ GET /api/site-settings 200 in 110ms (compile: 2ms, proxy.ts: 3ms, render: 104ms)
+ GET /api/notifications/rescore 200 in 242ms (compile: 3ms, proxy.ts: 118ms, render: 121ms)
+ GET /api/site-settings 200 in 71ms (compile: 2ms, proxy.ts: 4ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 259ms (compile: 3ms, proxy.ts: 79ms, render: 177ms)
+ GET /api/site-settings 200 in 80ms (compile: 3ms, proxy.ts: 4ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 167ms (compile: 3ms, proxy.ts: 90ms, render: 75ms)
+ GET /api/site-settings 200 in 71ms (compile: 3ms, proxy.ts: 3ms, render: 65ms)
+ GET /api/notifications/rescore 200 in 187ms (compile: 3ms, proxy.ts: 79ms, render: 105ms)
+ GET /api/site-settings 200 in 78ms (compile: 2ms, proxy.ts: 4ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 234ms (compile: 3ms, proxy.ts: 87ms, render: 144ms)
+ GET /api/site-settings 200 in 70ms (compile: 4ms, proxy.ts: 3ms, render: 63ms)
+ GET /api/notifications/rescore 200 in 168ms (compile: 2ms, proxy.ts: 80ms, render: 86ms)
+ GET /api/site-settings 200 in 78ms (compile: 4ms, proxy.ts: 4ms, render: 70ms)
+ GET /api/auth/session 200 in 129ms (compile: 13ms, proxy.ts: 87ms, render: 29ms)
+ GET /api/site-settings 200 in 75ms (compile: 2ms, proxy.ts: 3ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 180ms (compile: 2ms, proxy.ts: 82ms, render: 95ms)
+ GET /api/site-settings 200 in 72ms (compile: 2ms, proxy.ts: 4ms, render: 65ms)
+ GET /api/notifications/rescore 200 in 241ms (compile: 2ms, proxy.ts: 82ms, render: 157ms)
+ GET /api/site-settings 200 in 82ms (compile: 3ms, proxy.ts: 3ms, render: 76ms)
+ GET /api/notifications/rescore 200 in 166ms (compile: 3ms, proxy.ts: 91ms, render: 72ms)
+ GET /api/site-settings 200 in 84ms (compile: 3ms, proxy.ts: 3ms, render: 78ms)
+ GET /api/notifications/rescore 200 in 190ms (compile: 2ms, proxy.ts: 91ms, render: 96ms)
+ GET /api/site-settings 200 in 77ms (compile: 4ms, proxy.ts: 3ms, render: 71ms)
+ GET /api/notifications/rescore 200 in 230ms (compile: 2ms, proxy.ts: 86ms, render: 141ms)
+ GET /api/site-settings 200 in 66ms (compile: 4ms, proxy.ts: 3ms, render: 60ms)
+ GET /api/notifications/rescore 200 in 166ms (compile: 2ms, proxy.ts: 74ms, render: 89ms)
+ GET /api/site-settings 200 in 74ms (compile: 3ms, proxy.ts: 3ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 160ms (compile: 3ms, proxy.ts: 82ms, render: 76ms)
+ GET /api/site-settings 200 in 74ms (compile: 3ms, proxy.ts: 3ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 272ms (compile: 3ms, proxy.ts: 82ms, render: 188ms)
+ GET /api/site-settings 200 in 74ms (compile: 3ms, proxy.ts: 3ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 177ms (compile: 3ms, proxy.ts: 84ms, render: 91ms)
+ GET /api/site-settings 200 in 71ms (compile: 3ms, proxy.ts: 4ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 172ms (compile: 5ms, proxy.ts: 81ms, render: 86ms)
+ GET /api/site-settings 200 in 73ms (compile: 4ms, proxy.ts: 3ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 290ms (compile: 3ms, proxy.ts: 82ms, render: 206ms)
+ GET /api/site-settings 200 in 75ms (compile: 3ms, proxy.ts: 3ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 184ms (compile: 3ms, proxy.ts: 85ms, render: 96ms)
+ GET /api/site-settings 200 in 75ms (compile: 3ms, proxy.ts: 3ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 183ms (compile: 2ms, proxy.ts: 85ms, render: 96ms)
+ GET /api/site-settings 200 in 90ms (compile: 3ms, proxy.ts: 3ms, render: 84ms)
+ GET /api/notifications/rescore 200 in 294ms (compile: 3ms, proxy.ts: 99ms, render: 192ms)
+ GET /api/site-settings 200 in 72ms (compile: 4ms, proxy.ts: 3ms, render: 65ms)
+ GET /api/notifications/rescore 200 in 205ms (compile: 3ms, proxy.ts: 81ms, render: 121ms)
+ GET /api/site-settings 200 in 81ms (compile: 4ms, proxy.ts: 3ms, render: 75ms)
+ GET /api/notifications/rescore 200 in 178ms (compile: 2ms, proxy.ts: 89ms, render: 87ms)
+ GET /api/site-settings 200 in 71ms (compile: 3ms, proxy.ts: 3ms, render: 65ms)
+ GET /api/notifications/rescore 200 in 225ms (compile: 2ms, proxy.ts: 80ms, render: 143ms)
+ GET /api/site-settings 200 in 65ms (compile: 4ms, proxy.ts: 3ms, render: 59ms)
+ GET /api/notifications/rescore 200 in 159ms (compile: 2ms, proxy.ts: 73ms, render: 84ms)
+ GET /api/site-settings 200 in 70ms (compile: 3ms, proxy.ts: 3ms, render: 65ms)
+ GET /api/notifications/rescore 200 in 160ms (compile: 2ms, proxy.ts: 78ms, render: 80ms)
+ GET /api/site-settings 200 in 83ms (compile: 4ms, proxy.ts: 4ms, render: 75ms)
+ GET /api/notifications/rescore 200 in 287ms (compile: 2ms, proxy.ts: 94ms, render: 191ms)
+ GET /api/site-settings 200 in 75ms (compile: 5ms, proxy.ts: 4ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 162ms (compile: 3ms, proxy.ts: 85ms, render: 73ms)
+ GET /api/site-settings 200 in 70ms (compile: 3ms, proxy.ts: 5ms, render: 62ms)
+ GET /api/notifications/rescore 200 in 143ms (compile: 2ms, proxy.ts: 78ms, render: 62ms)
+ GET /api/site-settings 200 in 68ms (compile: 3ms, proxy.ts: 5ms, render: 61ms)
+ GET /api/notifications/rescore 200 in 226ms (compile: 2ms, proxy.ts: 78ms, render: 146ms)
+ GET /api/site-settings 200 in 74ms (compile: 3ms, proxy.ts: 5ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 161ms (compile: 3ms, proxy.ts: 84ms, render: 74ms)
+ GET /api/site-settings 200 in 77ms (compile: 2ms, proxy.ts: 4ms, render: 71ms)
+ GET /api/notifications/rescore 200 in 182ms (compile: 3ms, proxy.ts: 88ms, render: 91ms)
+ GET /api/site-settings 200 in 73ms (compile: 3ms, proxy.ts: 6ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 241ms (compile: 3ms, proxy.ts: 84ms, render: 154ms)
+ GET /api/site-settings 200 in 69ms (compile: 4ms, proxy.ts: 3ms, render: 62ms)
+ GET /api/notifications/rescore 200 in 158ms (compile: 2ms, proxy.ts: 78ms, render: 78ms)
+ GET /api/site-settings 200 in 68ms (compile: 4ms, proxy.ts: 3ms, render: 61ms)
+ GET /api/notifications/rescore 200 in 156ms (compile: 3ms, proxy.ts: 75ms, render: 78ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 3ms, render: 59ms)
+ GET /api/notifications/rescore 200 in 248ms (compile: 2ms, proxy.ts: 76ms, render: 170ms)
+ GET /api/site-settings 200 in 80ms (compile: 3ms, proxy.ts: 3ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 164ms (compile: 3ms, proxy.ts: 87ms, render: 74ms)
+ GET /api/site-settings 200 in 73ms (compile: 3ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 186ms (compile: 3ms, proxy.ts: 82ms, render: 101ms)
+ GET /api/site-settings 200 in 84ms (compile: 4ms, proxy.ts: 4ms, render: 75ms)
+ GET /api/notifications/rescore 200 in 269ms (compile: 3ms, proxy.ts: 94ms, render: 172ms)
+ GET /api/site-settings 200 in 116ms (compile: 3ms, proxy.ts: 3ms, render: 110ms)
+ GET /api/notifications/rescore 200 in 217ms (compile: 3ms, proxy.ts: 125ms, render: 89ms)
+ GET /api/site-settings 200 in 79ms (compile: 4ms, proxy.ts: 3ms, render: 73ms)
+ GET /api/notifications/rescore 200 in 183ms (compile: 2ms, proxy.ts: 88ms, render: 93ms)
+ GET /api/site-settings 200 in 78ms (compile: 4ms, proxy.ts: 3ms, render: 71ms)
+ GET /api/notifications/rescore 200 in 263ms (compile: 2ms, proxy.ts: 87ms, render: 173ms)
+ GET /api/site-settings 200 in 90ms (compile: 3ms, proxy.ts: 3ms, render: 84ms)
+ GET /api/notifications/rescore 200 in 197ms (compile: 2ms, proxy.ts: 98ms, render: 96ms)
+ GET /api/site-settings 200 in 78ms (compile: 3ms, proxy.ts: 3ms, render: 72ms)
+ GET /api/auth/session 200 in 135ms (compile: 14ms, proxy.ts: 86ms, render: 35ms)
+ GET /api/site-settings 200 in 84ms (compile: 10ms, proxy.ts: 10ms, render: 64ms)
+ GET /api/site-settings 200 in 89ms (compile: 7ms, proxy.ts: 14ms, render: 68ms)
+ GET /api/site-settings 200 in 164ms (compile: 16ms, proxy.ts: 14ms, render: 134ms)
+ GET /api/site-settings 200 in 221ms (compile: 11ms, proxy.ts: 14ms, render: 197ms)
+ GET /api/exams?active=true 200 in 421ms (compile: 3ms, proxy.ts: 103ms, render: 315ms)
+ GET /api/exams?active=true 200 in 487ms (compile: 3ms, proxy.ts: 247ms, render: 237ms)
+ GET /api/result 200 in 926ms (compile: 5ms, proxy.ts: 115ms, render: 806ms)
+ GET /api/result 200 in 950ms (compile: 3ms, proxy.ts: 189ms, render: 758ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 4ms, render: 57ms)
+ GET /api/exam-number/check?examId=1&regionId=4&examNumber=MOCK-1-1772010354212-4-PUBLIC-039&examType=PUBLIC 200 in 205ms (compile: 3ms, proxy.ts: 71ms, render: 131ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 4ms, render: 55ms)
+ GET /api/notifications/rescore 200 in 146ms (compile: 2ms, proxy.ts: 67ms, render: 77ms)
+ GET /api/site-settings 200 in 61ms (compile: 4ms, proxy.ts: 6ms, render: 52ms)
+ GET /api/site-settings 200 in 66ms (compile: 6ms, proxy.ts: 4ms, render: 56ms)
+ GET /api/prediction?page=1&limit=20 200 in 713ms (compile: 233ms, proxy.ts: 78ms, render: 402ms)
+ GET /api/prediction?page=1&limit=20 200 in 721ms (compile: 214ms, proxy.ts: 86ms, render: 421ms)
+ GET /api/site-settings 200 in 69ms (compile: 4ms, proxy.ts: 4ms, render: 61ms)
+ GET /api/site-settings 200 in 60ms (compile: 3ms, proxy.ts: 4ms, render: 53ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 800ms (compile: 411ms, proxy.ts: 78ms, render: 311ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 776ms (compile: 366ms, proxy.ts: 66ms, render: 344ms)
+ GET /api/site-settings 200 in 75ms (compile: 4ms, proxy.ts: 4ms, render: 68ms)
+ GET /api/auth/session 200 in 109ms (compile: 11ms, proxy.ts: 84ms, render: 13ms)
+ GET /api/site-settings 200 in 78ms (compile: 3ms, proxy.ts: 6ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 161ms (compile: 3ms, proxy.ts: 87ms, render: 71ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 5ms, render: 54ms)
+ GET /api/prediction?page=1&limit=20 200 in 470ms (compile: 2ms, proxy.ts: 69ms, render: 398ms)
+ GET /api/site-settings 200 in 60ms (compile: 2ms, proxy.ts: 4ms, render: 53ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 346ms (compile: 3ms, proxy.ts: 65ms, render: 278ms)
+ GET /api/site-settings 200 in 77ms (compile: 3ms, proxy.ts: 5ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 160ms (compile: 2ms, proxy.ts: 85ms, render: 73ms)
+ GET /api/site-settings 200 in 60ms (compile: 3ms, proxy.ts: 4ms, render: 52ms)
+ GET /api/prediction?page=1&limit=20 200 in 454ms (compile: 2ms, proxy.ts: 66ms, render: 386ms)
+ GET /api/site-settings 200 in 56ms (compile: 2ms, proxy.ts: 3ms, render: 50ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 328ms (compile: 2ms, proxy.ts: 62ms, render: 264ms)
+ GET /api/site-settings 200 in 76ms (compile: 3ms, proxy.ts: 3ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 177ms (compile: 3ms, proxy.ts: 84ms, render: 90ms)
+ GET /api/site-settings 200 in 60ms (compile: 2ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/prediction?page=1&limit=20 200 in 486ms (compile: 2ms, proxy.ts: 67ms, render: 417ms)
+ GET /api/site-settings 200 in 59ms (compile: 2ms, proxy.ts: 3ms, render: 54ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 332ms (compile: 3ms, proxy.ts: 66ms, render: 263ms)
+ GET /api/site-settings 200 in 74ms (compile: 1999µs, proxy.ts: 4ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 147ms (compile: 2ms, proxy.ts: 81ms, render: 64ms)
+ GET /api/site-settings 200 in 59ms (compile: 3ms, proxy.ts: 3ms, render: 54ms)
+ GET /api/prediction?page=1&limit=20 200 in 468ms (compile: 2ms, proxy.ts: 65ms, render: 401ms)
+ GET /api/site-settings 200 in 58ms (compile: 2ms, proxy.ts: 4ms, render: 52ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 334ms (compile: 2ms, proxy.ts: 64ms, render: 268ms)
+ GET /api/site-settings 200 in 165ms (compile: 2ms, proxy.ts: 4ms, render: 159ms)
+ GET /api/notifications/rescore 200 in 251ms (compile: 2ms, proxy.ts: 173ms, render: 75ms)
+ GET /api/site-settings 200 in 61ms (compile: 3ms, proxy.ts: 3ms, render: 55ms)
+ GET /api/prediction?page=1&limit=20 200 in 486ms (compile: 2ms, proxy.ts: 68ms, render: 416ms)
+ GET /api/site-settings 200 in 63ms (compile: 2ms, proxy.ts: 4ms, render: 56ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 408ms (compile: 2ms, proxy.ts: 69ms, render: 336ms)
+ GET /api/site-settings 200 in 78ms (compile: 3ms, proxy.ts: 3ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 174ms (compile: 3ms, proxy.ts: 87ms, render: 84ms)
+ GET /api/site-settings 200 in 60ms (compile: 3ms, proxy.ts: 3ms, render: 54ms)
+ GET /api/prediction?page=1&limit=20 200 in 469ms (compile: 2ms, proxy.ts: 68ms, render: 399ms)
+ GET /api/site-settings 200 in 57ms (compile: 2ms, proxy.ts: 4ms, render: 51ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 402ms (compile: 2ms, proxy.ts: 63ms, render: 337ms)
+ GET /api/site-settings 200 in 80ms (compile: 3ms, proxy.ts: 4ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 175ms (compile: 3ms, proxy.ts: 88ms, render: 85ms)
+ GET /api/site-settings 200 in 73ms (compile: 4ms, proxy.ts: 6ms, render: 63ms)
+ GET /api/site-settings 200 in 86ms (compile: 7ms, proxy.ts: 6ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 169ms (compile: 3ms, proxy.ts: 100ms, render: 66ms)
+ GET /api/prediction?page=1&limit=20 200 in 550ms (compile: 2ms, proxy.ts: 87ms, render: 460ms)
+ GET /api/site-settings 200 in 65ms (compile: 1982µs, proxy.ts: 3ms, render: 60ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 367ms (compile: 2ms, proxy.ts: 72ms, render: 292ms)
+ GET /api/site-settings 200 in 81ms (compile: 3ms, proxy.ts: 3ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 180ms (compile: 3ms, proxy.ts: 90ms, render: 88ms)
+ GET /api/site-settings 200 in 90ms (compile: 6ms, proxy.ts: 9ms, render: 75ms)
+ GET /api/site-settings 200 in 106ms (compile: 11ms, proxy.ts: 9ms, render: 86ms)
+ GET /api/notifications/rescore 200 in 290ms (compile: 4ms, proxy.ts: 125ms, render: 162ms)
+ GET /api/prediction?page=1&limit=20 200 in 491ms (compile: 2ms, proxy.ts: 107ms, render: 382ms)
+ GET /api/site-settings 200 in 57ms (compile: 2ms, proxy.ts: 5ms, render: 50ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 307ms (compile: 2ms, proxy.ts: 65ms, render: 241ms)
+ GET /api/site-settings 200 in 70ms (compile: 3ms, proxy.ts: 3ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 242ms (compile: 3ms, proxy.ts: 79ms, render: 160ms)
+ GET /api/site-settings 200 in 78ms (compile: 6ms, proxy.ts: 6ms, render: 66ms)
+ GET /api/site-settings 200 in 164ms (compile: 9ms, proxy.ts: 6ms, render: 150ms)
+ GET /api/notifications/rescore 200 in 251ms (compile: 2ms, proxy.ts: 182ms, render: 67ms)
+ GET /api/prediction?page=1&limit=20 200 in 520ms (compile: 4ms, proxy.ts: 93ms, render: 423ms)
+ GET /api/site-settings 200 in 59ms (compile: 2ms, proxy.ts: 3ms, render: 54ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 352ms (compile: 3ms, proxy.ts: 66ms, render: 284ms)
+ GET /api/site-settings 200 in 70ms (compile: 4ms, proxy.ts: 3ms, render: 63ms)
+ GET /api/notifications/rescore 200 in 157ms (compile: 4ms, proxy.ts: 79ms, render: 74ms)
+ GET /api/site-settings 200 in 69ms (compile: 5ms, proxy.ts: 5ms, render: 59ms)
+ GET /api/site-settings 200 in 77ms (compile: 6ms, proxy.ts: 5ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 177ms (compile: 3ms, proxy.ts: 91ms, render: 83ms)
+ GET /api/prediction?page=1&limit=20 200 in 484ms (compile: 3ms, proxy.ts: 81ms, render: 401ms)
+ GET /api/site-settings 200 in 60ms (compile: 2ms, proxy.ts: 5ms, render: 52ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 323ms (compile: 2ms, proxy.ts: 65ms, render: 257ms)
+ GET /api/site-settings 200 in 73ms (compile: 3ms, proxy.ts: 4ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 166ms (compile: 2ms, proxy.ts: 80ms, render: 84ms)
+ GET /api/site-settings 200 in 77ms (compile: 7ms, proxy.ts: 6ms, render: 65ms)
+ GET /api/site-settings 200 in 84ms (compile: 8ms, proxy.ts: 7ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 263ms (compile: 2ms, proxy.ts: 98ms, render: 162ms)
+ GET /api/prediction?page=1&limit=20 200 in 559ms (compile: 2ms, proxy.ts: 91ms, render: 466ms)
+ GET /api/site-settings 200 in 58ms (compile: 2ms, proxy.ts: 3ms, render: 54ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 334ms (compile: 3ms, proxy.ts: 65ms, render: 266ms)
+ GET /api/site-settings 200 in 74ms (compile: 2ms, proxy.ts: 3ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 180ms (compile: 3ms, proxy.ts: 82ms, render: 95ms)
+ GET /api/site-settings 200 in 135ms (compile: 9ms, proxy.ts: 7ms, render: 119ms)
+ GET /api/site-settings 200 in 211ms (compile: 4ms, proxy.ts: 8ms, render: 199ms)
+ GET /api/notifications/rescore 200 in 288ms (compile: 4ms, proxy.ts: 149ms, render: 135ms)
+ GET /api/prediction?page=1&limit=20 200 in 710ms (compile: 3ms, proxy.ts: 226ms, render: 481ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 3ms, render: 56ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 364ms (compile: 2ms, proxy.ts: 68ms, render: 293ms)
+ GET /api/site-settings 200 in 73ms (compile: 3ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 167ms (compile: 3ms, proxy.ts: 80ms, render: 83ms)
+ GET /api/site-settings 200 in 81ms (compile: 4ms, proxy.ts: 7ms, render: 71ms)
+ GET /api/site-settings 200 in 82ms (compile: 9ms, proxy.ts: 7ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 172ms (compile: 8ms, proxy.ts: 96ms, render: 68ms)
+ GET /api/prediction?page=1&limit=20 200 in 502ms (compile: 4ms, proxy.ts: 95ms, render: 403ms)
+ GET /api/site-settings 200 in 63ms (compile: 2ms, proxy.ts: 5ms, render: 56ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 327ms (compile: 3ms, proxy.ts: 69ms, render: 256ms)
+ GET /api/site-settings 200 in 73ms (compile: 2ms, proxy.ts: 3ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 180ms (compile: 2ms, proxy.ts: 81ms, render: 97ms)
+ GET /api/site-settings 200 in 84ms (compile: 7ms, proxy.ts: 5ms, render: 72ms)
+ GET /api/site-settings 200 in 169ms (compile: 10ms, proxy.ts: 6ms, render: 153ms)
+ GET /api/notifications/rescore 200 in 330ms (compile: 2ms, proxy.ts: 183ms, render: 145ms)
+ GET /api/prediction?page=1&limit=20 200 in 511ms (compile: 3ms, proxy.ts: 98ms, render: 409ms)
+ GET /api/site-settings 200 in 71ms (compile: 2ms, proxy.ts: 5ms, render: 64ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 583ms (compile: 3ms, proxy.ts: 76ms, render: 503ms)
+ GET /api/site-settings 200 in 78ms (compile: 5ms, proxy.ts: 4ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 168ms (compile: 3ms, proxy.ts: 89ms, render: 76ms)
+ GET /api/site-settings 200 in 76ms (compile: 3ms, proxy.ts: 6ms, render: 68ms)
+ GET /api/site-settings 200 in 148ms (compile: 8ms, proxy.ts: 5ms, render: 135ms)
+ GET /api/notifications/rescore 200 in 237ms (compile: 2ms, proxy.ts: 162ms, render: 73ms)
+ GET /api/prediction?page=1&limit=20 200 in 502ms (compile: 3ms, proxy.ts: 91ms, render: 408ms)
+ GET /api/site-settings 200 in 62ms (compile: 3ms, proxy.ts: 3ms, render: 56ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 311ms (compile: 2ms, proxy.ts: 68ms, render: 241ms)
+ GET /api/site-settings 200 in 72ms (compile: 4ms, proxy.ts: 4ms, render: 64ms)
+ GET /api/auth/session 200 in 140ms (compile: 17ms, proxy.ts: 85ms, render: 37ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 6ms, render: 58ms)
+ GET /api/notifications/rescore 200 in 147ms (compile: 3ms, proxy.ts: 76ms, render: 68ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 3ms, render: 58ms)
+ GET /api/prediction?page=1&limit=20 200 in 474ms (compile: 2ms, proxy.ts: 70ms, render: 402ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 354ms (compile: 3ms, proxy.ts: 68ms, render: 283ms)
+ GET /api/site-settings 200 in 70ms (compile: 3ms, proxy.ts: 4ms, render: 63ms)
+ GET /api/notifications/rescore 200 in 144ms (compile: 2ms, proxy.ts: 78ms, render: 65ms)
+ GET /api/site-settings 200 in 72ms (compile: 3ms, proxy.ts: 5ms, render: 64ms)
+ GET /api/site-settings 200 in 82ms (compile: 7ms, proxy.ts: 5ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 173ms (compile: 3ms, proxy.ts: 96ms, render: 74ms)
+ GET /api/prediction?page=1&limit=20 200 in 548ms (compile: 5ms, proxy.ts: 86ms, render: 456ms)
+ GET /api/site-settings 200 in 54ms (compile: 1934µs, proxy.ts: 3ms, render: 50ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 410ms (compile: 3ms, proxy.ts: 61ms, render: 346ms)
+ GET /api/site-settings 200 in 75ms (compile: 3ms, proxy.ts: 3ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 172ms (compile: 3ms, proxy.ts: 85ms, render: 84ms)
+ GET /api/site-settings 200 in 69ms (compile: 7ms, proxy.ts: 4ms, render: 59ms)
+ GET /api/site-settings 200 in 82ms (compile: 4ms, proxy.ts: 5ms, render: 73ms)
+ GET /api/notifications/rescore 200 in 147ms (compile: 4ms, proxy.ts: 82ms, render: 61ms)
+ GET /api/prediction?page=1&limit=20 200 in 510ms (compile: 4ms, proxy.ts: 94ms, render: 411ms)
+ GET /api/site-settings 200 in 55ms (compile: 3ms, proxy.ts: 3ms, render: 49ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 423ms (compile: 3ms, proxy.ts: 61ms, render: 360ms)
+✓ Compiled in 114ms
+✓ Compiled in 119ms
+ GET /api/site-settings 200 in 78ms (compile: 3ms, proxy.ts: 3ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 183ms (compile: 2ms, proxy.ts: 87ms, render: 94ms)
+ GET /api/site-settings 200 in 80ms (compile: 4ms, proxy.ts: 7ms, render: 69ms)
+ GET /api/site-settings 200 in 84ms (compile: 7ms, proxy.ts: 4ms, render: 73ms)
+ GET /api/notifications/rescore 200 in 185ms (compile: 5ms, proxy.ts: 99ms, render: 82ms)
+ GET /api/prediction?page=1&limit=20 200 in 561ms (compile: 5ms, proxy.ts: 91ms, render: 465ms)
+ GET /api/site-settings 200 in 66ms (compile: 2ms, proxy.ts: 4ms, render: 60ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 361ms (compile: 3ms, proxy.ts: 74ms, render: 284ms)
+ GET /api/site-settings 200 in 89ms (compile: 2ms, proxy.ts: 4ms, render: 83ms)
+ GET /api/notifications/rescore 200 in 206ms (compile: 2ms, proxy.ts: 97ms, render: 106ms)
+ GET /api/site-settings 200 in 74ms (compile: 4ms, proxy.ts: 5ms, render: 65ms)
+ GET /api/site-settings 200 in 160ms (compile: 6ms, proxy.ts: 6ms, render: 148ms)
+ GET /api/notifications/rescore 200 in 362ms (compile: 2ms, proxy.ts: 173ms, render: 187ms)
+ GET /api/prediction?page=1&limit=20 200 in 532ms (compile: 3ms, proxy.ts: 87ms, render: 442ms)
+ GET /api/site-settings 200 in 60ms (compile: 2ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 335ms (compile: 2ms, proxy.ts: 67ms, render: 266ms)
+ GET /api/site-settings 200 in 76ms (compile: 1987µs, proxy.ts: 3ms, render: 71ms)
+ GET /api/notifications/rescore 200 in 185ms (compile: 2ms, proxy.ts: 83ms, render: 100ms)
+ GET /api/site-settings 200 in 80ms (compile: 3ms, proxy.ts: 6ms, render: 72ms)
+ GET /api/site-settings 200 in 91ms (compile: 7ms, proxy.ts: 5ms, render: 78ms)
+ GET /api/notifications/rescore 200 in 251ms (compile: 599µs, proxy.ts: 104ms, render: 146ms)
+ GET /api/prediction?page=1&limit=20 200 in 539ms (compile: 3ms, proxy.ts: 94ms, render: 443ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 3ms, render: 58ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 379ms (compile: 3ms, proxy.ts: 71ms, render: 305ms)
+ GET /api/site-settings 200 in 74ms (compile: 3ms, proxy.ts: 3ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 185ms (compile: 3ms, proxy.ts: 83ms, render: 99ms)
+ GET /api/site-settings 200 in 82ms (compile: 6ms, proxy.ts: 6ms, render: 70ms)
+ GET /api/site-settings 200 in 89ms (compile: 8ms, proxy.ts: 6ms, render: 76ms)
+ GET /api/notifications/rescore 200 in 175ms (compile: 3ms, proxy.ts: 104ms, render: 68ms)
+ GET /api/prediction?page=1&limit=20 200 in 520ms (compile: 5ms, proxy.ts: 96ms, render: 419ms)
+ GET /api/site-settings 200 in 64ms (compile: 2ms, proxy.ts: 3ms, render: 58ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 357ms (compile: 3ms, proxy.ts: 70ms, render: 284ms)
+ GET /api/site-settings 200 in 83ms (compile: 2ms, proxy.ts: 3ms, render: 78ms)
+ GET /api/notifications/rescore 200 in 278ms (compile: 2ms, proxy.ts: 90ms, render: 185ms)
+ GET /api/site-settings 200 in 81ms (compile: 3ms, proxy.ts: 5ms, render: 73ms)
+ GET /api/site-settings 200 in 144ms (compile: 6ms, proxy.ts: 5ms, render: 132ms)
+ GET /api/notifications/rescore 200 in 274ms (compile: 2ms, proxy.ts: 157ms, render: 115ms)
+ GET /api/prediction?page=1&limit=20 200 in 595ms (compile: 2ms, proxy.ts: 95ms, render: 498ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 3ms, render: 61ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 371ms (compile: 3ms, proxy.ts: 72ms, render: 296ms)
+ GET /api/site-settings 200 in 102ms (compile: 3ms, proxy.ts: 3ms, render: 96ms)
+ GET /api/notifications/rescore 200 in 210ms (compile: 3ms, proxy.ts: 111ms, render: 97ms)
+ GET /api/site-settings 200 in 81ms (compile: 5ms, proxy.ts: 6ms, render: 70ms)
+ GET /api/site-settings 200 in 159ms (compile: 8ms, proxy.ts: 6ms, render: 145ms)
+ GET /api/notifications/rescore 200 in 237ms (compile: 4ms, proxy.ts: 175ms, render: 59ms)
+ GET /api/prediction?page=1&limit=20 200 in 591ms (compile: 2ms, proxy.ts: 96ms, render: 492ms)
+ GET /api/site-settings 200 in 65ms (compile: 3ms, proxy.ts: 5ms, render: 58ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 373ms (compile: 2ms, proxy.ts: 71ms, render: 299ms)
+ GET /api/site-settings 200 in 71ms (compile: 2ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 167ms (compile: 3ms, proxy.ts: 80ms, render: 85ms)
+ GET /api/site-settings 200 in 82ms (compile: 4ms, proxy.ts: 5ms, render: 73ms)
+ GET /api/site-settings 200 in 80ms (compile: 7ms, proxy.ts: 5ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 166ms (compile: 7ms, proxy.ts: 94ms, render: 64ms)
+ GET /api/prediction?page=1&limit=20 200 in 631ms (compile: 3ms, proxy.ts: 97ms, render: 531ms)
+ GET /api/site-settings 200 in 62ms (compile: 2ms, proxy.ts: 5ms, render: 55ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 335ms (compile: 2ms, proxy.ts: 68ms, render: 265ms)
+ GET /api/site-settings 200 in 73ms (compile: 3ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 177ms (compile: 2ms, proxy.ts: 84ms, render: 91ms)
+ GET /api/site-settings 200 in 86ms (compile: 8ms, proxy.ts: 6ms, render: 72ms)
+ GET /api/site-settings 200 in 91ms (compile: 10ms, proxy.ts: 8ms, render: 73ms)
+ GET /api/notifications/rescore 200 in 308ms (compile: 3ms, proxy.ts: 110ms, render: 195ms)
+ GET /api/prediction?page=1&limit=20 200 in 533ms (compile: 4ms, proxy.ts: 104ms, render: 426ms)
+ GET /api/site-settings 200 in 63ms (compile: 2ms, proxy.ts: 3ms, render: 57ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 345ms (compile: 2ms, proxy.ts: 69ms, render: 273ms)
+ GET /api/site-settings 200 in 82ms (compile: 3ms, proxy.ts: 5ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 166ms (compile: 3ms, proxy.ts: 93ms, render: 70ms)
+ GET /api/site-settings 200 in 81ms (compile: 8ms, proxy.ts: 6ms, render: 67ms)
+ GET /api/site-settings 200 in 162ms (compile: 3ms, proxy.ts: 7ms, render: 152ms)
+ GET /api/notifications/rescore 200 in 176ms (compile: 3ms, proxy.ts: 94ms, render: 79ms)
+ GET /api/prediction?page=1&limit=20 200 in 584ms (compile: 5ms, proxy.ts: 176ms, render: 403ms)
+ GET /api/site-settings 200 in 58ms (compile: 2ms, proxy.ts: 4ms, render: 52ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 324ms (compile: 3ms, proxy.ts: 64ms, render: 257ms)
+ GET /api/site-settings 200 in 76ms (compile: 4ms, proxy.ts: 4ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 179ms (compile: 4ms, proxy.ts: 85ms, render: 89ms)
+ GET /api/site-settings 200 in 89ms (compile: 7ms, proxy.ts: 5ms, render: 78ms)
+ GET /api/site-settings 200 in 156ms (compile: 5ms, proxy.ts: 5ms, render: 146ms)
+ GET /api/notifications/rescore 200 in 195ms (compile: 2ms, proxy.ts: 104ms, render: 88ms)
+ GET /api/prediction?page=1&limit=20 200 in 612ms (compile: 2ms, proxy.ts: 169ms, render: 441ms)
+ GET /api/site-settings 200 in 63ms (compile: 3ms, proxy.ts: 4ms, render: 56ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 351ms (compile: 4ms, proxy.ts: 69ms, render: 277ms)
+ GET /api/site-settings 200 in 74ms (compile: 2ms, proxy.ts: 4ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 153ms (compile: 3ms, proxy.ts: 80ms, render: 70ms)
+ GET /api/site-settings 200 in 75ms (compile: 5ms, proxy.ts: 4ms, render: 66ms)
+ GET /api/site-settings 200 in 82ms (compile: 6ms, proxy.ts: 4ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 245ms (compile: 2ms, proxy.ts: 97ms, render: 146ms)
+ GET /api/prediction?page=1&limit=20 200 in 514ms (compile: 2ms, proxy.ts: 92ms, render: 420ms)
+ GET /api/site-settings 200 in 63ms (compile: 3ms, proxy.ts: 4ms, render: 57ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 349ms (compile: 3ms, proxy.ts: 71ms, render: 276ms)
+ GET /api/site-settings 200 in 70ms (compile: 3ms, proxy.ts: 3ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 166ms (compile: 3ms, proxy.ts: 79ms, render: 84ms)
+ GET /api/site-settings 200 in 76ms (compile: 7ms, proxy.ts: 5ms, render: 64ms)
+ GET /api/site-settings 200 in 148ms (compile: 4ms, proxy.ts: 5ms, render: 139ms)
+ GET /api/notifications/rescore 200 in 187ms (compile: 3ms, proxy.ts: 91ms, render: 92ms)
+ GET /api/prediction?page=1&limit=20 200 in 582ms (compile: 3ms, proxy.ts: 161ms, render: 418ms)
+ GET /api/site-settings 200 in 62ms (compile: 2ms, proxy.ts: 4ms, render: 55ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 344ms (compile: 2ms, proxy.ts: 68ms, render: 273ms)
+ GET /api/site-settings 200 in 72ms (compile: 3ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 183ms (compile: 3ms, proxy.ts: 81ms, render: 99ms)
+ GET /api/site-settings 200 in 90ms (compile: 8ms, proxy.ts: 5ms, render: 77ms)
+ GET /api/site-settings 200 in 170ms (compile: 5ms, proxy.ts: 6ms, render: 159ms)
+ GET /api/notifications/rescore 200 in 189ms (compile: 2ms, proxy.ts: 104ms, render: 83ms)
+ GET /api/prediction?page=1&limit=20 200 in 577ms (compile: 2ms, proxy.ts: 184ms, render: 391ms)
+ GET /api/site-settings 200 in 60ms (compile: 2ms, proxy.ts: 3ms, render: 55ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 368ms (compile: 2ms, proxy.ts: 67ms, render: 299ms)
+ GET /api/site-settings 200 in 82ms (compile: 3ms, proxy.ts: 3ms, render: 76ms)
+ GET /api/notifications/rescore 200 in 184ms (compile: 2ms, proxy.ts: 90ms, render: 91ms)
+ GET /api/site-settings 200 in 76ms (compile: 6ms, proxy.ts: 7ms, render: 63ms)
+ GET /api/site-settings 200 in 83ms (compile: 6ms, proxy.ts: 6ms, render: 71ms)
+ GET /api/notifications/rescore 200 in 236ms (compile: 2ms, proxy.ts: 101ms, render: 132ms)
+ GET /api/prediction?page=1&limit=20 200 in 545ms (compile: 2ms, proxy.ts: 95ms, render: 447ms)
+ GET /api/site-settings 200 in 66ms (compile: 2ms, proxy.ts: 3ms, render: 60ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 370ms (compile: 3ms, proxy.ts: 72ms, render: 296ms)
+ GET /api/site-settings 200 in 83ms (compile: 3ms, proxy.ts: 4ms, render: 76ms)
+ GET /api/notifications/rescore 200 in 238ms (compile: 3ms, proxy.ts: 91ms, render: 144ms)
+ GET /api/site-settings 200 in 73ms (compile: 6ms, proxy.ts: 6ms, render: 61ms)
+ GET /api/site-settings 200 in 89ms (compile: 8ms, proxy.ts: 6ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 179ms (compile: 2ms, proxy.ts: 107ms, render: 70ms)
+ GET /api/prediction?page=1&limit=20 200 in 551ms (compile: 5ms, proxy.ts: 92ms, render: 455ms)
+ GET /api/site-settings 200 in 66ms (compile: 2ms, proxy.ts: 4ms, render: 60ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 388ms (compile: 3ms, proxy.ts: 73ms, render: 313ms)
+ GET /api/site-settings 200 in 132ms (compile: 4ms, proxy.ts: 3ms, render: 125ms)
+ GET /api/notifications/rescore 200 in 305ms (compile: 2ms, proxy.ts: 140ms, render: 163ms)
+ GET /api/site-settings 200 in 84ms (compile: 6ms, proxy.ts: 5ms, render: 73ms)
+ GET /api/site-settings 200 in 98ms (compile: 7ms, proxy.ts: 6ms, render: 85ms)
+ GET /api/notifications/rescore 200 in 201ms (compile: 2ms, proxy.ts: 111ms, render: 88ms)
+ GET /api/prediction?page=1&limit=20 200 in 517ms (compile: 2ms, proxy.ts: 98ms, render: 416ms)
+ GET /api/site-settings 200 in 55ms (compile: 2ms, proxy.ts: 3ms, render: 50ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 358ms (compile: 3ms, proxy.ts: 63ms, render: 292ms)
+ GET /api/site-settings 200 in 82ms (compile: 4ms, proxy.ts: 3ms, render: 75ms)
+ GET /api/notifications/rescore 200 in 173ms (compile: 4ms, proxy.ts: 90ms, render: 79ms)
+ GET /api/site-settings 200 in 73ms (compile: 6ms, proxy.ts: 5ms, render: 62ms)
+ GET /api/site-settings 200 in 94ms (compile: 5ms, proxy.ts: 7ms, render: 82ms)
+ GET /api/notifications/rescore 200 in 159ms (compile: 4ms, proxy.ts: 87ms, render: 68ms)
+ GET /api/prediction?page=1&limit=20 200 in 578ms (compile: 2ms, proxy.ts: 106ms, render: 470ms)
+ GET /api/site-settings 200 in 55ms (compile: 2ms, proxy.ts: 4ms, render: 49ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 410ms (compile: 2ms, proxy.ts: 60ms, render: 347ms)
+ GET /api/site-settings 200 in 79ms (compile: 3ms, proxy.ts: 3ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 182ms (compile: 2ms, proxy.ts: 87ms, render: 93ms)
+ GET /api/site-settings 200 in 83ms (compile: 4ms, proxy.ts: 6ms, render: 73ms)
+ GET /api/site-settings 200 in 93ms (compile: 9ms, proxy.ts: 6ms, render: 78ms)
+ GET /api/notifications/rescore 200 in 187ms (compile: 2ms, proxy.ts: 108ms, render: 76ms)
+ GET /api/prediction?page=1&limit=20 200 in 628ms (compile: 4ms, proxy.ts: 98ms, render: 526ms)
+ GET /api/site-settings 200 in 58ms (compile: 2ms, proxy.ts: 3ms, render: 53ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 337ms (compile: 2ms, proxy.ts: 65ms, render: 270ms)
+ GET /api/site-settings 200 in 74ms (compile: 3ms, proxy.ts: 3ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 180ms (compile: 3ms, proxy.ts: 82ms, render: 95ms)
+ GET /api/site-settings 200 in 73ms (compile: 4ms, proxy.ts: 4ms, render: 64ms)
+ GET /api/site-settings 200 in 82ms (compile: 7ms, proxy.ts: 5ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 170ms (compile: 2ms, proxy.ts: 94ms, render: 74ms)
+ GET /api/prediction?page=1&limit=20 200 in 517ms (compile: 3ms, proxy.ts: 88ms, render: 427ms)
+ GET /api/site-settings 200 in 62ms (compile: 3ms, proxy.ts: 4ms, render: 55ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 361ms (compile: 2ms, proxy.ts: 69ms, render: 289ms)
+ GET /api/site-settings 200 in 78ms (compile: 3ms, proxy.ts: 3ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 178ms (compile: 2ms, proxy.ts: 90ms, render: 86ms)
+ GET /api/site-settings 200 in 71ms (compile: 5ms, proxy.ts: 5ms, render: 61ms)
+ GET /api/site-settings 200 in 151ms (compile: 6ms, proxy.ts: 5ms, render: 140ms)
+ GET /api/notifications/rescore 200 in 326ms (compile: 2ms, proxy.ts: 166ms, render: 158ms)
+ GET /api/prediction?page=1&limit=20 200 in 508ms (compile: 3ms, proxy.ts: 86ms, render: 418ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 3ms, render: 56ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 330ms (compile: 2ms, proxy.ts: 67ms, render: 261ms)
+ GET /api/site-settings 200 in 75ms (compile: 2ms, proxy.ts: 3ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 177ms (compile: 3ms, proxy.ts: 83ms, render: 91ms)
+ GET /api/site-settings 200 in 101ms (compile: 3ms, proxy.ts: 7ms, render: 91ms)
+ GET /api/site-settings 200 in 100ms (compile: 8ms, proxy.ts: 6ms, render: 86ms)
+ GET /api/notifications/rescore 200 in 283ms (compile: 7ms, proxy.ts: 116ms, render: 161ms)
+ GET /api/prediction?page=1&limit=20 200 in 574ms (compile: 4ms, proxy.ts: 116ms, render: 453ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 3ms, render: 58ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 366ms (compile: 2ms, proxy.ts: 71ms, render: 293ms)
+ GET /api/site-settings 200 in 80ms (compile: 4ms, proxy.ts: 4ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 165ms (compile: 3ms, proxy.ts: 90ms, render: 72ms)
+ GET /api/site-settings 200 in 76ms (compile: 5ms, proxy.ts: 5ms, render: 66ms)
+ GET /api/site-settings 200 in 85ms (compile: 7ms, proxy.ts: 5ms, render: 72ms)
+ GET /api/notifications/rescore 200 in 169ms (compile: 2ms, proxy.ts: 98ms, render: 68ms)
+ GET /api/prediction?page=1&limit=20 200 in 535ms (compile: 2ms, proxy.ts: 90ms, render: 442ms)
+ GET /api/site-settings 200 in 63ms (compile: 2ms, proxy.ts: 3ms, render: 58ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 359ms (compile: 2ms, proxy.ts: 70ms, render: 286ms)
+ GET /api/site-settings 200 in 72ms (compile: 2ms, proxy.ts: 5ms, render: 65ms)
+ GET /api/notifications/rescore 200 in 170ms (compile: 2ms, proxy.ts: 82ms, render: 86ms)
+ GET /api/site-settings 200 in 142ms (compile: 3ms, proxy.ts: 6ms, render: 133ms)
+ GET /api/site-settings 200 in 154ms (compile: 7ms, proxy.ts: 6ms, render: 141ms)
+ GET /api/notifications/rescore 200 in 231ms (compile: 2ms, proxy.ts: 167ms, render: 63ms)
+ GET /api/prediction?page=1&limit=20 200 in 565ms (compile: 3ms, proxy.ts: 156ms, render: 407ms)
+ GET /api/site-settings 200 in 66ms (compile: 2ms, proxy.ts: 3ms, render: 61ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 342ms (compile: 2ms, proxy.ts: 72ms, render: 268ms)
+ GET /api/site-settings 200 in 75ms (compile: 2ms, proxy.ts: 3ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 175ms (compile: 2ms, proxy.ts: 82ms, render: 91ms)
+ GET /api/site-settings 200 in 82ms (compile: 7ms, proxy.ts: 6ms, render: 68ms)
+ GET /api/site-settings 200 in 157ms (compile: 3ms, proxy.ts: 7ms, render: 148ms)
+ GET /api/notifications/rescore 200 in 192ms (compile: 3ms, proxy.ts: 94ms, render: 95ms)
+ GET /api/prediction?page=1&limit=20 200 in 581ms (compile: 3ms, proxy.ts: 170ms, render: 408ms)
+ GET /api/site-settings 200 in 60ms (compile: 3ms, proxy.ts: 4ms, render: 53ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 336ms (compile: 3ms, proxy.ts: 67ms, render: 266ms)
+ GET /api/site-settings 200 in 74ms (compile: 2ms, proxy.ts: 4ms, render: 68ms)
+ GET /api/auth/session 200 in 114ms (compile: 13ms, proxy.ts: 83ms, render: 18ms)
+ GET /api/site-settings 200 in 69ms (compile: 3ms, proxy.ts: 3ms, render: 64ms)
+ GET / 200 in 1896ms (compile: 544ms, proxy.ts: 76ms, render: 1276ms)
+ GET /api/site-settings 200 in 28ms (compile: 13ms, proxy.ts: 11ms, render: 4ms)
+ GET /api/site-settings 200 in 34ms (compile: 15ms, proxy.ts: 15ms, render: 4ms)
+ GET /api/site-settings 200 in 78ms (compile: 4ms, proxy.ts: 18ms, render: 56ms)
+ GET /api/site-settings 200 in 75ms (compile: 1954µs, proxy.ts: 7ms, render: 66ms)
+ GET /api/auth/session 200 in 130ms (compile: 13ms, proxy.ts: 107ms, render: 10ms)
+ GET /api/site-settings 200 in 61ms (compile: 3ms, proxy.ts: 5ms, render: 53ms)
+ GET /api/site-settings 200 in 79ms (compile: 6ms, proxy.ts: 5ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 156ms (compile: 2ms, proxy.ts: 70ms, render: 84ms)
+ GET /api/notifications/rescore 200 in 162ms (compile: 3ms, proxy.ts: 88ms, render: 71ms)
+ GET /api/main-stats 200 in 543ms (compile: 3ms, proxy.ts: 99ms, render: 441ms)
+ GET /api/site-settings 200 in 70ms (compile: 4ms, proxy.ts: 5ms, render: 61ms)
+ GET /api/final-prediction 200 in 1034ms (compile: 324ms, proxy.ts: 81ms, render: 628ms)
+prisma:error Error in PostgreSQL connection: Error { kind: Io, cause: Some(Os { code: 10054, kind: ConnectionReset, message: "현재 연결은 원격 호스트에 의해 강제로 끊겼습니다." }) }
+prisma:error 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].siteSetting.findMany()` invocation in
+D:\앱 프로그램\합격예측 프로그램\police\.next\dev\server\chunks\[root-of-the-server]__00b70dfa._.js:265:169
+
+  262     ...__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$site$2d$settings$2e$constants$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["SITE_SETTING_DEFAULTS"]
+  263 };
+  264 try {
+→ 265     const rows = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].siteSetting.findMany(
+Server has closed the connection.
+사이트 설정 캐시 조회 중 오류가 발생했습니다. Error [PrismaClientKnownRequestError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].siteSetting.findMany()` invocation in
+D:\앱 프로그램\합격예측 프로그램\police\.next\dev\server\chunks\[root-of-the-server]__00b70dfa._.js:265:169
+
+  262     ...__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$site$2d$settings$2e$constants$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["SITE_SETTING_DEFAULTS"]
+  263 };
+  264 try {
+→ 265     const rows = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].siteSetting.findMany(
+Server has closed the connection.
+    at <unknown> (src\lib\site-settings.ts:120:43)
+    at async readSiteSettingsFromDb (src\lib\site-settings.ts:120:18)
+    at async GET (src\app\api\site-settings\route.ts:8:22)
+  118 |
+  119 |   try {
+> 120 |     const rows = await prisma.siteSetting.findMany({
+      |                                           ^
+  121 |       where: {
+  122 |         key: {
+  123 |           in: Object.keys(SITE_SETTING_TYPES), {
+  code: 'P1017',
+  clientVersion: '5.22.0',
+  meta: [Object]
+}
+ GET /api/site-settings 200 in 19.5s (compile: 7ms, proxy.ts: 5ms, render: 19.5s)
+ GET /api/final-prediction 200 in 20.1s (compile: 4ms, proxy.ts: 19.5s, render: 567ms)
+ GET /api/site-settings 200 in 74ms (compile: 2ms, proxy.ts: 3ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 214ms (compile: 3ms, proxy.ts: 81ms, render: 131ms)
+ GET /api/site-settings 200 in 90ms (compile: 2ms, proxy.ts: 3ms, render: 84ms)
+ GET /api/notifications/rescore 200 in 180ms (compile: 2ms, proxy.ts: 96ms, render: 82ms)
+ GET /api/site-settings 200 in 143ms (compile: 3ms, proxy.ts: 3ms, render: 136ms)
+ GET /api/auth/session 200 in 201ms (compile: 13ms, proxy.ts: 153ms, render: 36ms)
+ GET /api/site-settings 200 in 57ms (compile: 2ms, proxy.ts: 3ms, render: 52ms)
+ POST /api/final-prediction 200 in 539ms (compile: 2ms, proxy.ts: 66ms, render: 471ms)
+ GET /api/site-settings 200 in 56ms (compile: 2ms, proxy.ts: 4ms, render: 50ms)
+ GET /api/final-prediction?submissionId=2600 200 in 591ms (compile: 2ms, proxy.ts: 64ms, render: 524ms)
+ GET /api/site-settings 200 in 69ms (compile: 3ms, proxy.ts: 7ms, render: 59ms)
+ GET /api/notifications/rescore 200 in 167ms (compile: 4ms, proxy.ts: 76ms, render: 87ms)
+ GET /api/site-settings 200 in 75ms (compile: 2ms, proxy.ts: 3ms, render: 69ms)
+ GET /api/auth/session 200 in 112ms (compile: 10ms, proxy.ts: 84ms, render: 17ms)
+ GET /api/site-settings 200 in 75ms (compile: 4ms, proxy.ts: 3ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 160ms (compile: 2ms, proxy.ts: 82ms, render: 76ms)
+ GET /api/site-settings 200 in 72ms (compile: 1037µs, proxy.ts: 5ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 245ms (compile: 3ms, proxy.ts: 80ms, render: 162ms)
+ GET /api/site-settings 200 in 76ms (compile: 2ms, proxy.ts: 4ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 158ms (compile: 2ms, proxy.ts: 84ms, render: 72ms)
+ GET /api/site-settings 200 in 68ms (compile: 4ms, proxy.ts: 3ms, render: 61ms)
+ GET /api/notifications/rescore 200 in 176ms (compile: 2ms, proxy.ts: 79ms, render: 95ms)
+ GET /api/site-settings 200 in 72ms (compile: 3ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 249ms (compile: 2ms, proxy.ts: 82ms, render: 166ms)
+ GET /api/site-settings 200 in 127ms (compile: 3ms, proxy.ts: 3ms, render: 121ms)
+ GET /api/notifications/rescore 200 in 291ms (compile: 3ms, proxy.ts: 136ms, render: 152ms)
+ GET /api/site-settings 200 in 155ms (compile: 4ms, proxy.ts: 3ms, render: 149ms)
+ GET /api/notifications/rescore 200 in 243ms (compile: 2ms, proxy.ts: 165ms, render: 76ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 4ms, render: 59ms)
+ GET /api/auth/session 200 in 102ms (compile: 13ms, proxy.ts: 76ms, render: 13ms)
+ GET /api/site-settings 200 in 58ms (compile: 2ms, proxy.ts: 4ms, render: 52ms)
+ GET / 200 in 337ms (compile: 4ms, proxy.ts: 63ms, render: 270ms)
+ GET /api/site-settings 200 in 21ms (compile: 9ms, proxy.ts: 9ms, render: 3ms)
+ GET /api/site-settings 200 in 26ms (compile: 13ms, proxy.ts: 9ms, render: 3ms)
+ GET /api/site-settings 200 in 71ms (compile: 4ms, proxy.ts: 15ms, render: 52ms)
+ GET /api/site-settings 200 in 69ms (compile: 6ms, proxy.ts: 4ms, render: 59ms)
+ GET /api/auth/session 200 in 143ms (compile: 10ms, proxy.ts: 97ms, render: 36ms)
+ GET /api/site-settings 200 in 75ms (compile: 4ms, proxy.ts: 6ms, render: 65ms)
+ GET /api/site-settings 200 in 158ms (compile: 8ms, proxy.ts: 6ms, render: 144ms)
+ GET /api/notifications/rescore 200 in 174ms (compile: 3ms, proxy.ts: 90ms, render: 81ms)
+ GET /api/main-stats 200 in 430ms (compile: 2ms, proxy.ts: 87ms, render: 341ms)
+ GET /api/notifications/rescore 200 in 269ms (compile: 3ms, proxy.ts: 171ms, render: 94ms)
+ GET /api/site-settings 200 in 68ms (compile: 5ms, proxy.ts: 10ms, render: 53ms)
+ GET /api/site-settings 200 in 78ms (compile: 8ms, proxy.ts: 10ms, render: 60ms)
+ GET /api/site-settings 200 in 81ms (compile: 12ms, proxy.ts: 10ms, render: 60ms)
+ GET /api/site-settings 200 in 87ms (compile: 15ms, proxy.ts: 9ms, render: 62ms)
+ GET /api/exams?active=true 200 in 242ms (compile: 3ms, proxy.ts: 89ms, render: 151ms)
+ GET /api/exams?active=true 200 in 264ms (compile: 7ms, proxy.ts: 102ms, render: 155ms)
+ GET /api/result 200 in 842ms (compile: 5ms, proxy.ts: 99ms, render: 738ms)
+ GET /api/result 200 in 843ms (compile: 4ms, proxy.ts: 111ms, render: 728ms)
+ GET /api/site-settings 200 in 62ms (compile: 3ms, proxy.ts: 3ms, render: 57ms)
+ GET /api/exam-number/check?examId=1&regionId=4&examNumber=MOCK-1-1772010354212-4-PUBLIC-039&examType=PUBLIC 200 in 203ms (compile: 3ms, proxy.ts: 68ms, render: 132ms)
+ GET /api/site-settings 200 in 68ms (compile: 4ms, proxy.ts: 5ms, render: 60ms)
+ GET /api/site-settings 200 in 77ms (compile: 10ms, proxy.ts: 5ms, render: 63ms)
+ GET /api/result 200 in 750ms (compile: 5ms, proxy.ts: 77ms, render: 668ms)
+ GET /api/result 200 in 790ms (compile: 5ms, proxy.ts: 123ms, render: 662ms)
+ GET /api/site-settings 200 in 66ms (compile: 6ms, proxy.ts: 4ms, render: 55ms)
+ GET /api/site-settings 200 in 67ms (compile: 3ms, proxy.ts: 5ms, render: 59ms)
+ GET /api/analysis/answer-change-impact?submissionId=2600 200 in 309ms (compile: 4ms, proxy.ts: 75ms, render: 230ms)
+ GET /api/analysis/answer-change-impact?submissionId=2600 200 in 312ms (compile: 6ms, proxy.ts: 77ms, render: 228ms)
+ GET /api/site-settings 200 in 71ms (compile: 4ms, proxy.ts: 6ms, render: 61ms)
+ GET /api/site-settings 200 in 70ms (compile: 8ms, proxy.ts: 5ms, render: 57ms)
+ GET /api/final-prediction 200 in 636ms (compile: 7ms, proxy.ts: 84ms, render: 545ms)
+ GET /api/final-prediction 200 in 659ms (compile: 3ms, proxy.ts: 85ms, render: 571ms)
+ GET /api/site-settings 200 in 64ms (compile: 6ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/site-settings 200 in 65ms (compile: 3ms, proxy.ts: 4ms, render: 58ms)
+ GET /api/prediction?page=1&limit=20 200 in 487ms (compile: 3ms, proxy.ts: 72ms, render: 412ms)
+ GET /api/prediction?page=1&limit=20 200 in 506ms (compile: 7ms, proxy.ts: 74ms, render: 425ms)
+ GET /api/site-settings 200 in 62ms (compile: 2ms, proxy.ts: 3ms, render: 57ms)
+ GET /api/site-settings 200 in 65ms (compile: 2ms, proxy.ts: 3ms, render: 60ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 360ms (compile: 3ms, proxy.ts: 68ms, render: 289ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 353ms (compile: 3ms, proxy.ts: 70ms, render: 280ms)
+ GET /api/site-settings 200 in 82ms (compile: 5ms, proxy.ts: 4ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 171ms (compile: 3ms, proxy.ts: 91ms, render: 76ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 4ms, render: 58ms)
+ GET /api/prediction?page=1&limit=20 200 in 495ms (compile: 3ms, proxy.ts: 72ms, render: 420ms)
+ GET /api/site-settings 200 in 60ms (compile: 2ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 348ms (compile: 2ms, proxy.ts: 67ms, render: 279ms)
+ GET /api/site-settings 200 in 77ms (compile: 4ms, proxy.ts: 3ms, render: 70ms)
+ GET /api/auth/session 200 in 134ms (compile: 12ms, proxy.ts: 84ms, render: 39ms)
+ GET /api/site-settings 200 in 77ms (compile: 1963µs, proxy.ts: 4ms, render: 71ms)
+ GET /api/notifications/rescore 200 in 182ms (compile: 2ms, proxy.ts: 83ms, render: 96ms)
+ GET /api/site-settings 200 in 68ms (compile: 2ms, proxy.ts: 4ms, render: 62ms)
+ GET /api/prediction?page=1&limit=20 200 in 505ms (compile: 2ms, proxy.ts: 76ms, render: 426ms)
+ GET /api/site-settings 200 in 62ms (compile: 2ms, proxy.ts: 4ms, render: 56ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 343ms (compile: 3ms, proxy.ts: 68ms, render: 272ms)
+ GET /api/site-settings 200 in 308ms (compile: 3ms, proxy.ts: 3ms, render: 302ms)
+ GET /api/notifications/rescore 200 in 407ms (compile: 3ms, proxy.ts: 316ms, render: 88ms)
+ GET /api/site-settings 200 in 68ms (compile: 4ms, proxy.ts: 4ms, render: 60ms)
+ GET /api/prediction?page=1&limit=20 200 in 514ms (compile: 2ms, proxy.ts: 77ms, render: 435ms)
+ GET /api/site-settings 200 in 64ms (compile: 3ms, proxy.ts: 4ms, render: 58ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 347ms (compile: 3ms, proxy.ts: 70ms, render: 275ms)
+ GET /api/site-settings 200 in 88ms (compile: 3ms, proxy.ts: 3ms, render: 83ms)
+ GET /api/notifications/rescore 200 in 203ms (compile: 3ms, proxy.ts: 96ms, render: 105ms)
+ GET /api/site-settings 200 in 74ms (compile: 3ms, proxy.ts: 3ms, render: 68ms)
+ GET /api/prediction?page=1&limit=20 200 in 599ms (compile: 3ms, proxy.ts: 82ms, render: 515ms)
+ GET /api/site-settings 200 in 68ms (compile: 1971µs, proxy.ts: 3ms, render: 62ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 395ms (compile: 2ms, proxy.ts: 73ms, render: 320ms)
+ GET /api/site-settings 200 in 149ms (compile: 3ms, proxy.ts: 3ms, render: 142ms)
+ GET /api/notifications/rescore 200 in 304ms (compile: 2ms, proxy.ts: 158ms, render: 144ms)
+ GET /api/site-settings 200 in 59ms (compile: 4ms, proxy.ts: 4ms, render: 52ms)
+ GET /api/prediction?page=1&limit=20 200 in 458ms (compile: 3ms, proxy.ts: 67ms, render: 389ms)
+ GET /api/site-settings 200 in 57ms (compile: 1972µs, proxy.ts: 4ms, render: 52ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 358ms (compile: 2ms, proxy.ts: 63ms, render: 293ms)
+ GET /api/site-settings 200 in 66ms (compile: 3ms, proxy.ts: 3ms, render: 60ms)
+ GET /api/notifications/rescore 200 in 162ms (compile: 2ms, proxy.ts: 73ms, render: 86ms)
+ GET /api/site-settings 200 in 56ms (compile: 3ms, proxy.ts: 4ms, render: 50ms)
+ GET /api/prediction?page=1&limit=20 200 in 453ms (compile: 2ms, proxy.ts: 64ms, render: 387ms)
+ GET /api/site-settings 200 in 57ms (compile: 3ms, proxy.ts: 5ms, render: 49ms)
+ GET /api/pass-cut-history?examId=1&regionId=4&examType=PUBLIC 200 in 296ms (compile: 3ms, proxy.ts: 64ms, render: 230ms)
+ GET /api/site-settings 200 in 75ms (compile: 3ms, proxy.ts: 4ms, render: 68ms)
+ GET /api/auth/session 200 in 108ms (compile: 11ms, proxy.ts: 83ms, render: 13ms)
+ GET /api/site-settings 200 in 60ms (compile: 2ms, proxy.ts: 5ms, render: 54ms)
+ GET /api/auth/session 200 in 98ms (compile: 12ms, proxy.ts: 69ms, render: 18ms)
+ GET /api/site-settings 200 in 61ms (compile: 5ms, proxy.ts: 5ms, render: 51ms)
+ GET /api/final-prediction 401 in 86ms (compile: 3ms, proxy.ts: 76ms, render: 8ms)
+ GET /api/site-settings 200 in 74ms (compile: 7ms, proxy.ts: 5ms, render: 61ms)
+ GET /api/final-prediction 401 in 112ms (compile: 3ms, proxy.ts: 88ms, render: 22ms)
+ GET /api/site-settings 200 in 59ms (compile: 3ms, proxy.ts: 5ms, render: 51ms)
+ GET / 200 in 286ms (compile: 3ms, proxy.ts: 67ms, render: 215ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 3ms, render: 56ms)
+ GET / 200 in 207ms (compile: 4ms, proxy.ts: 68ms, render: 135ms)
+ GET /api/site-settings 200 in 65ms (compile: 2ms, proxy.ts: 3ms, render: 60ms)
+ GET / 200 in 248ms (compile: 3ms, proxy.ts: 71ms, render: 174ms)
+ GET /api/site-settings 200 in 18ms (compile: 7ms, proxy.ts: 7ms, render: 3ms)
+ GET /api/site-settings 200 in 21ms (compile: 11ms, proxy.ts: 7ms, render: 3ms)
+ GET /api/site-settings 200 in 74ms (compile: 2ms, proxy.ts: 13ms, render: 59ms)
+ GET /api/auth/session 200 in 134ms (compile: 13ms, proxy.ts: 86ms, render: 35ms)
+ GET /api/site-settings 200 in 66ms (compile: 2ms, proxy.ts: 3ms, render: 60ms)
+ GET /login 200 in 120ms (compile: 15ms, proxy.ts: 71ms, render: 34ms)
+ GET /api/site-settings 200 in 64ms (compile: 2ms, proxy.ts: 4ms, render: 58ms)
+ GET /api/auth/providers 200 in 113ms (compile: 10ms, proxy.ts: 70ms, render: 33ms)
+ GET /api/site-settings 200 in 67ms (compile: 2ms, proxy.ts: 3ms, render: 62ms)
+ GET /api/auth/csrf 200 in 88ms (compile: 5ms, proxy.ts: 72ms, render: 11ms)
+ GET /api/site-settings 200 in 63ms (compile: 1887µs, proxy.ts: 3ms, render: 59ms)
+ POST /api/auth/callback/credentials 200 in 435ms (compile: 4ms, proxy.ts: 69ms, render: 361ms)
+ GET /api/site-settings 200 in 67ms (compile: 1930µs, proxy.ts: 3ms, render: 62ms)
+ GET /api/auth/session 200 in 94ms (compile: 4ms, proxy.ts: 72ms, render: 18ms)
+ GET /api/site-settings 200 in 75ms (compile: 6ms, proxy.ts: 7ms, render: 63ms)
+ GET /api/site-settings 200 in 68ms (compile: 3ms, proxy.ts: 9ms, render: 57ms)
+ GET /api/site-settings 200 in 67ms (compile: 5ms, proxy.ts: 8ms, render: 54ms)
+ GET /api/notifications/rescore 200 in 173ms (compile: 19ms, proxy.ts: 84ms, render: 70ms)
+ GET /api/site-settings 200 in 55ms (compile: 1903µs, proxy.ts: 3ms, render: 50ms)
+ GET /api/notifications/rescore 200 in 198ms (compile: 22ms, proxy.ts: 83ms, render: 94ms)
+ GET / 200 in 314ms (compile: 5ms, proxy.ts: 87ms, render: 223ms)
+ GET /api/site-settings 200 in 71ms (compile: 3ms, proxy.ts: 4ms, render: 65ms)
+[next-auth][error][JWT_SESSION_ERROR] 
+https://next-auth.js.org/errors#jwt_session_error decryption operation failed {
+  message: 'decryption operation failed',
+  stack: 'JWEDecryptionFailed: decryption operation failed\n' +
+    '    at gcmDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5871:15)\n' +
+    '    at decrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:5894:20)\n' +
+    '    at flattenedDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7391:52)\n' +
+    '    at async compactDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:7445:23)\n' +
+    '    at async jwtDecrypt (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_5929141f._.js:8907:23)\n' +
+    '    at async Object.decode (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:725:25)\n' +
+    '    at async Object.session (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:2038:34)\n' +
+    '    at async AuthHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3184:37)\n' +
+    '    at async NextAuthRouteHandler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3501:30)\n' +
+    '    at async NextAuth._args$ (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next-auth_1810886e._.js:3536:24)\n' +
+    '    at async AppRouteRouteModule.do (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:37866)\n' +
+    '    at async AppRouteRouteModule.handle (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:5:45156)\n' +
+    '    at async responseGenerator (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12522:38)\n' +
+    '    at async AppRouteRouteModule.handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\compiled\\next-server\\app-route-turbo.runtime.dev.js:1:191938)\n' +
+    '    at async handleResponse (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12585:32)\n' +
+    '    at async Module.handler (D:\\앱 프로그램\\합격예측 프로그램\\police\\.next\\dev\\server\\chunks\\node_modules_next_cfb5cf42._.js:12638:13)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1442:9)\n' +
+    '    at async DevServer.renderPageComponent (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1494:24)\n' +
+    '    at async DevServer.renderToResponseImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1544:32)\n' +
+    '    at async DevServer.pipeImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:1038:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\next-server.js:395:17)\n' +
+    '    at async DevServer.handleRequestImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\base-server.js:929:17)\n' +
+    '    at async D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:387:20\n' +
+    '    at async Span.traceAsyncFn (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\trace\\trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\dev\\next-dev-server.js:383:24)\n' +
+    '    at async invokeRender (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:248:21)\n' +
+    '    at async handleRequest (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:447:24)\n' +
+    '    at async requestHandlerImpl (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\router-server.js:496:13)\n' +
+    '    at async Server.requestListener (D:\\앱 프로그램\\합격예측 프로그램\\police\\node_modules\\next\\dist\\server\\lib\\start-server.js:226:13)',
+  name: 'JWEDecryptionFailed'
+}
+ GET /api/auth/session 200 in 128ms (compile: 12ms, proxy.ts: 80ms, render: 36ms)
+prisma:error Error in PostgreSQL connection: Error { kind: Io, cause: Some(Os { code: 10054, kind: ConnectionReset, message: "현재 연결은 원격 호스트에 의해 강제로 끊겼습니다." }) }
+prisma:error 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].submission.count()` invocation in
+D:\앱 프로그램\합격예측 프로그램\police\.next\dev\server\chunks\ssr\[root-of-the-server]__c261b848._.js:2421:151
+
+  2418         _all: true
+  2419     }
+  2420 }),
+→ 2421 __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].submission.count(
+Server has closed the connection.
+실시간 참여 현황 조회 중 오류가 발생했습니다. Error [PrismaClientKnownRequestError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].submission.count()` invocation in
+D:\앱 프로그램\합격예측 프로그램\police\.next\dev\server\chunks\ssr\[root-of-the-server]__c261b848._.js:2421:151
+
+  2418         _all: true
+  2419     }
+  2420 }),
+→ 2421 __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].submission.count(
+Server has closed the connection.
+    at <unknown> (src\app\page.tsx:46:25)
+    at async getLiveStats (src\app\page.tsx:35:86)
+    at async HomePage (src\app\page.tsx:108:5)
+  44 |         },
+  45 |       }),
+> 46 |       prisma.submission.count({
+     |                         ^
+  47 |         where: {
+  48 |           examId: activeExam.id,
+  49 |           createdAt: { gte: oneHourAgo }, {
+  code: 'P1017',
+  clientVersion: '5.22.0',
+  meta: [Object]
+}
+ GET / 200 in 19.3s (compile: 3ms, proxy.ts: 60ms, render: 19.2s)
+ GET /api/site-settings 200 in 68ms (compile: 7ms, proxy.ts: 5ms, render: 56ms)
+ GET /api/main-stats 401 in 93ms (compile: 2ms, proxy.ts: 77ms, render: 14ms)
+ GET /api/site-settings 200 in 83ms (compile: 9ms, proxy.ts: 7ms, render: 67ms)
+ GET /api/main-stats 401 in 129ms (compile: 3ms, proxy.ts: 94ms, render: 32ms)
+ GET /api/site-settings 200 in 67ms (compile: 3ms, proxy.ts: 4ms, render: 60ms)
+ GET / 200 in 265ms (compile: 4ms, proxy.ts: 74ms, render: 186ms)
+ GET /api/site-settings 200 in 24ms (compile: 9ms, proxy.ts: 10ms, render: 5ms)
+ GET /api/site-settings 200 in 28ms (compile: 14ms, proxy.ts: 10ms, render: 3ms)
+ GET /api/site-settings 200 in 67ms (compile: 2ms, proxy.ts: 14ms, render: 50ms)
+ GET /api/auth/session 200 in 127ms (compile: 12ms, proxy.ts: 83ms, render: 32ms)
+ GET /api/site-settings 200 in 53ms (compile: 2ms, proxy.ts: 3ms, render: 48ms)
+ GET /login 200 in 81ms (compile: 3ms, proxy.ts: 59ms, render: 19ms)
+ GET /api/site-settings 200 in 54ms (compile: 2ms, proxy.ts: 3ms, render: 50ms)
+ GET /api/auth/providers 200 in 104ms (compile: 11ms, proxy.ts: 60ms, render: 34ms)
+ GET /api/site-settings 200 in 105ms (compile: 2ms, proxy.ts: 3ms, render: 99ms)
+ GET /api/auth/csrf 200 in 149ms (compile: 4ms, proxy.ts: 110ms, render: 35ms)
+ GET /api/site-settings 200 in 59ms (compile: 2ms, proxy.ts: 3ms, render: 54ms)
+ POST /api/auth/callback/credentials 200 in 404ms (compile: 4ms, proxy.ts: 65ms, render: 335ms)
+ GET /api/site-settings 200 in 94ms (compile: 2ms, proxy.ts: 3ms, render: 88ms)
+ GET /api/auth/session 200 in 124ms (compile: 4ms, proxy.ts: 99ms, render: 21ms)
+ GET /api/site-settings 200 in 64ms (compile: 6ms, proxy.ts: 7ms, render: 50ms)
+ GET /api/site-settings 200 in 85ms (compile: 7ms, proxy.ts: 6ms, render: 72ms)
+ GET /api/site-settings 200 in 97ms (compile: 10ms, proxy.ts: 6ms, render: 82ms)
+ GET /api/notifications/rescore 200 in 194ms (compile: 4ms, proxy.ts: 123ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 196ms (compile: 10ms, proxy.ts: 111ms, render: 76ms)
+ GET /api/site-settings 200 in 77ms (compile: 3ms, proxy.ts: 4ms, render: 70ms)
+ GET / 200 in 316ms (compile: 4ms, proxy.ts: 82ms, render: 230ms)
+ GET / 200 in 236ms (compile: 4ms, proxy.ts: 85ms, render: 147ms)
+ GET /api/site-settings 200 in 65ms (compile: 3ms, proxy.ts: 5ms, render: 58ms)
+ GET /api/site-settings 200 in 65ms (compile: 6ms, proxy.ts: 4ms, render: 55ms)
+ GET /api/main-stats 200 in 351ms (compile: 4ms, proxy.ts: 74ms, render: 274ms)
+prisma:error Error in PostgreSQL connection: Error { kind: Io, cause: Some(Os { code: 10054, kind: ConnectionReset, message: "현재 연결은 원격 호스트에 의해 강제로 끊겼습니다." }) }
+prisma:error 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].submission.groupBy()` invocation in
+D:\앱 프로그램\합격예측 프로그램\police\.next\dev\server\chunks\[root-of-the-server]__8983ddca._.js:2070:153
+
+  2067         }
+  2068     ]
+  2069 }),
+→ 2070 __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].submission.groupBy(
+Server has closed the connection.
+풀서비스 메인 통계 조회 중 오류가 발생했습니다. Error [PrismaClientKnownRequestError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].submission.groupBy()` invocation in
+D:\앱 프로그램\합격예측 프로그램\police\.next\dev\server\chunks\[root-of-the-server]__8983ddca._.js:2070:153
+
+  2067         }
+  2068     ]
+  2069 }),
+→ 2070 __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].submission.groupBy(
+Server has closed the connection.
+    at <unknown> (src\app\api\main-stats\route.ts:564:25)
+    at async GET (src\app\api\main-stats\route.ts:545:7)
+  562 |         orderBy: [{ regionId: "asc" }, { examType: "asc" }, { finalScore: "desc" }],
+  563 |       }),
+> 564 |       prisma.submission.groupBy({
+      |                         ^
+  565 |         by: ["examType", "totalScore"],
+  566 |         where: {
+  567 |           examId: activeExam.id, {
+  code: 'P1017',
+  clientVersion: '5.22.0',
+  meta: [Object]
+}
+ GET /api/main-stats 500 in 19.7s (compile: 6ms, proxy.ts: 74ms, render: 19.6s)
+ GET /api/site-settings 200 in 77ms (compile: 3ms, proxy.ts: 4ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 179ms (compile: 3ms, proxy.ts: 88ms, render: 87ms)
+ GET /api/site-settings 200 in 60ms (compile: 3ms, proxy.ts: 3ms, render: 55ms)
+ GET /api/main-stats 200 in 353ms (compile: 4ms, proxy.ts: 65ms, render: 284ms)
+ GET /api/site-settings 200 in 73ms (compile: 2ms, proxy.ts: 5ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 166ms (compile: 3ms, proxy.ts: 81ms, render: 82ms)
+ GET /api/site-settings 200 in 63ms (compile: 2ms, proxy.ts: 3ms, render: 57ms)
+ GET /api/main-stats 200 in 356ms (compile: 3ms, proxy.ts: 69ms, render: 284ms)
+ GET /api/site-settings 200 in 75ms (compile: 3ms, proxy.ts: 4ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 162ms (compile: 2ms, proxy.ts: 83ms, render: 77ms)
+ GET /api/site-settings 200 in 60ms (compile: 2ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/main-stats 200 in 352ms (compile: 2ms, proxy.ts: 66ms, render: 284ms)
+ GET /api/site-settings 200 in 120ms (compile: 2ms, proxy.ts: 3ms, render: 115ms)
+ GET /api/notifications/rescore 200 in 233ms (compile: 2ms, proxy.ts: 128ms, render: 103ms)
+ GET /api/site-settings 200 in 67ms (compile: 4ms, proxy.ts: 3ms, render: 60ms)
+ GET /api/main-stats 200 in 375ms (compile: 2ms, proxy.ts: 74ms, render: 299ms)
+ GET /api/site-settings 200 in 73ms (compile: 2ms, proxy.ts: 4ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 153ms (compile: 3ms, proxy.ts: 81ms, render: 68ms)
+ GET /api/site-settings 200 in 150ms (compile: 4ms, proxy.ts: 4ms, render: 143ms)
+ GET /api/main-stats 200 in 559ms (compile: 3ms, proxy.ts: 158ms, render: 398ms)
+ GET /api/site-settings 200 in 80ms (compile: 2ms, proxy.ts: 4ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 169ms (compile: 3ms, proxy.ts: 89ms, render: 77ms)
+ GET /api/site-settings 200 in 69ms (compile: 3ms, proxy.ts: 3ms, render: 63ms)
+ GET /api/main-stats 200 in 373ms (compile: 3ms, proxy.ts: 75ms, render: 295ms)
+ GET /api/site-settings 200 in 79ms (compile: 4ms, proxy.ts: 6ms, render: 69ms)
+ GET /api/site-settings 200 in 81ms (compile: 8ms, proxy.ts: 6ms, render: 67ms)
+ GET /api/notifications/rescore 200 in 169ms (compile: 3ms, proxy.ts: 96ms, render: 71ms)
+ GET /api/main-stats 200 in 430ms (compile: 5ms, proxy.ts: 100ms, render: 326ms)
+ GET /api/site-settings 200 in 89ms (compile: 9ms, proxy.ts: 10ms, render: 70ms)
+ GET /api/site-settings 200 in 95ms (compile: 6ms, proxy.ts: 10ms, render: 78ms)
+ GET /api/notifications/rescore 401 in 130ms (compile: 4ms, proxy.ts: 119ms, render: 8ms)
+ GET /api/site-settings 200 in 125ms (compile: 13ms, proxy.ts: 10ms, render: 102ms)
+ GET /api/auth/session 200 in 160ms (compile: 20ms, proxy.ts: 132ms, render: 8ms)
+ GET /api/main-stats 401 in 167ms (compile: 3ms, proxy.ts: 152ms, render: 12ms)
+ GET /api/site-settings 200 in 62ms (compile: 2ms, proxy.ts: 3ms, render: 56ms)
+ GET /login 200 in 92ms (compile: 3ms, proxy.ts: 68ms, render: 20ms)
+ GET /api/site-settings 200 in 59ms (compile: 2ms, proxy.ts: 3ms, render: 54ms)
+ GET /api/auth/providers 200 in 103ms (compile: 11ms, proxy.ts: 66ms, render: 25ms)
+ GET /api/site-settings 200 in 65ms (compile: 2ms, proxy.ts: 3ms, render: 60ms)
+ GET /api/auth/csrf 200 in 102ms (compile: 4ms, proxy.ts: 70ms, render: 27ms)
+ GET /api/site-settings 200 in 61ms (compile: 2ms, proxy.ts: 3ms, render: 55ms)
+ POST /api/auth/callback/credentials 200 in 450ms (compile: 4ms, proxy.ts: 66ms, render: 380ms)
+ GET /api/site-settings 200 in 61ms (compile: 3ms, proxy.ts: 3ms, render: 55ms)
+ GET /api/auth/session 200 in 107ms (compile: 6ms, proxy.ts: 69ms, render: 31ms)
+ GET /api/site-settings 200 in 67ms (compile: 7ms, proxy.ts: 6ms, render: 53ms)
+ GET /api/site-settings 200 in 101ms (compile: 9ms, proxy.ts: 11ms, render: 81ms)
+ GET /api/site-settings 200 in 102ms (compile: 3ms, proxy.ts: 11ms, render: 88ms)
+ GET /api/notifications/rescore 200 in 202ms (compile: 4ms, proxy.ts: 121ms, render: 77ms)
+ GET /api/site-settings 200 in 141ms (compile: 1992µs, proxy.ts: 3ms, render: 135ms)
+ GET /api/notifications/rescore 200 in 307ms (compile: 8ms, proxy.ts: 123ms, render: 175ms)
+ GET / 200 in 328ms (compile: 3ms, proxy.ts: 84ms, render: 241ms)
+ GET / 200 in 303ms (compile: 3ms, proxy.ts: 150ms, render: 150ms)
+ GET /api/site-settings 200 in 68ms (compile: 3ms, proxy.ts: 5ms, render: 60ms)
+ GET /api/site-settings 200 in 78ms (compile: 8ms, proxy.ts: 4ms, render: 66ms)
+ GET /api/main-stats 200 in 459ms (compile: 3ms, proxy.ts: 86ms, render: 370ms)
+ GET /api/site-settings 200 in 72ms (compile: 7ms, proxy.ts: 10ms, render: 56ms)
+ GET /api/site-settings 200 in 84ms (compile: 14ms, proxy.ts: 10ms, render: 60ms)
+ GET /api/site-settings 200 in 85ms (compile: 10ms, proxy.ts: 10ms, render: 65ms)
+ GET /api/site-settings 200 in 100ms (compile: 17ms, proxy.ts: 10ms, render: 73ms)
+ GET /api/exams?active=true 200 in 267ms (compile: 3ms, proxy.ts: 100ms, render: 164ms)
+ GET /api/exams?active=true 200 in 279ms (compile: 7ms, proxy.ts: 110ms, render: 163ms)
+ GET /api/result 200 in 835ms (compile: 5ms, proxy.ts: 126ms, render: 704ms)
+ GET /api/result 200 in 841ms (compile: 11ms, proxy.ts: 112ms, render: 718ms)
+ GET /api/site-settings 200 in 62ms (compile: 3ms, proxy.ts: 3ms, render: 56ms)
+ GET /api/exam-number/check?examId=1&regionId=4&examNumber=MOCK-1-1772010354212-4-PUBLIC-039&examType=PUBLIC 200 in 206ms (compile: 3ms, proxy.ts: 69ms, render: 133ms)
+ GET /api/site-settings 200 in 65ms (compile: 4ms, proxy.ts: 6ms, render: 55ms)
+ GET /api/site-settings 200 in 76ms (compile: 8ms, proxy.ts: 6ms, render: 62ms)
+ GET /api/result?submissionId=2600 200 in 590ms (compile: 3ms, proxy.ts: 76ms, render: 512ms)
+ GET /api/result?submissionId=2600 200 in 627ms (compile: 2ms, proxy.ts: 85ms, render: 540ms)
+ GET /api/site-settings 200 in 65ms (compile: 4ms, proxy.ts: 6ms, render: 56ms)
+ GET /api/site-settings 200 in 75ms (compile: 7ms, proxy.ts: 6ms, render: 62ms)
+ GET /api/analysis/answer-change-impact?submissionId=2600 200 in 292ms (compile: 3ms, proxy.ts: 74ms, render: 215ms)
+ GET /api/analysis/answer-change-impact?submissionId=2600 200 in 312ms (compile: 4ms, proxy.ts: 84ms, render: 224ms)
+prisma:error Error in PostgreSQL connection: Error { kind: Io, cause: Some(Os { code: 10054, kind: ConnectionReset, message: "현재 연결은 원격 호스트에 의해 강제로 끊겼습니다." }) }
+prisma:error 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].submission.count()` invocation in
+D:\앱 프로그램\합격예측 프로그램\police\.next\dev\server\chunks\[root-of-the-server]__8983ddca._.js:1945:153
+
+  1942 }
+  1943 const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  1944 const [totalParticipants, examTypeStats, recentParticipants, latestSubmission, difficulty, quotas, mySubmissions] = await Promise.all([
+→ 1945     __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].submission.count(
+Server has closed the connection.
+풀서비스 메인 통계 조회 중 오류가 발생했습니다. Error [PrismaClientKnownRequestError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].submission.count()` invocation in
+D:\앱 프로그램\합격예측 프로그램\police\.next\dev\server\chunks\[root-of-the-server]__8983ddca._.js:1945:153
+
+  1942 }
+  1943 const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  1944 const [totalParticipants, examTypeStats, recentParticipants, latestSubmission, difficulty, quotas, mySubmissions] = await Promise.all([
+→ 1945     __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].submission.count(
+Server has closed the connection.
+    at <unknown> (src\app\api\main-stats\route.ts:467:27)
+    at async GET (src\app\api\main-stats\route.ts:466:7)
+  465 |     const [totalParticipants, examTypeStats, recentParticipants, latestSubmission, difficulty, quotas, mySubmissions] =
+  466 |       await Promise.all([
+> 467 |         prisma.submission.count({
+      |                           ^
+  468 |           where: { examId: activeExam.id },
+  469 |         }),
+  470 |         prisma.submission.groupBy({ {
+  code: 'P1017',
+  clientVersion: '5.22.0',
+  meta: [Object]
+}
+ GET /api/main-stats 500 in 19.4s (compile: 2ms, proxy.ts: 77ms, render: 19.3s)
+ GET /api/site-settings 200 in 86ms (compile: 4ms, proxy.ts: 6ms, render: 76ms)
+ GET /api/site-settings 200 in 86ms (compile: 7ms, proxy.ts: 6ms, render: 73ms)
+ GET /api/final-prediction 200 in 662ms (compile: 4ms, proxy.ts: 98ms, render: 559ms)
+ GET /api/final-prediction 200 in 662ms (compile: 9ms, proxy.ts: 99ms, render: 554ms)
+ GET /api/site-settings 200 in 73ms (compile: 2ms, proxy.ts: 4ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 171ms (compile: 3ms, proxy.ts: 81ms, render: 87ms)
+ GET /api/site-settings 200 in 78ms (compile: 4ms, proxy.ts: 4ms, render: 70ms)
+ POST /api/final-prediction 200 in 564ms (compile: 2ms, proxy.ts: 86ms, render: 475ms)
+ GET /api/site-settings 200 in 61ms (compile: 3ms, proxy.ts: 4ms, render: 54ms)
+ GET /api/final-prediction?submissionId=2600 200 in 622ms (compile: 6ms, proxy.ts: 67ms, render: 549ms)
+ GET /api/site-settings 200 in 123ms (compile: 12ms, proxy.ts: 8ms, render: 103ms)
+ GET /api/site-settings 200 in 192ms (compile: 10ms, proxy.ts: 10ms, render: 172ms)
+ GET /api/site-settings 200 in 201ms (compile: 7ms, proxy.ts: 8ms, render: 186ms)
+ GET /api/site-settings 200 in 201ms (compile: 10ms, proxy.ts: 9ms, render: 182ms)
+ GET /api/exams?active=true 200 in 384ms (compile: 3ms, proxy.ts: 146ms, render: 234ms)
+ GET /api/exams?active=true 200 in 406ms (compile: 9ms, proxy.ts: 226ms, render: 170ms)
+ GET /api/result 200 in 832ms (compile: 13ms, proxy.ts: 226ms, render: 594ms)
+ GET /api/result 200 in 861ms (compile: 5ms, proxy.ts: 218ms, render: 637ms)
+ GET /api/site-settings 200 in 62ms (compile: 3ms, proxy.ts: 5ms, render: 55ms)
+ GET /api/exam-number/check?examId=1&regionId=4&examNumber=MOCK-1-1772010354212-4-PUBLIC-039&examType=PUBLIC 200 in 204ms (compile: 5ms, proxy.ts: 70ms, render: 129ms)
+ GET /api/site-settings 200 in 67ms (compile: 4ms, proxy.ts: 6ms, render: 57ms)
+ GET /api/site-settings 200 in 68ms (compile: 7ms, proxy.ts: 5ms, render: 55ms)
+ GET /api/final-prediction 200 in 604ms (compile: 3ms, proxy.ts: 81ms, render: 519ms)
+ GET /api/final-prediction 200 in 644ms (compile: 3ms, proxy.ts: 84ms, render: 556ms)
+ GET /api/site-settings 200 in 76ms (compile: 3ms, proxy.ts: 3ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 182ms (compile: 2ms, proxy.ts: 84ms, render: 95ms)
+ GET /api/site-settings 200 in 147ms (compile: 2ms, proxy.ts: 3ms, render: 142ms)
+ GET /api/notifications/rescore 200 in 313ms (compile: 3ms, proxy.ts: 154ms, render: 156ms)
+ GET /api/site-settings 200 in 76ms (compile: 3ms, proxy.ts: 4ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 165ms (compile: 3ms, proxy.ts: 85ms, render: 78ms)
+ GET /api/site-settings 200 in 72ms (compile: 2ms, proxy.ts: 6ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 173ms (compile: 2ms, proxy.ts: 80ms, render: 90ms)
+ GET /api/site-settings 200 in 74ms (compile: 2ms, proxy.ts: 4ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 150ms (compile: 3ms, proxy.ts: 83ms, render: 63ms)
+ GET /api/site-settings 200 in 155ms (compile: 4ms, proxy.ts: 4ms, render: 147ms)
+ GET /api/notifications/rescore 200 in 326ms (compile: 3ms, proxy.ts: 165ms, render: 158ms)
+ GET /api/site-settings 200 in 88ms (compile: 3ms, proxy.ts: 4ms, render: 81ms)
+ GET /api/notifications/rescore 200 in 190ms (compile: 3ms, proxy.ts: 98ms, render: 90ms)
+ GET /api/site-settings 200 in 69ms (compile: 3ms, proxy.ts: 4ms, render: 62ms)
+ GET /api/notifications/rescore 200 in 149ms (compile: 3ms, proxy.ts: 78ms, render: 68ms)
+ GET /api/site-settings 200 in 150ms (compile: 2ms, proxy.ts: 5ms, render: 143ms)
+ GET /api/notifications/rescore 200 in 294ms (compile: 2ms, proxy.ts: 159ms, render: 133ms)
+ GET /api/site-settings 200 in 68ms (compile: 4ms, proxy.ts: 4ms, render: 60ms)
+ GET /api/notifications/rescore 200 in 209ms (compile: 3ms, proxy.ts: 78ms, render: 128ms)
+ GET /api/site-settings 200 in 75ms (compile: 4ms, proxy.ts: 3ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 169ms (compile: 2ms, proxy.ts: 84ms, render: 83ms)
+ GET /api/site-settings 200 in 168ms (compile: 3ms, proxy.ts: 3ms, render: 162ms)
+ GET /api/notifications/rescore 200 in 337ms (compile: 3ms, proxy.ts: 176ms, render: 157ms)
+ GET /api/site-settings 200 in 73ms (compile: 4ms, proxy.ts: 3ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 186ms (compile: 2ms, proxy.ts: 84ms, render: 100ms)
+ GET /api/site-settings 200 in 80ms (compile: 4ms, proxy.ts: 4ms, render: 73ms)
+ GET /api/notifications/rescore 200 in 178ms (compile: 3ms, proxy.ts: 90ms, render: 85ms)
+ GET /api/site-settings 200 in 164ms (compile: 4ms, proxy.ts: 3ms, render: 157ms)
+ GET /api/notifications/rescore 200 in 308ms (compile: 2ms, proxy.ts: 173ms, render: 132ms)
+ GET /api/site-settings 200 in 71ms (compile: 3ms, proxy.ts: 4ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 171ms (compile: 3ms, proxy.ts: 79ms, render: 89ms)
+ GET /api/site-settings 200 in 82ms (compile: 3ms, proxy.ts: 5ms, render: 75ms)
+ GET /api/notifications/rescore 200 in 164ms (compile: 2ms, proxy.ts: 90ms, render: 72ms)
+ GET /api/site-settings 200 in 210ms (compile: 3ms, proxy.ts: 5ms, render: 202ms)
+ GET /api/notifications/rescore 200 in 386ms (compile: 3ms, proxy.ts: 220ms, render: 163ms)
+ GET /api/site-settings 200 in 83ms (compile: 4ms, proxy.ts: 4ms, render: 75ms)
+ GET /api/notifications/rescore 200 in 233ms (compile: 4ms, proxy.ts: 94ms, render: 135ms)
+ GET /api/site-settings 200 in 74ms (compile: 5ms, proxy.ts: 4ms, render: 65ms)
+ GET /api/notifications/rescore 200 in 171ms (compile: 3ms, proxy.ts: 85ms, render: 82ms)
+ GET /api/site-settings 200 in 164ms (compile: 3ms, proxy.ts: 5ms, render: 157ms)
+ GET /api/notifications/rescore 200 in 348ms (compile: 3ms, proxy.ts: 174ms, render: 171ms)
+ GET /api/site-settings 200 in 70ms (compile: 4ms, proxy.ts: 4ms, render: 62ms)
+ GET /api/notifications/rescore 200 in 152ms (compile: 2ms, proxy.ts: 79ms, render: 71ms)
+ GET /api/site-settings 200 in 77ms (compile: 4ms, proxy.ts: 4ms, render: 69ms)
+ GET /api/notifications/rescore 200 in 174ms (compile: 3ms, proxy.ts: 86ms, render: 85ms)
+ GET /api/site-settings 200 in 159ms (compile: 4ms, proxy.ts: 4ms, render: 151ms)
+ GET /api/notifications/rescore 200 in 331ms (compile: 3ms, proxy.ts: 168ms, render: 161ms)
+ GET /api/site-settings 200 in 77ms (compile: 3ms, proxy.ts: 3ms, render: 71ms)
+ GET /api/notifications/rescore 200 in 161ms (compile: 2ms, proxy.ts: 87ms, render: 72ms)
+ GET /api/site-settings 200 in 78ms (compile: 4ms, proxy.ts: 4ms, render: 71ms)
+ GET /api/notifications/rescore 200 in 167ms (compile: 3ms, proxy.ts: 88ms, render: 77ms)
+ GET /api/site-settings 200 in 153ms (compile: 3ms, proxy.ts: 3ms, render: 146ms)
+ GET /api/notifications/rescore 200 in 300ms (compile: 3ms, proxy.ts: 162ms, render: 136ms)
+ GET /api/site-settings 200 in 70ms (compile: 4ms, proxy.ts: 3ms, render: 63ms)
+ GET /api/notifications/rescore 200 in 149ms (compile: 2ms, proxy.ts: 80ms, render: 67ms)
+ GET /api/site-settings 200 in 72ms (compile: 4ms, proxy.ts: 3ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 177ms (compile: 3ms, proxy.ts: 82ms, render: 92ms)
+ GET /api/site-settings 200 in 179ms (compile: 4ms, proxy.ts: 3ms, render: 172ms)
+ GET /api/notifications/rescore 200 in 346ms (compile: 3ms, proxy.ts: 188ms, render: 155ms)
+ GET /api/site-settings 200 in 77ms (compile: 4ms, proxy.ts: 3ms, render: 70ms)
+ GET /api/notifications/rescore 200 in 208ms (compile: 3ms, proxy.ts: 87ms, render: 119ms)
+ GET /api/site-settings 200 in 73ms (compile: 4ms, proxy.ts: 4ms, render: 65ms)
+ GET /api/notifications/rescore 200 in 184ms (compile: 3ms, proxy.ts: 83ms, render: 98ms)
+ GET /api/site-settings 200 in 160ms (compile: 3ms, proxy.ts: 4ms, render: 153ms)
+ GET /api/notifications/rescore 200 in 322ms (compile: 3ms, proxy.ts: 169ms, render: 150ms)
+ GET /api/site-settings 200 in 74ms (compile: 4ms, proxy.ts: 4ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 179ms (compile: 3ms, proxy.ts: 84ms, render: 92ms)
+ GET /api/site-settings 200 in 72ms (compile: 3ms, proxy.ts: 3ms, render: 65ms)
+ GET /api/notifications/rescore 200 in 179ms (compile: 2ms, proxy.ts: 82ms, render: 95ms)
+ GET /api/site-settings 200 in 153ms (compile: 4ms, proxy.ts: 3ms, render: 146ms)
+ GET /api/notifications/rescore 200 in 320ms (compile: 2ms, proxy.ts: 162ms, render: 156ms)
+ GET /api/site-settings 200 in 71ms (compile: 4ms, proxy.ts: 4ms, render: 63ms)
+ GET /api/notifications/rescore 200 in 177ms (compile: 3ms, proxy.ts: 80ms, render: 94ms)
+ GET /api/site-settings 200 in 166ms (compile: 4ms, proxy.ts: 4ms, render: 158ms)
+ GET /api/notifications/rescore 200 in 555ms (compile: 3ms, proxy.ts: 175ms, render: 378ms)
+ GET /api/site-settings 200 in 147ms (compile: 4ms, proxy.ts: 3ms, render: 140ms)
+ GET /api/notifications/rescore 200 in 323ms (compile: 4ms, proxy.ts: 157ms, render: 162ms)
+ GET /api/site-settings 200 in 73ms (compile: 3ms, proxy.ts: 4ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 160ms (compile: 2ms, proxy.ts: 82ms, render: 76ms)
+ GET /api/site-settings 200 in 67ms (compile: 2ms, proxy.ts: 5ms, render: 60ms)
+ GET /api/notifications/rescore 200 in 146ms (compile: 2ms, proxy.ts: 76ms, render: 67ms)
+ GET /api/site-settings 200 in 184ms (compile: 4ms, proxy.ts: 3ms, render: 177ms)
+ GET /api/notifications/rescore 200 in 358ms (compile: 2ms, proxy.ts: 193ms, render: 163ms)
+ GET /api/site-settings 200 in 78ms (compile: 4ms, proxy.ts: 3ms, render: 71ms)
+ GET /api/notifications/rescore 200 in 194ms (compile: 3ms, proxy.ts: 88ms, render: 103ms)
+ GET /api/site-settings 200 in 89ms (compile: 4ms, proxy.ts: 4ms, render: 80ms)
+ GET /api/notifications/rescore 200 in 201ms (compile: 3ms, proxy.ts: 98ms, render: 100ms)
+ GET /api/site-settings 200 in 154ms (compile: 3ms, proxy.ts: 4ms, render: 147ms)
+ GET /api/notifications/rescore 200 in 328ms (compile: 3ms, proxy.ts: 164ms, render: 161ms)
+ GET /api/site-settings 200 in 73ms (compile: 4ms, proxy.ts: 4ms, render: 66ms)
+ GET /api/notifications/rescore 200 in 178ms (compile: 2ms, proxy.ts: 82ms, render: 94ms)
+ GET /api/site-settings 200 in 71ms (compile: 4ms, proxy.ts: 3ms, render: 64ms)
+ GET /api/notifications/rescore 200 in 180ms (compile: 3ms, proxy.ts: 80ms, render: 97ms)
+ GET /api/site-settings 200 in 163ms (compile: 4ms, proxy.ts: 4ms, render: 155ms)
+ GET /api/notifications/rescore 200 in 325ms (compile: 2ms, proxy.ts: 173ms, render: 150ms)
+ GET /api/site-settings 200 in 76ms (compile: 4ms, proxy.ts: 4ms, render: 68ms)
+ GET /api/notifications/rescore 200 in 185ms (compile: 3ms, proxy.ts: 87ms, render: 95ms)
+ GET /api/site-settings 200 in 137ms (compile: 4ms, proxy.ts: 4ms, render: 129ms)
+ GET /api/notifications/rescore 200 in 298ms (compile: 4ms, proxy.ts: 147ms, render: 146ms)
+ GET /api/site-settings 200 in 169ms (compile: 2ms, proxy.ts: 5ms, render: 162ms)
+ GET /api/notifications/rescore 200 in 307ms (compile: 3ms, proxy.ts: 178ms, render: 125ms)
+ GET /api/site-settings 200 in 65ms (compile: 2ms, proxy.ts: 4ms, render: 59ms)
+ GET /api/notifications/rescore 200 in 144ms (compile: 2ms, proxy.ts: 75ms, render: 67ms)
+ GET /api/site-settings 200 in 81ms (compile: 4ms, proxy.ts: 3ms, render: 74ms)
+ GET /api/notifications/rescore 200 in 179ms (compile: 3ms, proxy.ts: 90ms, render: 86ms)
+^C^C

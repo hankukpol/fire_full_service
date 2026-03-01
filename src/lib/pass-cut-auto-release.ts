@@ -1,4 +1,4 @@
-﻿import { ExamType, PassCutSnapshotStatus, Role } from "@prisma/client";
+﻿import { ExamType, Gender, PassCutSnapshotStatus, Role } from "@prisma/client";
 import { buildPassCutPredictionRows, type PassCutPredictionRow } from "@/lib/pass-cut";
 import {
   createPassCutRelease,
@@ -31,6 +31,7 @@ interface AutoPassCutSettings {
 interface ScoreBandGroupRow {
   regionId: number;
   examType: ExamType;
+  gender: Gender;
   finalScore: number;
   _count: { _all: number };
 }
@@ -104,15 +105,20 @@ function toScoreKey(score: number): number {
   return Math.round(score * SCORE_KEY_SCALE);
 }
 
-function buildRegionExamKey(regionId: number, examType: ExamType): string {
-  return `${regionId}-${examType}`;
+function buildRegionExamKey(regionId: number, examType: ExamType, gender: Gender | null): string {
+  return `${regionId}-${examType}-${gender ?? "ALL"}`;
 }
 
-function examTypeLabel(examType: ExamType): string {
-  if (examType === ExamType.PUBLIC) return "공채";
+function examTypeLabel(examType: ExamType, gender: Gender | null): string {
+  if (examType === ExamType.PUBLIC) {
+    return gender === Gender.FEMALE ? "공채(여)" : "공채(남)";
+  }
   if (examType === ExamType.CAREER_RESCUE) return "구조";
-  if (examType === ExamType.CAREER_ACADEMIC) return "소방학과";
-  return "구급 경채";
+  if (examType === ExamType.CAREER_ACADEMIC) {
+    if (gender === null) return "소방학과(양성)";
+    return gender === Gender.FEMALE ? "소방학과(여)" : "소방학과(남)";
+  }
+  return gender === Gender.FEMALE ? "구급(여)" : "구급(남)";
 }
 
 function parseProfile(value: unknown, fallback: AutoPassCutProfile): AutoPassCutProfile {
@@ -191,11 +197,77 @@ function getScoreAtRank(
 }
 
 function getCutFromGroupedRows(
-  rows: ScoreBandGroupRow[],
+  rows: Array<{ finalScore: number; _count: { _all: number } }>,
   recruitCount: number
 ): number | null {
   const bands = rows.map((row) => ({ score: Number(row.finalScore), count: row._count._all }));
   return getScoreAtRank(bands, recruitCount);
+}
+
+function getCohortGenders(gender: Gender | null): Gender[] {
+  if (gender === null) {
+    return [Gender.MALE, Gender.FEMALE];
+  }
+  return [gender];
+}
+
+function getCohortInflowCount(
+  inflowMap: Map<string, number>,
+  regionId: number,
+  examType: ExamType,
+  gender: Gender | null
+): number {
+  return getCohortGenders(gender).reduce(
+    (sum, cohortGender) => sum + (inflowMap.get(buildRegionExamKey(regionId, examType, cohortGender)) ?? 0),
+    0
+  );
+}
+
+function getScoreBandsForCohort(
+  scoreBandMap: Map<string, ScoreBandGroupRow[]>,
+  regionId: number,
+  examType: ExamType,
+  gender: Gender | null
+): Array<{ finalScore: number; _count: { _all: number } }> {
+  const cohortGenders = getCohortGenders(gender);
+  if (cohortGenders.length === 1) {
+    return (scoreBandMap.get(buildRegionExamKey(regionId, examType, cohortGenders[0])) ?? []).map((row) => ({
+      finalScore: Number(row.finalScore),
+      _count: { _all: row._count._all },
+    }));
+  }
+
+  const merged = new Map<number, number>();
+  for (const cohortGender of cohortGenders) {
+    const rows = scoreBandMap.get(buildRegionExamKey(regionId, examType, cohortGender)) ?? [];
+    for (const band of rows) {
+      const score = Number(band.finalScore);
+      merged.set(score, (merged.get(score) ?? 0) + band._count._all);
+    }
+  }
+
+  return Array.from(merged.entries())
+    .sort((a, b) => b[0] - a[0])
+    .map(([score, count]) => ({
+      finalScore: score,
+      _count: { _all: count },
+    }));
+}
+
+function getCohortTieCount(
+  tieCountMap: Map<string, number>,
+  regionId: number,
+  examType: ExamType,
+  gender: Gender | null,
+  score: number | null
+): number | null {
+  if (score === null) return null;
+  const scoreKey = toScoreKey(score);
+  const count = getCohortGenders(gender).reduce((sum, cohortGender) => {
+    const tieKey = `${buildRegionExamKey(regionId, examType, cohortGender)}-${scoreKey}`;
+    return sum + (tieCountMap.get(tieKey) ?? 0);
+  }, 0);
+  return count > 0 ? count : null;
 }
 
 function isModeAllowed(trigger: "traffic" | "cron", mode: AutoPassCutMode): boolean {
@@ -262,7 +334,7 @@ function buildNoticeContent(params: {
           ? "-"
           : row.statusPayload.targetParticipantCount.toLocaleString("ko-KR");
 
-      return `- ${row.regionName}-${examTypeLabel(row.examType)}: ${statusText}, 참여 ${row.participantCount.toLocaleString("ko-KR")}명 / 목표 ${targetText}명 / 참여율 ${coverageText} / 안정도 ${stabilityText}`;
+      return `- ${row.regionName}-${examTypeLabel(row.examType, row.gender)}: ${statusText}, 참여 ${row.participantCount.toLocaleString("ko-KR")}명 / 목표 ${targetText}명 / 참여율 ${coverageText} / 안정도 ${stabilityText}`;
     });
 
   return [...header, ...lines].join("\n");
@@ -413,6 +485,10 @@ async function evaluateRows(params: {
   const populationWhere = {
     examId: params.examId,
     isSuspicious: false,
+    NOT: {
+      examType: ExamType.CAREER_RESCUE,
+      gender: Gender.FEMALE,
+    },
     subjectScores: {
       some: {},
       none: { isFailed: true },
@@ -423,7 +499,7 @@ async function evaluateRows(params: {
 
   const [recentInflows, currentScoreBands, historyScoreBands] = await Promise.all([
     prisma.submission.groupBy({
-      by: ["regionId", "examType"],
+      by: ["regionId", "examType", "gender"],
       where: {
         ...populationWhere,
         createdAt: { gte: oneHourAgo },
@@ -431,24 +507,24 @@ async function evaluateRows(params: {
       _count: { _all: true },
     }),
     prisma.submission.groupBy({
-      by: ["regionId", "examType", "finalScore"],
+      by: ["regionId", "examType", "gender", "finalScore"],
       where: populationWhere,
       _count: { _all: true },
-      orderBy: [{ regionId: "asc" }, { examType: "asc" }, { finalScore: "desc" }],
+      orderBy: [{ regionId: "asc" }, { examType: "asc" }, { gender: "asc" }, { finalScore: "desc" }],
     }),
     prisma.submission.groupBy({
-      by: ["regionId", "examType", "finalScore"],
+      by: ["regionId", "examType", "gender", "finalScore"],
       where: {
         ...populationWhere,
         createdAt: { lt: oneHourAgo },
       },
       _count: { _all: true },
-      orderBy: [{ regionId: "asc" }, { examType: "asc" }, { finalScore: "desc" }],
+      orderBy: [{ regionId: "asc" }, { examType: "asc" }, { gender: "asc" }, { finalScore: "desc" }],
     }),
   ]);
 
   const inflowMap = new Map(
-    recentInflows.map((row) => [buildRegionExamKey(row.regionId, row.examType), row._count._all] as const)
+    recentInflows.map((row) => [buildRegionExamKey(row.regionId, row.examType, row.gender), row._count._all] as const)
   );
 
   const currentBandMap = new Map<string, ScoreBandGroupRow[]>();
@@ -456,7 +532,7 @@ async function evaluateRows(params: {
   const tieCountMap = new Map<string, number>();
 
   for (const row of currentScoreBands) {
-    const key = buildRegionExamKey(row.regionId, row.examType);
+    const key = buildRegionExamKey(row.regionId, row.examType, row.gender);
     const list = currentBandMap.get(key) ?? [];
     list.push(row);
     currentBandMap.set(key, list);
@@ -466,7 +542,7 @@ async function evaluateRows(params: {
   }
 
   for (const row of historyScoreBands) {
-    const key = buildRegionExamKey(row.regionId, row.examType);
+    const key = buildRegionExamKey(row.regionId, row.examType, row.gender);
     const list = historyBandMap.get(key) ?? [];
     list.push(row);
     historyBandMap.set(key, list);
@@ -475,7 +551,12 @@ async function evaluateRows(params: {
   const evaluated: AutoPassCutEvaluatedRow[] = [];
 
   for (const row of baseRows) {
-    const key = buildRegionExamKey(row.regionId, row.examType);
+    const historyBands = getScoreBandsForCohort(
+      historyBandMap,
+      row.regionId,
+      row.examType,
+      row.gender
+    );
 
     const passMultiple = getPassMultiple(row.recruitCount, row.examType);
     const targetParticipantCount = Math.ceil(row.recruitCount * passMultiple);
@@ -484,17 +565,26 @@ async function evaluateRows(params: {
         ? roundNumber((row.participantCount / targetParticipantCount) * 100)
         : 0;
 
-    const recentInflowCount = inflowMap.get(key) ?? 0;
+    const recentInflowCount = getCohortInflowCount(
+      inflowMap,
+      row.regionId,
+      row.examType,
+      row.gender
+    );
     const recentInflowRatePct =
       targetParticipantCount > 0
         ? roundNumber((recentInflowCount / targetParticipantCount) * 100)
         : 0;
 
-    const tieKey =
-      row.oneMultipleCutScore === null ? null : `${key}-${toScoreKey(row.oneMultipleCutScore)}`;
-    const oneMultipleTieCount = tieKey ? (tieCountMap.get(tieKey) ?? 0) : null;
+    const oneMultipleTieCount = getCohortTieCount(
+      tieCountMap,
+      row.regionId,
+      row.examType,
+      row.gender,
+      row.oneMultipleCutScore
+    );
 
-    const cut60mAgo = getCutFromGroupedRows(historyBandMap.get(key) ?? [], row.recruitCount);
+    const cut60mAgo = getCutFromGroupedRows(historyBands, row.recruitCount);
     const cutShift =
       row.oneMultipleCutScore !== null && cut60mAgo !== null
         ? roundNumber(Math.abs(row.oneMultipleCutScore - cut60mAgo))
@@ -524,7 +614,7 @@ async function evaluateRows(params: {
 
     evaluated.push({
       ...row,
-      examTypeLabel: examTypeLabel(row.examType),
+      examTypeLabel: examTypeLabel(row.examType, row.gender),
       statusPayload: statusComputed.statusPayload,
       isReady: statusComputed.isReady,
       oneMultipleTieCount,
@@ -709,6 +799,7 @@ export async function runAutoPassCutRelease(params: {
       snapshots: rows.map((row) => ({
         regionId: row.regionId,
         examType: row.examType,
+        gender: row.gender,
         participantCount: row.participantCount,
         recruitCount: row.recruitCount,
         averageScore: row.averageScore,
@@ -799,3 +890,5 @@ export function toSnapshotFromEvaluatedRow(
     possibleMinScore: row.possibleMinScore,
   };
 }
+
+

@@ -29,6 +29,8 @@ interface SubjectInfo {
   id: number;
   name: string;
   examType: ExamType;
+  questionCount: number;
+  pointPerQuestion: number;
   maxScore: number;
 }
 
@@ -92,6 +94,7 @@ export interface GenerateMockDataOptions {
   careerRescueEnabled?: boolean;
   careerAcademicEnabled?: boolean;
   careerEmtEnabled?: boolean;
+  includeEmploymentBonus?: boolean;
   resetBeforeGenerate?: boolean;
   includeFinalPredictionMock?: boolean;
 }
@@ -145,7 +148,10 @@ function roundTwo(value: number): number {
   return Number(value.toFixed(2));
 }
 
-function randomGender(): Gender {
+function randomGender(examType?: ExamType): Gender {
+  if (examType === ExamType.CAREER_RESCUE) {
+    return Gender.MALE;
+  }
   return Math.random() < 0.7 ? Gender.MALE : Gender.FEMALE;
 }
 
@@ -187,14 +193,15 @@ function pickFitnessRawScore(): number {
   return roundOne(clamp(base + noise, 5, 60));
 }
 
-/** 자격증 가산점 랜덤 생성 (0~5%) */
+/** 자격증 가산점 랜덤 생성 (0~5점 정수) */
 function pickCertificateBonus(): number {
+  // 0점이 가장 많고, 1~5점은 균등 분포
   const roll = Math.random();
-  if (roll < 0.40) return 0;
-  if (roll < 0.55) return 1;
-  if (roll < 0.70) return 2;
-  if (roll < 0.82) return 3;
-  if (roll < 0.92) return 4;
+  if (roll < 0.35) return 0;
+  if (roll < 0.50) return 1;
+  if (roll < 0.65) return 2;
+  if (roll < 0.78) return 3;
+  if (roll < 0.90) return 4;
   return 5;
 }
 
@@ -286,7 +293,12 @@ function createScoreDraft(
       percent = clamp(percent - 0.28, 0.18, 0.5);
     }
 
-    const rawScore = roundOne(subject.maxScore * percent);
+    const correctCount = clamp(
+      Math.round(percent * subject.questionCount),
+      0,
+      subject.questionCount
+    );
+    const rawScore = roundOne(correctCount * subject.pointPerQuestion);
     const isFailed = rawScore < subject.maxScore * 0.4;
     const rating = pickDifficultyByPercent((rawScore / subject.maxScore) * 100);
 
@@ -481,6 +493,7 @@ export async function generateMockData(
   const careerRescueEnabled = options.careerRescueEnabled !== false;
   const careerAcademicEnabled = options.careerAcademicEnabled !== false;
   const careerEmtEnabled = options.careerEmtEnabled !== false;
+  const includeEmploymentBonus = options.includeEmploymentBonus === true;
   const resetBeforeGenerate = options.resetBeforeGenerate !== false;
   const includeFinalPredictionMock = options.includeFinalPredictionMock !== false;
 
@@ -513,6 +526,8 @@ export async function generateMockData(
         id: true,
         name: true,
         examType: true,
+        questionCount: true,
+        pointPerQuestion: true,
         maxScore: true,
       },
     }),
@@ -539,24 +554,32 @@ export async function generateMockData(
       .filter((subject) => subject.examType === ExamType.PUBLIC)
       .map((subject) => ({
         ...subject,
+        questionCount: Number(subject.questionCount),
+        pointPerQuestion: Number(subject.pointPerQuestion),
         maxScore: Number(subject.maxScore),
       })),
     [ExamType.CAREER_RESCUE]: subjects
       .filter((subject) => subject.examType === ExamType.CAREER_RESCUE)
       .map((subject) => ({
         ...subject,
+        questionCount: Number(subject.questionCount),
+        pointPerQuestion: Number(subject.pointPerQuestion),
         maxScore: Number(subject.maxScore),
       })),
     [ExamType.CAREER_ACADEMIC]: subjects
       .filter((subject) => subject.examType === ExamType.CAREER_RESCUE)
       .map((subject) => ({
         ...subject,
+        questionCount: Number(subject.questionCount),
+        pointPerQuestion: Number(subject.pointPerQuestion),
         maxScore: Number(subject.maxScore),
       })),
     [ExamType.CAREER_EMT]: subjects
       .filter((subject) => subject.examType === ExamType.CAREER_EMT)
       .map((subject) => ({
         ...subject,
+        questionCount: Number(subject.questionCount),
+        pointPerQuestion: Number(subject.pointPerQuestion),
         maxScore: Number(subject.maxScore),
       })),
   };
@@ -619,7 +642,7 @@ export async function generateMockData(
         const subjectScores = createScoreDraft(subjectsOfType, scorePercent, rankRatio > 0.82);
 
         const totalScore = roundOne(subjectScores.reduce((sum, item) => sum + item.rawScore, 0));
-        const bonusType = chooseBonusType(recruitCount);
+        const bonusType = includeEmploymentBonus ? chooseBonusType(recruitCount) : BonusType.NONE;
         const bonusRate = bonusRateOf(bonusType);
         const bonusScore = roundTwo(
           subjectScores.reduce((sum, item) => {
@@ -653,7 +676,7 @@ export async function generateMockData(
           examType,
           regionId: region.id,
           examNumber,
-          gender: randomGender(),
+          gender: randomGender(examType),
           totalScore: clamp(totalScore, 0, maxTotal),
           bonusType,
           bonusRate,

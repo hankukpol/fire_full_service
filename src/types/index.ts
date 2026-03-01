@@ -29,6 +29,8 @@ export interface RegisterFormData {
   name: string;
   phone: string;
   password: string;
+  agreedToTerms: boolean;    // 서비스 이용약관 동의 (필수)
+  agreedToPrivacy: boolean;  // 개인정보 수집·이용 동의 (필수)
 }
 
 export interface LoginFormData {

@@ -1,4 +1,4 @@
-import { ExamType, Prisma, Role } from "@prisma/client";
+import { ExamType, Gender, Prisma, Role, SubmissionScoringStatus } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
@@ -10,6 +10,9 @@ import { getSiteSettingsUncached } from "@/lib/site-settings";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+const MOCK_EXAM_NUMBER_PREFIX = "MOCK-";
+const PREVIEW_PRIMARY_EXAM_TYPE = ExamType.PUBLIC;
+const PREVIEW_PRIMARY_GENDER = Gender.MALE;
 
 const SUBJECT_ORDER: Record<ExamType, string[]> = {
   [ExamType.PUBLIC]: ["소방학개론", "소방관계법규", "행정법총론"],
@@ -115,7 +118,7 @@ function getGenderConditionSql(params: {
   const { examType, gender, recruitAcademicCombined } = params;
 
   if (examType === ExamType.CAREER_RESCUE) {
-    return Prisma.empty;
+    return Prisma.sql`AND s."gender"::text = ${Gender.MALE}`;
   }
 
   if (examType === ExamType.CAREER_ACADEMIC) {
@@ -156,68 +159,71 @@ export async function GET(request: NextRequest) {
       }
     : { userId };
 
-  let submission = await prisma.submission.findFirst({
-    where: submissionWhere,
-    orderBy: submissionId ? undefined : [{ createdAt: "desc" }, { id: "desc" }],
-    select: {
-      id: true,
-      userId: true,
-      examId: true,
-      examType: true,
-      regionId: true,
-      gender: true,
-      examNumber: true,
-      totalScore: true,
-      finalScore: true,
-      bonusType: true,
-      bonusRate: true,
-      certificateBonus: true,
-      createdAt: true,
-      editCount: true,
-      exam: {
-        select: {
-          id: true,
-          name: true,
-          year: true,
-          round: true,
-        },
+  const submissionDetailSelect = {
+    id: true,
+    userId: true,
+    examId: true,
+    examType: true,
+    regionId: true,
+    gender: true,
+    examNumber: true,
+    totalScore: true,
+    finalScore: true,
+    scoringStatus: true,
+    bonusType: true,
+    bonusRate: true,
+    certificateBonus: true,
+    createdAt: true,
+    editCount: true,
+    exam: {
+      select: {
+        id: true,
+        name: true,
+        year: true,
+        round: true,
       },
-      region: {
-        select: {
-          id: true,
-          name: true,
-        },
+    },
+    region: {
+      select: {
+        id: true,
+        name: true,
       },
-      subjectScores: {
-        select: {
-          subjectId: true,
-          rawScore: true,
-          isFailed: true,
-          subject: {
-            select: {
-              name: true,
-              questionCount: true,
-              maxScore: true,
-              pointPerQuestion: true,
-            },
+    },
+    subjectScores: {
+      select: {
+        subjectId: true,
+        rawScore: true,
+        isFailed: true,
+        subject: {
+          select: {
+            name: true,
+            questionCount: true,
+            maxScore: true,
+            pointPerQuestion: true,
           },
         },
       },
-      userAnswers: {
-        select: {
-          subjectId: true,
-          questionNumber: true,
-          selectedAnswer: true,
-          isCorrect: true,
-        },
-      },
-      difficultyRatings: {
-        select: {
-          subjectId: true,
-          rating: true,
-        },
+    },
+    userAnswers: {
+      select: {
+        subjectId: true,
+        questionNumber: true,
+        selectedAnswer: true,
+        isCorrect: true,
       },
     },
+    difficultyRatings: {
+      select: {
+        subjectId: true,
+        rating: true,
+      },
+    },
+  } as const;
+
+  let submission = await prisma.submission.findFirst({
+    where: submissionWhere,
+    orderBy: submissionId ? undefined : [{ createdAt: "desc" }, { id: "desc" }],
+    select: submissionDetailSelect,
   });
 
   // 2차: 관리자이고 본인 제출이 없으면, 활성 시험의 아무 제출로 대시보드 미리보기
@@ -227,27 +233,62 @@ export async function GET(request: NextRequest) {
       orderBy: [{ examDate: "desc" }, { id: "desc" }],
       select: { id: true },
     });
-    if (activeExam) {
+
+    const findMockPreviewSubmission = async (params: {
+      examId?: number;
+      preferPrimaryProfile: boolean;
+      requireNonCutoff: boolean;
+    }) =>
+      prisma.submission.findFirst({
+        where: {
+          examNumber: { startsWith: MOCK_EXAM_NUMBER_PREFIX },
+          isSuspicious: false,
+          ...(params.examId ? { examId: params.examId } : {}),
+          ...(params.preferPrimaryProfile
+            ? { examType: PREVIEW_PRIMARY_EXAM_TYPE, gender: PREVIEW_PRIMARY_GENDER }
+            : {}),
+          ...(params.requireNonCutoff
+            ? {
+                subjectScores: {
+                  some: {},
+                  none: { isFailed: true },
+                },
+              }
+            : {}),
+        },
+        orderBy: [{ finalScore: "desc" }, { createdAt: "desc" }, { id: "desc" }],
+        select: submissionDetailSelect,
+      });
+
+    const previewSearchOrder: Array<{
+      examId?: number;
+      preferPrimaryProfile: boolean;
+      requireNonCutoff: boolean;
+    }> = [
+      ...(activeExam
+        ? [
+            { examId: activeExam.id, preferPrimaryProfile: true, requireNonCutoff: true },
+            { examId: activeExam.id, preferPrimaryProfile: false, requireNonCutoff: true },
+            { examId: activeExam.id, preferPrimaryProfile: true, requireNonCutoff: false },
+            { examId: activeExam.id, preferPrimaryProfile: false, requireNonCutoff: false },
+          ]
+        : []),
+      { preferPrimaryProfile: true, requireNonCutoff: true },
+      { preferPrimaryProfile: false, requireNonCutoff: true },
+      { preferPrimaryProfile: true, requireNonCutoff: false },
+      { preferPrimaryProfile: false, requireNonCutoff: false },
+    ];
+
+    for (const condition of previewSearchOrder) {
+      submission = await findMockPreviewSubmission(condition);
+      if (submission) break;
+    }
+
+    if (!submission && activeExam) {
       submission = await prisma.submission.findFirst({
         where: { examId: activeExam.id },
         orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-        select: {
-          id: true, userId: true, examId: true, examType: true, regionId: true,
-          gender: true, examNumber: true, totalScore: true, finalScore: true,
-          bonusType: true, bonusRate: true, certificateBonus: true, createdAt: true, editCount: true,
-          exam: { select: { id: true, name: true, year: true, round: true } },
-          region: { select: { id: true, name: true } },
-          subjectScores: {
-            select: {
-              subjectId: true, rawScore: true, isFailed: true,
-              subject: { select: { name: true, questionCount: true, maxScore: true, pointPerQuestion: true } },
-            },
-          },
-          userAnswers: {
-            select: { subjectId: true, questionNumber: true, selectedAnswer: true, isCorrect: true },
-          },
-          difficultyRatings: { select: { subjectId: true, rating: true } },
-        },
+        select: submissionDetailSelect,
       });
     }
   }
@@ -259,6 +300,78 @@ export async function GET(request: NextRequest) {
   const settings = await getSiteSettingsUncached();
   const maxEditLimit = (settings["site.submissionEditLimit"] as number) ?? 3;
   const finalPredictionEnabled = Boolean(settings["site.finalPredictionEnabled"] ?? false);
+
+  if (submission.scoringStatus === SubmissionScoringStatus.PENDING) {
+    return NextResponse.json({
+      features: {
+        finalPredictionEnabled,
+      },
+      pending: {
+        isPending: true,
+        message: "답안 접수 완료. 가답안 발표 후 자동 채점됩니다.",
+      },
+      submission: {
+        id: submission.id,
+        isOwner: submission.userId === userId,
+        examId: submission.examId,
+        examName: submission.exam.name,
+        examYear: submission.exam.year,
+        examRound: submission.exam.round,
+        examType: submission.examType,
+        regionId: submission.region.id,
+        regionName: submission.region.name,
+        gender: submission.gender,
+        examNumber: submission.examNumber,
+        totalScore: Number(submission.totalScore),
+        finalScore: Number(submission.finalScore),
+        scoringStatus: submission.scoringStatus,
+        bonusType: submission.bonusType,
+        bonusRate: Number(submission.bonusRate),
+        certificateBonus: Number(submission.certificateBonus),
+        createdAt: submission.createdAt,
+        editCount: submission.editCount,
+        maxEditLimit,
+      },
+      scores: [],
+      subjectCorrectRateSummaries: [],
+      analysisSummary: {
+        examType: submission.examType,
+        subjects: [],
+        total: {
+          myScore: 0,
+          maxScore: 0,
+          myRank: 0,
+          totalParticipants: 0,
+          correctCount: 0,
+          questionCount: 0,
+          topPercent: 0,
+          percentile: 0,
+          averageScore: 0,
+          highestScore: 0,
+          lowestScore: 0,
+          top10Average: 0,
+          top30Average: 0,
+        },
+      },
+      participantStatus: {
+        currentRank: 0,
+        totalParticipants: 0,
+        topPercent: 0,
+        percentile: 0,
+        lastUpdated: new Date().toISOString(),
+      },
+      statistics: {
+        totalParticipants: 0,
+        totalRank: 0,
+        topPercent: 0,
+        totalPercentile: 0,
+        hasCutoff: false,
+        rankingBasis: "ALL_PARTICIPANTS",
+        cutoffSubjects: [],
+        bonusScore: 0,
+      },
+    });
+  }
 
   const answerKeys = await prisma.answerKey.findMany({
     where: { examId: submission.examId },
@@ -424,8 +537,8 @@ export async function GET(request: NextRequest) {
   const [totalAggregateRow] = await prisma.$queryRaw<TotalAggregateRow[]>(Prisma.sql`
     WITH ranked_total AS (
       SELECT
-        s."totalScore" AS "totalScore",
-        ROW_NUMBER() OVER (ORDER BY s."totalScore" DESC, s.id ASC) AS "rn",
+        s."finalScore" AS "finalScore",
+        ROW_NUMBER() OVER (ORDER BY s."finalScore" DESC, s.id ASC) AS "rn",
         COUNT(*) OVER () AS "cnt"
       FROM "Submission" s
       WHERE s."examId" = ${submission.examId}
@@ -435,11 +548,11 @@ export async function GET(request: NextRequest) {
         ${populationConditionSql}
     )
     SELECT
-      ROUND(AVG("totalScore")::numeric, 2) AS "averageScore",
-      MAX("totalScore") AS "highestScore",
-      MIN("totalScore") AS "lowestScore",
-      ROUND(AVG(CASE WHEN "rn" <= GREATEST(1, FLOOR("cnt" * 0.1)) THEN "totalScore" END)::numeric, 2) AS "top10Average",
-      ROUND(AVG(CASE WHEN "rn" <= GREATEST(1, FLOOR("cnt" * 0.3)) THEN "totalScore" END)::numeric, 2) AS "top30Average"
+      ROUND(AVG("finalScore")::numeric, 2) AS "averageScore",
+      MAX("finalScore") AS "highestScore",
+      MIN("finalScore") AS "lowestScore",
+      ROUND(AVG(CASE WHEN "rn" <= GREATEST(1, FLOOR("cnt" * 0.1)) THEN "finalScore" END)::numeric, 2) AS "top10Average",
+      ROUND(AVG(CASE WHEN "rn" <= GREATEST(1, FLOOR("cnt" * 0.3)) THEN "finalScore" END)::numeric, 2) AS "top30Average"
     FROM ranked_total
   `);
 
@@ -647,6 +760,7 @@ export async function GET(request: NextRequest) {
       examNumber: submission.examNumber,
       totalScore: Number(submission.totalScore),
       finalScore: Number(submission.finalScore),
+      scoringStatus: submission.scoringStatus,
       bonusType: submission.bonusType,
       bonusRate: Number(submission.bonusRate),
       certificateBonus: Number(submission.certificateBonus),
@@ -670,3 +784,4 @@ export async function GET(request: NextRequest) {
     },
   });
 }
+

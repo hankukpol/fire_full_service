@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { buildAdminPreviewCandidates } from "@/lib/admin-preview";
 import { authOptions } from "@/lib/auth";
 import { PredictionError, calculatePrediction } from "@/lib/prediction";
 
@@ -15,7 +16,6 @@ function parsePositiveInteger(value: string | null): number | undefined {
 
   return parsed;
 }
-
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
@@ -31,16 +31,30 @@ export async function GET(request: NextRequest) {
   const submissionId = parsePositiveInteger(searchParams.get("submissionId"));
   const page = parsePositiveInteger(searchParams.get("page"));
   const limit = parsePositiveInteger(searchParams.get("limit"));
-  const role = session.user.role === "ADMIN" ? "ADMIN" : "USER";
+  const isAdmin = session.user.role === "ADMIN";
+  const role = isAdmin ? "ADMIN" : "USER";
 
   try {
+    const adminPreviewCandidates = isAdmin ? await buildAdminPreviewCandidates() : [];
+    const effectiveSubmissionId = isAdmin
+      ? (submissionId ?? adminPreviewCandidates[0]?.submissionId)
+      : submissionId;
+
     const result = await calculatePrediction(userId, {
-      submissionId,
+      submissionId: effectiveSubmissionId,
       page,
       limit,
     }, role);
 
-    return NextResponse.json(result);
+    return NextResponse.json(
+      isAdmin
+        ? {
+            ...result,
+            isAdminPreview: true,
+            adminPreviewCandidates,
+          }
+        : result
+    );
   } catch (error) {
     if (error instanceof PredictionError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

@@ -1,4 +1,4 @@
-import { ExamType } from "@prisma/client";
+import { ExamType, SubmissionScoringStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import {
   buildAnswerKey,
@@ -233,9 +233,9 @@ export async function POST(request: NextRequest) {
     if (!examType) {
       return NextResponse.json(
         { error: "examType은 PUBLIC, CAREER_RESCUE, CAREER_ACADEMIC, CAREER_EMT 이어야 합니다." },
-        { status: 400 }
-      );
-    }
+      { status: 400 }
+    );
+  }
 
     const exam = await prisma.exam.findUnique({
       where: { id: examId },
@@ -275,16 +275,51 @@ export async function POST(request: NextRequest) {
       nextRows: normalizedRows,
       isConfirmed,
     });
+    const pendingSubmissionCount = await prisma.submission.count({
+      where: {
+        examId,
+        examType,
+        scoringStatus: SubmissionScoringStatus.PENDING,
+      },
+    });
+    const shouldRunRescore = changedQuestions > 0 || pendingSubmissionCount > 0;
+    const subjectNameById = new Map(subjects.map((subject) => [subject.id, subject.name] as const));
+    const runRescore = () =>
+      rescoreExam(examId, {
+        reason: reason ?? undefined,
+        adminUserId,
+        examType,
+        changedQuestions: answerChanges.map((change) => ({
+          subjectName: subjectNameById.get(change.subjectId) ?? `subject#${change.subjectId}`,
+          questionNumber: change.questionNumber,
+          oldAnswer: change.oldAnswer,
+          newAnswer: change.newAnswer,
+        })),
+      });
 
     if (!hasAnyChange) {
+      if (!shouldRunRescore) {
+        return NextResponse.json({
+          success: true,
+          savedCount: normalizedRows.length,
+          isConfirmed,
+          changedQuestions: 0,
+          statusChangedCount: 0,
+          rescoredCount: 0,
+          message: "변경된 정답이 없어 저장을 생략했습니다.",
+        });
+      }
+      const rescoreResult = await runRescore();
       return NextResponse.json({
         success: true,
         savedCount: normalizedRows.length,
         isConfirmed,
         changedQuestions: 0,
         statusChangedCount: 0,
-        rescoredCount: 0,
-        message: "변경된 정답이 없어 재채점을 생략했습니다.",
+        rescoredCount: rescoreResult.rescoredCount,
+        rescoreEventId: rescoreResult.rescoreEventId,
+        scoreChanges: rescoreResult.scoreChanges,
+        message: "정답 변경은 없지만 채점 대기 제출을 자동 채점했습니다.",
       });
     }
 
@@ -297,14 +332,29 @@ export async function POST(request: NextRequest) {
         data: { isConfirmed },
       });
 
+      if (!shouldRunRescore) {
+        return NextResponse.json({
+          success: true,
+          savedCount: normalizedRows.length,
+          isConfirmed,
+          changedQuestions: 0,
+          statusChangedCount,
+          rescoredCount: 0,
+          message: "정답 상태만 변경되어 재채점을 생략했습니다.",
+        });
+      }
+
+      const rescoreResult = await runRescore();
       return NextResponse.json({
         success: true,
         savedCount: normalizedRows.length,
         isConfirmed,
         changedQuestions: 0,
         statusChangedCount,
-        rescoredCount: 0,
-        message: "정답 상태만 변경되어 재채점을 생략했습니다.",
+        rescoredCount: rescoreResult.rescoredCount,
+        rescoreEventId: rescoreResult.rescoreEventId,
+        scoreChanges: rescoreResult.scoreChanges,
+        message: "정답 상태 변경 후 채점 대기 제출을 자동 채점했습니다.",
       });
     }
 
@@ -341,18 +391,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const subjectNameById = new Map(subjects.map((subject) => [subject.id, subject.name] as const));
-    const rescoreResult = await rescoreExam(examId, {
-      reason: reason ?? undefined,
-      adminUserId,
-      examType,
-      changedQuestions: answerChanges.map((change) => ({
-        subjectName: subjectNameById.get(change.subjectId) ?? `과목#${change.subjectId}`,
-        questionNumber: change.questionNumber,
-        oldAnswer: change.oldAnswer,
-        newAnswer: change.newAnswer,
-      })),
-    });
+    const rescoreResult = await runRescore();
 
     return NextResponse.json(
       {

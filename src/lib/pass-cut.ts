@@ -1,5 +1,5 @@
-import { ExamType } from "@prisma/client";
-import { getRegionRecruitCount } from "@/lib/exam-utils";
+import { ExamType, Gender } from "@prisma/client";
+import { estimateApplicants } from "@/lib/policy";
 import { getLikelyMultiple, getPassMultiple } from "@/lib/prediction";
 import { prisma } from "@/lib/prisma";
 
@@ -24,19 +24,48 @@ interface QuotaRow {
   applicantEmtFemale: number | null;
 }
 
-interface ScoreBandRow {
+interface ParticipantStatRow {
   regionId: number;
   examType: ExamType;
+  gender: Gender;
+  _count: {
+    _all: number;
+  };
+  _sum: {
+    finalScore: number | null;
+  };
+}
+
+interface ScoreBandStatRow {
+  regionId: number;
+  examType: ExamType;
+  gender: Gender;
   finalScore: number;
   _count: {
     _all: number;
   };
 }
 
+type CohortGender = Gender | null;
+
+interface CohortSpec {
+  examType: ExamType;
+  gender: CohortGender;
+  recruitCount: number;
+  applicantCount: number | null;
+  isApplicantCountExact: boolean;
+}
+
+type ParticipantAggregate = {
+  participantCount: number;
+  scoreSum: number;
+};
+
 export interface PassCutPredictionRow {
   regionId: number;
   regionName: string;
   examType: ExamType;
+  gender: CohortGender;
   recruitCount: number;
   applicantCount: number | null;
   estimatedApplicants: number;
@@ -54,11 +83,23 @@ function roundNumber(value: number): number {
   return Number(value.toFixed(2));
 }
 
-function buildScoreBands(rows: ScoreBandRow[]): Array<{ score: number; count: number }> {
-  return rows.map((row) => ({
-    score: Number(row.finalScore),
-    count: row._count._all,
-  }));
+function toApplicantInfo(raw: number | null): { applicantCount: number | null; isApplicantCountExact: boolean } {
+  if (typeof raw === "number" && Number.isFinite(raw) && raw >= 0) {
+    return {
+      applicantCount: Math.floor(raw),
+      isApplicantCountExact: true,
+    };
+  }
+
+  return {
+    applicantCount: null,
+    isApplicantCountExact: false,
+  };
+}
+
+function buildCohortKey(regionId: number, examType: ExamType, gender: CohortGender): string {
+  const genderKey = gender ?? "ALL";
+  return `${regionId}-${examType}-${genderKey}`;
 }
 
 function getScoreAtRank(
@@ -95,45 +136,145 @@ function getScoreRange(
   };
 }
 
-function getRegionApplicantCount(
+function toSortedScoreBands(scoreCountMap: Map<number, number>): Array<{ score: number; count: number }> {
+  return Array.from(scoreCountMap.entries())
+    .sort((a, b) => b[0] - a[0])
+    .map(([score, count]) => ({
+      score: Number(score),
+      count,
+    }));
+}
+
+function mergeScoreCount(
+  target: Map<number, number>,
+  source: Map<number, number> | undefined
+): void {
+  if (!source) return;
+  for (const [score, count] of source.entries()) {
+    target.set(score, (target.get(score) ?? 0) + count);
+  }
+}
+
+function buildCohortsForQuota(
   quota: QuotaRow,
-  examType: ExamType
-): { applicantCount: number | null; isExact: boolean } {
-  let raw: number | null = null;
-  switch (examType) {
-    case ExamType.PUBLIC:
-      raw = (quota.applicantPublicMale ?? 0) + (quota.applicantPublicFemale ?? 0);
-      // 두 값 모두 null이면 null 반환
-      if (quota.applicantPublicMale === null && quota.applicantPublicFemale === null) raw = null;
-      break;
-    case ExamType.CAREER_RESCUE:
-      raw = quota.applicantRescue;
-      break;
-    case ExamType.CAREER_ACADEMIC:
+  examTypes: ExamType[]
+): CohortSpec[] {
+  const cohorts: CohortSpec[] = [];
+
+  for (const examType of examTypes) {
+    if (examType === ExamType.PUBLIC) {
+      cohorts.push({
+        examType,
+        gender: Gender.MALE,
+        recruitCount: quota.recruitPublicMale,
+        ...toApplicantInfo(quota.applicantPublicMale),
+      });
+      cohorts.push({
+        examType,
+        gender: Gender.FEMALE,
+        recruitCount: quota.recruitPublicFemale,
+        ...toApplicantInfo(quota.applicantPublicFemale),
+      });
+      continue;
+    }
+
+    if (examType === ExamType.CAREER_RESCUE) {
+      cohorts.push({
+        examType,
+        gender: Gender.MALE,
+        recruitCount: quota.recruitRescue,
+        ...toApplicantInfo(quota.applicantRescue),
+      });
+      continue;
+    }
+
+    if (examType === ExamType.CAREER_ACADEMIC) {
       if (quota.recruitAcademicCombined > 0) {
-        raw = quota.applicantAcademicCombined;
+        cohorts.push({
+          examType,
+          gender: null,
+          recruitCount: quota.recruitAcademicCombined,
+          ...toApplicantInfo(quota.applicantAcademicCombined),
+        });
       } else {
-        raw = (quota.applicantAcademicMale ?? 0) + (quota.applicantAcademicFemale ?? 0);
-        if (quota.applicantAcademicMale === null && quota.applicantAcademicFemale === null) raw = null;
+        cohorts.push({
+          examType,
+          gender: Gender.MALE,
+          recruitCount: quota.recruitAcademicMale,
+          ...toApplicantInfo(quota.applicantAcademicMale),
+        });
+        cohorts.push({
+          examType,
+          gender: Gender.FEMALE,
+          recruitCount: quota.recruitAcademicFemale,
+          ...toApplicantInfo(quota.applicantAcademicFemale),
+        });
       }
-      break;
-    case ExamType.CAREER_EMT:
-      raw = (quota.applicantEmtMale ?? 0) + (quota.applicantEmtFemale ?? 0);
-      if (quota.applicantEmtMale === null && quota.applicantEmtFemale === null) raw = null;
-      break;
+      continue;
+    }
+
+    cohorts.push({
+      examType,
+      gender: Gender.MALE,
+      recruitCount: quota.recruitEmtMale,
+      ...toApplicantInfo(quota.applicantEmtMale),
+    });
+    cohorts.push({
+      examType,
+      gender: Gender.FEMALE,
+      recruitCount: quota.recruitEmtFemale,
+      ...toApplicantInfo(quota.applicantEmtFemale),
+    });
   }
 
-  if (typeof raw === "number" && Number.isFinite(raw) && raw >= 0) {
+  return cohorts.filter((cohort) => Number.isInteger(cohort.recruitCount) && cohort.recruitCount > 0);
+}
+
+function getParticipantAggregateForCohort(
+  participantMap: Map<string, ParticipantAggregate>,
+  regionId: number,
+  examType: ExamType,
+  gender: CohortGender
+): { participantCount: number; averageScore: number | null } {
+  if (gender !== null) {
+    const exact = participantMap.get(buildCohortKey(regionId, examType, gender));
+    if (!exact || exact.participantCount < 1) {
+      return { participantCount: 0, averageScore: null };
+    }
     return {
-      applicantCount: Math.floor(raw),
-      isExact: true,
+      participantCount: exact.participantCount,
+      averageScore: roundNumber(exact.scoreSum / exact.participantCount),
     };
   }
 
+  const male = participantMap.get(buildCohortKey(regionId, examType, Gender.MALE));
+  const female = participantMap.get(buildCohortKey(regionId, examType, Gender.FEMALE));
+  const participantCount = (male?.participantCount ?? 0) + (female?.participantCount ?? 0);
+  const scoreSum = (male?.scoreSum ?? 0) + (female?.scoreSum ?? 0);
+  if (participantCount < 1) {
+    return { participantCount: 0, averageScore: null };
+  }
+
   return {
-    applicantCount: null,
-    isExact: false,
+    participantCount,
+    averageScore: roundNumber(scoreSum / participantCount),
   };
+}
+
+function getScoreBandsForCohort(
+  scoreBandMap: Map<string, Map<number, number>>,
+  regionId: number,
+  examType: ExamType,
+  gender: CohortGender
+): Array<{ score: number; count: number }> {
+  if (gender !== null) {
+    return toSortedScoreBands(scoreBandMap.get(buildCohortKey(regionId, examType, gender)) ?? new Map());
+  }
+
+  const merged = new Map<number, number>();
+  mergeScoreCount(merged, scoreBandMap.get(buildCohortKey(regionId, examType, Gender.MALE)));
+  mergeScoreCount(merged, scoreBandMap.get(buildCohortKey(regionId, examType, Gender.FEMALE)));
+  return toSortedScoreBands(merged);
 }
 
 export async function buildPassCutPredictionRows(params: {
@@ -171,7 +312,7 @@ export async function buildPassCutPredictionRows(params: {
       ORDER BY r."name" ASC
     `,
     prisma.submission.groupBy({
-      by: ["regionId", "examType"],
+      by: ["regionId", "examType", "gender"],
       where: {
         examId: params.examId,
         isSuspicious: false,
@@ -185,12 +326,12 @@ export async function buildPassCutPredictionRows(params: {
       _count: {
         _all: true,
       },
-      _avg: {
+      _sum: {
         finalScore: true,
       },
     }),
     prisma.submission.groupBy({
-      by: ["regionId", "examType", "finalScore"],
+      by: ["regionId", "examType", "gender", "finalScore"],
       where: {
         examId: params.examId,
         isSuspicious: false,
@@ -204,57 +345,55 @@ export async function buildPassCutPredictionRows(params: {
       _count: {
         _all: true,
       },
-      orderBy: [{ regionId: "asc" }, { examType: "asc" }, { finalScore: "desc" }],
+      orderBy: [{ regionId: "asc" }, { examType: "asc" }, { gender: "asc" }, { finalScore: "desc" }],
     }),
   ]);
 
-  const participantMap = new Map(
-    participantStats.map((item) => [
-      `${item.regionId}-${item.examType}`,
+  const participantMap = new Map<string, ParticipantAggregate>();
+  for (const row of participantStats as ParticipantStatRow[]) {
+    participantMap.set(
+      buildCohortKey(row.regionId, row.examType, row.gender),
       {
-        participantCount: item._count._all,
-        averageScore: item._avg.finalScore === null ? null : roundNumber(Number(item._avg.finalScore)),
-      },
-    ])
-  );
+        participantCount: row._count._all,
+        scoreSum: row._sum.finalScore === null ? 0 : Number(row._sum.finalScore),
+      }
+    );
+  }
 
-  const scoreBandMap = new Map<string, ScoreBandRow[]>();
-  for (const row of scoreBandStats) {
-    const key = `${row.regionId}-${row.examType}`;
-    const current = scoreBandMap.get(key) ?? [];
-    current.push({
-      regionId: row.regionId,
-      examType: row.examType,
-      finalScore: Number(row.finalScore),
-      _count: {
-        _all: row._count._all,
-      },
-    });
-    scoreBandMap.set(key, current);
+  const scoreBandMap = new Map<string, Map<number, number>>();
+  for (const row of scoreBandStats as ScoreBandStatRow[]) {
+    const key = buildCohortKey(row.regionId, row.examType, row.gender);
+    const byScore = scoreBandMap.get(key) ?? new Map<number, number>();
+    byScore.set(Number(row.finalScore), (byScore.get(Number(row.finalScore)) ?? 0) + row._count._all);
+    scoreBandMap.set(key, byScore);
   }
 
   const rows: PassCutPredictionRow[] = [];
 
   for (const quota of quotaRows) {
-    for (const examType of examTypes) {
-      const recruitCount = getRegionRecruitCount(quota, examType);
-      if (!Number.isInteger(recruitCount) || recruitCount < 1) {
-        continue;
-      }
+    const cohorts = buildCohortsForQuota(quota, examTypes);
+    for (const cohort of cohorts) {
+      const recruitCount = cohort.recruitCount;
+      const participant = getParticipantAggregateForCohort(
+        participantMap,
+        quota.regionId,
+        cohort.examType,
+        cohort.gender
+      );
+      const scoreBands = getScoreBandsForCohort(
+        scoreBandMap,
+        quota.regionId,
+        cohort.examType,
+        cohort.gender
+      );
 
-      const participant = participantMap.get(`${quota.regionId}-${examType}`);
-      const participantCount = participant?.participantCount ?? 0;
-      const averageScore = participant?.averageScore ?? null;
-      const applicantCountInfo = getRegionApplicantCount(quota, examType);
       const competitionRate =
-        recruitCount > 0 && applicantCountInfo.applicantCount !== null
-          ? roundNumber(applicantCountInfo.applicantCount / recruitCount)
+        recruitCount > 0 && cohort.applicantCount !== null
+          ? roundNumber(cohort.applicantCount / recruitCount)
           : null;
 
-      const scoreBands = buildScoreBands(scoreBandMap.get(`${quota.regionId}-${examType}`) ?? []);
       const oneMultipleCutScore = getScoreAtRank(scoreBands, recruitCount);
-
-      const passMultiple = getPassMultiple(recruitCount, examType);
+      const passMultiple = getPassMultiple(recruitCount, cohort.examType);
       const likelyMultiple = getLikelyMultiple(passMultiple);
       const likelyMaxRank = Math.max(1, Math.floor(recruitCount * likelyMultiple));
       const passCount = Math.ceil(recruitCount * passMultiple);
@@ -266,14 +405,18 @@ export async function buildPassCutPredictionRows(params: {
       rows.push({
         regionId: quota.regionId,
         regionName: quota.regionName,
-        examType,
+        examType: cohort.examType,
+        gender: cohort.gender,
         recruitCount,
-        applicantCount: applicantCountInfo.applicantCount,
-        estimatedApplicants: applicantCountInfo.applicantCount ?? 0,
-        isApplicantCountExact: applicantCountInfo.isExact,
+        applicantCount: cohort.applicantCount,
+        estimatedApplicants: estimateApplicants({
+          applicantCount: cohort.applicantCount,
+          recruitCount,
+        }),
+        isApplicantCountExact: cohort.isApplicantCountExact,
         competitionRate,
-        participantCount,
-        averageScore,
+        participantCount: participant.participantCount,
+        averageScore: participant.averageScore,
         oneMultipleCutScore,
         sureMinScore,
         likelyMinScore: likelyRange.min,
@@ -288,7 +431,8 @@ export async function buildPassCutPredictionRows(params: {
 export function getCurrentPassCutSnapshot(
   rows: PassCutPredictionRow[],
   regionId: number,
-  examType: ExamType
+  examType: ExamType,
+  gender: CohortGender
 ): {
   participantCount: number;
   recruitCount: number;
@@ -299,7 +443,22 @@ export function getCurrentPassCutSnapshot(
   likelyMinScore: number | null;
   possibleMinScore: number | null;
 } {
-  const matched = rows.find((row) => row.regionId === regionId && row.examType === examType);
+  const matched =
+    rows.find(
+      (row) =>
+        row.regionId === regionId &&
+        row.examType === examType &&
+        row.gender === gender
+    ) ??
+    (gender !== null
+      ? rows.find(
+          (row) =>
+            row.regionId === regionId &&
+            row.examType === examType &&
+            row.gender === null
+        )
+      : undefined);
+
   if (!matched) {
     return {
       participantCount: 0,

@@ -1,8 +1,9 @@
-import { BonusType, ExamType, Gender, Prisma } from "@prisma/client";
+import { BonusType, ExamType, Gender, Prisma, SubmissionScoringStatus } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { invalidateCorrectRateCache } from "@/lib/correct-rate";
+import { parseExamNumberInput, validateExamNumberWithRange } from "@/lib/exam-number";
 import { getRegionRecruitCount, normalizeSubjectName, parsePositiveInt } from "@/lib/exam-utils";
 import { getPassMultiple } from "@/lib/prediction";
 import { prisma } from "@/lib/prisma";
@@ -80,6 +81,14 @@ function parseGender(value: unknown): Gender | null {
   return null;
 }
 
+/** 구조 경채(CAREER_RESCUE)는 남성만 채용 — 여성 제출 시 에러 메시지 반환 */
+function getRescueMaleOnlyError(examType: ExamType, gender: Gender): string | null {
+  if (examType === ExamType.CAREER_RESCUE && gender !== Gender.MALE) {
+    return "구조 경채는 남성만 채용하는 직렬입니다. 성별을 남성으로 선택해주세요.";
+  }
+  return null;
+}
+
 function parsePercent(value: unknown): number {
   if (typeof value === "number" && Number.isFinite(value)) {
     return value;
@@ -93,15 +102,8 @@ function parsePercent(value: unknown): number {
 
 function parseCertificateBonus(value: unknown): number {
   const parsed = parsePercent(value);
-  return parsed === 1 || parsed === 2 || parsed === 3 || parsed === 4 || parsed === 5 ? parsed : 0;
-}
-
-function parseExamNumber(value: unknown): string | null {
-  if (typeof value !== "string") return null;
-
-  const normalized = value.trim();
-  if (!normalized) return null;
-  return normalized.slice(0, 50);
+  // 0~5점 정수만 허용
+  return Number.isInteger(parsed) && parsed >= 0 && parsed <= 5 ? parsed : 0;
 }
 
 function parseNonNegativeInt(value: unknown): number | null {
@@ -228,30 +230,101 @@ function resolveBonusType(body: SubmissionRequestBody): BonusType {
   return getBonusTypeFromPercent(veteranPercent, heroPercent);
 }
 
-function isExamNumberOutOfRange(examNumber: string, rangeStart: string, rangeEnd: string): boolean {
-  const inputNum = Number(examNumber);
-  const startNum = Number(rangeStart);
-  const endNum = Number(rangeEnd);
-
-  if (Number.isInteger(inputNum) && Number.isInteger(startNum) && Number.isInteger(endNum)) {
-    return inputNum < startNum || inputNum > endNum;
-  }
-
-  return examNumber < rangeStart || examNumber > rangeEnd;
+interface SubmissionSubjectMeta {
+  id: number;
+  name: string;
+  questionCount: number;
 }
 
-function buildDifficultyRows(
+async function loadSubmissionSubjectMeta(examType: ExamType): Promise<SubmissionSubjectMeta[]> {
+  const subjects = await prisma.subject.findMany({
+    where: { examType },
+    select: {
+      id: true,
+      name: true,
+      questionCount: true,
+    },
+    orderBy: [{ id: "asc" }],
+  });
+
+  if (subjects.length < 1) {
+    throw new Error(`${examType} 과목 설정이 존재하지 않습니다.`);
+  }
+
+  return subjects.map((subject) => ({
+    id: subject.id,
+    name: subject.name,
+    questionCount: subject.questionCount,
+  }));
+}
+
+function buildSubjectIdByName(subjects: SubmissionSubjectMeta[]): Map<string, number> {
+  return new Map(
+    subjects.map((subject) => [normalizeSubjectName(subject.name), subject.id] as const)
+  );
+}
+
+async function resolveScoringReadiness(params: {
+  examId: number;
+  examType: ExamType;
+}): Promise<{
+  isReady: boolean;
+  subjects: SubmissionSubjectMeta[];
+}> {
+  const subjects = await loadSubmissionSubjectMeta(params.examType);
+  const subjectIds = subjects.map((subject) => subject.id);
+
+  const answerKeys = await prisma.answerKey.findMany({
+    where: {
+      examId: params.examId,
+      subjectId: { in: subjectIds },
+    },
+    select: {
+      subjectId: true,
+      questionNumber: true,
+    },
+  });
+
+  const questionNoBySubjectId = new Map<number, Set<number>>();
+  for (const answerKey of answerKeys) {
+    const bucket = questionNoBySubjectId.get(answerKey.subjectId) ?? new Set<number>();
+    bucket.add(answerKey.questionNumber);
+    questionNoBySubjectId.set(answerKey.subjectId, bucket);
+  }
+
+  for (const subject of subjects) {
+    const questionNos = questionNoBySubjectId.get(subject.id);
+    if (!questionNos || questionNos.size !== subject.questionCount) {
+      return {
+        isReady: false,
+        subjects,
+      };
+    }
+
+    for (let questionNo = 1; questionNo <= subject.questionCount; questionNo += 1) {
+      if (!questionNos.has(questionNo)) {
+        return {
+          isReady: false,
+          subjects,
+        };
+      }
+    }
+  }
+
+  return {
+    isReady: true,
+    subjects,
+  };
+}
+
+function buildDifficultyRowsFromSubjectMap(
   submissionId: number,
-  scoreResult: ScoreResult,
-  difficulty: DifficultyInput[]
+  difficulty: DifficultyInput[],
+  subjectIdByName: Map<string, number>
 ): Array<{ submissionId: number; subjectId: number; rating: DifficultyRatingValue }> {
   if (difficulty.length < 1) {
     return [];
   }
-
-  const subjectIdByName = new Map(
-    scoreResult.scores.map((score) => [normalizeSubjectName(score.subjectName), score.subjectId] as const)
-  );
 
   return difficulty
     .map((item) => {
@@ -267,6 +340,92 @@ function buildDifficultyRows(
     .filter(
       (row): row is { submissionId: number; subjectId: number; rating: DifficultyRatingValue } => row !== null
     );
+}
+
+function buildDifficultyRows(
+  submissionId: number,
+  scoreResult: ScoreResult,
+  difficulty: DifficultyInput[]
+): Array<{ submissionId: number; subjectId: number; rating: DifficultyRatingValue }> {
+  const subjectIdByName = new Map(
+    scoreResult.scores.map((score) => [normalizeSubjectName(score.subjectName), score.subjectId] as const)
+  );
+
+  return buildDifficultyRowsFromSubjectMap(submissionId, difficulty, subjectIdByName);
+}
+
+function buildPendingUserAnswerRows(params: {
+  submissionId: number;
+  answers: AnswerInput[];
+  subjects: SubmissionSubjectMeta[];
+}): Array<{
+  submissionId: number;
+  subjectId: number;
+  questionNumber: number;
+  selectedAnswer: number;
+  isCorrect: boolean;
+}> {
+  const subjectByName = new Map(
+    params.subjects.map((subject) => [normalizeSubjectName(subject.name), subject] as const)
+  );
+
+  return params.answers.map((answer) => {
+    const subject = subjectByName.get(normalizeSubjectName(answer.subjectName));
+    if (!subject) {
+      throw new Error(`${answer.subjectName} 과목이 현재 시험 유형에 존재하지 않습니다.`);
+    }
+    if (answer.questionNo < 1 || answer.questionNo > subject.questionCount) {
+      throw new Error(`${answer.subjectName} ${answer.questionNo}번 문항이 유효 범위를 벗어났습니다.`);
+    }
+
+    return {
+      submissionId: params.submissionId,
+      subjectId: subject.id,
+      questionNumber: answer.questionNo,
+      selectedAnswer: answer.answer,
+      isCorrect: false,
+    };
+  });
+}
+
+async function persistPendingSubmissionRows(
+  tx: Prisma.TransactionClient,
+  params: {
+    submissionId: number;
+    userAnswerRows: Array<{
+      submissionId: number;
+      subjectId: number;
+      questionNumber: number;
+      selectedAnswer: number;
+      isCorrect: boolean;
+    }>;
+    difficultyRows: Array<{
+      submissionId: number;
+      subjectId: number;
+      rating: DifficultyRatingValue;
+    }>;
+    replaceExisting: boolean;
+  }
+): Promise<void> {
+  const { submissionId, userAnswerRows, difficultyRows, replaceExisting } = params;
+
+  if (replaceExisting) {
+    await tx.userAnswer.deleteMany({ where: { submissionId } });
+    await tx.subjectScore.deleteMany({ where: { submissionId } });
+    await tx.difficultyRating.deleteMany({ where: { submissionId } });
+  }
+
+  if (userAnswerRows.length > 0) {
+    await tx.userAnswer.createMany({
+      data: userAnswerRows,
+    });
+  }
+
+  if (difficultyRows.length > 0) {
+    await tx.difficultyRating.createMany({
+      data: difficultyRows,
+    });
+  }
 }
 
 async function persistSubmissionScoreRows(
@@ -554,6 +713,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "성별 정보가 올바르지 않습니다." }, { status: 400 });
     }
 
+    const rescueMaleOnlyError = getRescueMaleOnlyError(examType, gender);
+    if (rescueMaleOnlyError) {
+      return NextResponse.json({ error: rescueMaleOnlyError }, { status: 400 });
+    }
+
     const regionId = parsePositiveInt(body.regionId);
     if (!regionId) {
       return NextResponse.json({ error: "지역 정보가 올바르지 않습니다." }, { status: 400 });
@@ -621,26 +785,65 @@ export async function POST(request: Request) {
       );
     }
 
-    const examNumber = parseExamNumber(body.examNumber);
+    const examNumber = parseExamNumberInput(body.examNumber);
     if (!examNumber) {
-      return NextResponse.json({ error: "응시번호는 필수 입력 항목입니다." }, { status: 400 });
+      return NextResponse.json({ error: "응시번호는 10자리 숫자로 입력해 주세요." }, { status: 400 });
     }
 
     const quota = await prisma.examRegionQuota.findUnique({
       where: { examId_regionId: { examId: exam.id, regionId } },
+      select: {
+        recruitPublicMale: true,
+        recruitPublicFemale: true,
+        recruitRescue: true,
+        recruitAcademicMale: true,
+        recruitAcademicFemale: true,
+        recruitAcademicCombined: true,
+        recruitEmtMale: true,
+        recruitEmtFemale: true,
+        applicantPublicMale: true,
+        applicantPublicFemale: true,
+        applicantRescue: true,
+        applicantAcademicMale: true,
+        applicantAcademicFemale: true,
+        applicantAcademicCombined: true,
+        applicantEmtMale: true,
+        applicantEmtFemale: true,
+        examNumberStartPublicMale: true,
+        examNumberEndPublicMale: true,
+        examNumberStartPublicFemale: true,
+        examNumberEndPublicFemale: true,
+        examNumberStartCareerRescue: true,
+        examNumberEndCareerRescue: true,
+        examNumberStartCareerAcademicMale: true,
+        examNumberEndCareerAcademicMale: true,
+        examNumberStartCareerAcademicFemale: true,
+        examNumberEndCareerAcademicFemale: true,
+        examNumberStartCareerAcademicCombined: true,
+        examNumberEndCareerAcademicCombined: true,
+        examNumberStartCareerEmtMale: true,
+        examNumberEndCareerEmtMale: true,
+        examNumberStartCareerEmtFemale: true,
+        examNumberEndCareerEmtFemale: true,
+        examNumberStart: true,
+        examNumberEnd: true,
+      },
     });
 
-    // 응시번호 범위 검증
-    const rangeStart = quota?.examNumberStart ?? null;
-    const rangeEnd = quota?.examNumberEnd ?? null;
-
-    if (rangeStart && rangeEnd) {
-      if (isExamNumberOutOfRange(examNumber, rangeStart, rangeEnd)) {
-        return NextResponse.json(
-          { error: `응시번호가 유효 범위(${rangeStart}~${rangeEnd}) 밖입니다.` },
-          { status: 400 }
-        );
-      }
+    const examNumberValidation = validateExamNumberWithRange({
+      examNumber,
+      context: {
+        examType,
+        gender,
+        recruitAcademicCombined: quota?.recruitAcademicCombined ?? 0,
+      },
+      quota,
+    });
+    if (!examNumberValidation.ok) {
+      return NextResponse.json(
+        { error: examNumberValidation.message ?? "응시번호 검증에 실패했습니다." },
+        { status: 400 }
+      );
     }
 
     const bonusType = resolveBonusType(body);
@@ -660,32 +863,50 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: bonusMinRecruitError }, { status: 400 });
     }
 
-    const scoreResult = await calculateScore({
+    const scoringReadiness = await resolveScoringReadiness({
       examId: exam.id,
       examType,
-      answers,
-      bonusType,
-      bonusRate,
     });
+    const scoringStatus = scoringReadiness.isReady
+      ? SubmissionScoringStatus.SCORED
+      : SubmissionScoringStatus.PENDING;
+    const subjectIdByName = buildSubjectIdByName(scoringReadiness.subjects);
+    let scoreResult: ScoreResult | null = null;
+    let isSuspicious = false;
+    let suspiciousReason: string | null = null;
 
-    await validateBonusPassCap({
-      examId: exam.id,
-      regionId: region.id,
-      examType,
-      recruitCount,
-      bonusType,
-      totalScore: scoreResult.totalScore,
-      finalScore: scoreResult.finalScore,
-      hasCutoff: scoreResult.hasCutoff,
-    });
+    if (scoringStatus === SubmissionScoringStatus.SCORED) {
+      scoreResult = await calculateScore({
+        examId: exam.id,
+        examType,
+        answers,
+        bonusType,
+        bonusRate,
+      });
 
-    const maxScore = examType === ExamType.PUBLIC ? 300 : 200;
-    const answerPatternResult = validateAnswerPattern({
-      answers: answers.map((a) => a.answer),
-      totalScore: scoreResult.totalScore,
-      maxScore,
-      submitDurationMs,
-    });
+      await validateBonusPassCap({
+        examId: exam.id,
+        regionId: region.id,
+        examType,
+        recruitCount,
+        bonusType,
+        totalScore: scoreResult.totalScore,
+        finalScore: scoreResult.finalScore,
+        hasCutoff: scoreResult.hasCutoff,
+      });
+
+      const maxScore = examType === ExamType.PUBLIC ? 300 : 200;
+      const answerPatternResult = validateAnswerPattern({
+        answers: answers.map((a) => a.answer),
+        totalScore: scoreResult.totalScore,
+        maxScore,
+        submitDurationMs,
+      });
+      isSuspicious = answerPatternResult.isSuspicious;
+      suspiciousReason = answerPatternResult.isSuspicious
+        ? answerPatternResult.reasons.join("; ")
+        : null;
+    }
 
     const submission = await prisma.$transaction(async (tx) => {
       const savedSubmission = await tx.submission.create({
@@ -696,25 +917,43 @@ export async function POST(request: Request) {
           examType,
           gender,
           examNumber,
-          totalScore: scoreResult.totalScore,
+          totalScore: scoreResult?.totalScore ?? 0,
           bonusType,
           bonusRate,
           certificateBonus,
-          finalScore: scoreResult.finalScore,
+          finalScore: scoreResult?.finalScore ?? 0,
+          scoringStatus,
           submitDurationMs,
-          isSuspicious: answerPatternResult.isSuspicious,
-          suspiciousReason: answerPatternResult.isSuspicious
-            ? answerPatternResult.reasons.join("; ")
-            : null,
+          isSuspicious,
+          suspiciousReason,
         },
       });
 
-      await persistSubmissionScoreRows(tx, {
-        submissionId: savedSubmission.id,
-        scoreResult,
-        difficulty,
-        replaceExisting: false,
-      });
+      if (scoreResult) {
+        await persistSubmissionScoreRows(tx, {
+          submissionId: savedSubmission.id,
+          scoreResult,
+          difficulty,
+          replaceExisting: false,
+        });
+      } else {
+        const pendingAnswerRows = buildPendingUserAnswerRows({
+          submissionId: savedSubmission.id,
+          answers,
+          subjects: scoringReadiness.subjects,
+        });
+        const difficultyRows = buildDifficultyRowsFromSubjectMap(
+          savedSubmission.id,
+          difficulty,
+          subjectIdByName
+        );
+        await persistPendingSubmissionRows(tx, {
+          submissionId: savedSubmission.id,
+          userAnswerRows: pendingAnswerRows,
+          difficultyRows,
+          replaceExisting: false,
+        });
+      }
 
       await tx.submissionLog.create({
         data: {
@@ -729,11 +968,18 @@ export async function POST(request: Request) {
       return savedSubmission;
     });
 
-    invalidateCorrectRateCache(exam.id, examType);
+    if (scoreResult) {
+      invalidateCorrectRateCache(exam.id, examType);
+    }
 
     return NextResponse.json({
       success: true,
       submissionId: submission.id,
+      scoringStatus,
+      message:
+        scoringStatus === SubmissionScoringStatus.PENDING
+          ? "답안 접수가 완료되었습니다. 가답안 발표 후 자동 채점됩니다."
+          : null,
       result: scoreResult,
     });
   } catch (error) {
@@ -791,7 +1037,7 @@ export async function PUT(request: Request) {
       where: { id: submissionId },
       select: {
         id: true, userId: true, examId: true, editCount: true,
-        examType: true, regionId: true, examNumber: true, gender: true, bonusType: true, certificateBonus: true,
+        examType: true, regionId: true, examNumber: true, gender: true, bonusType: true, certificateBonus: true, scoringStatus: true,
       },
     });
 
@@ -821,6 +1067,11 @@ export async function PUT(request: Request) {
     const gender = parseGender(body.gender);
     if (!gender) {
       return NextResponse.json({ error: "성별 정보가 올바르지 않습니다." }, { status: 400 });
+    }
+
+    const rescueMaleOnlyErrorEdit = getRescueMaleOnlyError(examType, gender);
+    if (rescueMaleOnlyErrorEdit) {
+      return NextResponse.json({ error: rescueMaleOnlyErrorEdit }, { status: 400 });
     }
 
     const regionId = parsePositiveInt(body.regionId);
@@ -875,26 +1126,65 @@ export async function PUT(request: Request) {
       );
     }
 
-    const examNumber = parseExamNumber(body.examNumber);
+    const examNumber = parseExamNumberInput(body.examNumber);
     if (!examNumber) {
-      return NextResponse.json({ error: "응시번호는 필수 입력 항목입니다." }, { status: 400 });
+      return NextResponse.json({ error: "응시번호는 10자리 숫자로 입력해 주세요." }, { status: 400 });
     }
 
     const quotaForEdit = await prisma.examRegionQuota.findUnique({
       where: { examId_regionId: { examId: exam.id, regionId } },
+      select: {
+        recruitPublicMale: true,
+        recruitPublicFemale: true,
+        recruitRescue: true,
+        recruitAcademicMale: true,
+        recruitAcademicFemale: true,
+        recruitAcademicCombined: true,
+        recruitEmtMale: true,
+        recruitEmtFemale: true,
+        applicantPublicMale: true,
+        applicantPublicFemale: true,
+        applicantRescue: true,
+        applicantAcademicMale: true,
+        applicantAcademicFemale: true,
+        applicantAcademicCombined: true,
+        applicantEmtMale: true,
+        applicantEmtFemale: true,
+        examNumberStartPublicMale: true,
+        examNumberEndPublicMale: true,
+        examNumberStartPublicFemale: true,
+        examNumberEndPublicFemale: true,
+        examNumberStartCareerRescue: true,
+        examNumberEndCareerRescue: true,
+        examNumberStartCareerAcademicMale: true,
+        examNumberEndCareerAcademicMale: true,
+        examNumberStartCareerAcademicFemale: true,
+        examNumberEndCareerAcademicFemale: true,
+        examNumberStartCareerAcademicCombined: true,
+        examNumberEndCareerAcademicCombined: true,
+        examNumberStartCareerEmtMale: true,
+        examNumberEndCareerEmtMale: true,
+        examNumberStartCareerEmtFemale: true,
+        examNumberEndCareerEmtFemale: true,
+        examNumberStart: true,
+        examNumberEnd: true,
+      },
     });
 
-    // 응시번호 범위 검증
-    const editRangeStart = quotaForEdit?.examNumberStart ?? null;
-    const editRangeEnd = quotaForEdit?.examNumberEnd ?? null;
-
-    if (editRangeStart && editRangeEnd) {
-      if (isExamNumberOutOfRange(examNumber, editRangeStart, editRangeEnd)) {
-        return NextResponse.json(
-          { error: `응시번호가 유효 범위(${editRangeStart}~${editRangeEnd}) 밖입니다.` },
-          { status: 400 }
-        );
-      }
+    const editExamNumberValidation = validateExamNumberWithRange({
+      examNumber,
+      context: {
+        examType,
+        gender,
+        recruitAcademicCombined: quotaForEdit?.recruitAcademicCombined ?? 0,
+      },
+      quota: quotaForEdit,
+    });
+    if (!editExamNumberValidation.ok) {
+      return NextResponse.json(
+        { error: editExamNumberValidation.message ?? "응시번호 검증에 실패했습니다." },
+        { status: 400 }
+      );
     }
 
     const bonusType = resolveBonusType(body);
@@ -914,33 +1204,51 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: bonusMinRecruitError }, { status: 400 });
     }
 
-    const scoreResult = await calculateScore({
+    const scoringReadiness = await resolveScoringReadiness({
       examId: exam.id,
       examType,
-      answers,
-      bonusType,
-      bonusRate,
     });
+    const scoringStatus = scoringReadiness.isReady
+      ? SubmissionScoringStatus.SCORED
+      : SubmissionScoringStatus.PENDING;
+    const subjectIdByName = buildSubjectIdByName(scoringReadiness.subjects);
+    let scoreResult: ScoreResult | null = null;
+    let isSuspicious = false;
+    let suspiciousReason: string | null = null;
 
-    await validateBonusPassCap({
-      examId: exam.id,
-      regionId: region.id,
-      examType,
-      recruitCount,
-      submissionId,
-      bonusType,
-      totalScore: scoreResult.totalScore,
-      finalScore: scoreResult.finalScore,
-      hasCutoff: scoreResult.hasCutoff,
-    });
+    if (scoringStatus === SubmissionScoringStatus.SCORED) {
+      scoreResult = await calculateScore({
+        examId: exam.id,
+        examType,
+        answers,
+        bonusType,
+        bonusRate,
+      });
 
-    const maxScoreEdit = examType === ExamType.PUBLIC ? 300 : 200;
-    const answerPatternResult = validateAnswerPattern({
-      answers: answers.map((a) => a.answer),
-      totalScore: scoreResult.totalScore,
-      maxScore: maxScoreEdit,
-      submitDurationMs: submitDurationMsEdit,
-    });
+      await validateBonusPassCap({
+        examId: exam.id,
+        regionId: region.id,
+        examType,
+        recruitCount,
+        submissionId,
+        bonusType,
+        totalScore: scoreResult.totalScore,
+        finalScore: scoreResult.finalScore,
+        hasCutoff: scoreResult.hasCutoff,
+      });
+
+      const maxScoreEdit = examType === ExamType.PUBLIC ? 300 : 200;
+      const answerPatternResult = validateAnswerPattern({
+        answers: answers.map((a) => a.answer),
+        totalScore: scoreResult.totalScore,
+        maxScore: maxScoreEdit,
+        submitDurationMs: submitDurationMsEdit,
+      });
+      isSuspicious = answerPatternResult.isSuspicious;
+      suspiciousReason = answerPatternResult.isSuspicious
+        ? answerPatternResult.reasons.join("; ")
+        : null;
+    }
 
     // 변경된 필드 감지 (감사 로그용)
     const changedFields: string[] = [];
@@ -950,6 +1258,7 @@ export async function PUT(request: Request) {
     if (existingSubmission.gender !== gender) changedFields.push("gender");
     if (existingSubmission.bonusType !== bonusType) changedFields.push("bonusType");
     if (existingSubmission.certificateBonus !== certificateBonus) changedFields.push("certificateBonus");
+    if (existingSubmission.scoringStatus !== scoringStatus) changedFields.push("scoringStatus");
     changedFields.push("answers");
 
     const updated = await prisma.$transaction(async (tx) => {
@@ -961,26 +1270,44 @@ export async function PUT(request: Request) {
           examType,
           gender,
           examNumber,
-          totalScore: scoreResult.totalScore,
+          totalScore: scoreResult?.totalScore ?? 0,
           bonusType,
           bonusRate,
           certificateBonus,
-          finalScore: scoreResult.finalScore,
+          finalScore: scoreResult?.finalScore ?? 0,
+          scoringStatus,
           submitDurationMs: submitDurationMsEdit,
           editCount: { increment: 1 },
-          isSuspicious: answerPatternResult.isSuspicious,
-          suspiciousReason: answerPatternResult.isSuspicious
-            ? answerPatternResult.reasons.join("; ")
-            : null,
+          isSuspicious,
+          suspiciousReason,
         },
       });
 
-      await persistSubmissionScoreRows(tx, {
-        submissionId,
-        scoreResult,
-        difficulty,
-        replaceExisting: true,
-      });
+      if (scoreResult) {
+        await persistSubmissionScoreRows(tx, {
+          submissionId,
+          scoreResult,
+          difficulty,
+          replaceExisting: true,
+        });
+      } else {
+        const pendingAnswerRows = buildPendingUserAnswerRows({
+          submissionId,
+          answers,
+          subjects: scoringReadiness.subjects,
+        });
+        const difficultyRows = buildDifficultyRowsFromSubjectMap(
+          submissionId,
+          difficulty,
+          subjectIdByName
+        );
+        await persistPendingSubmissionRows(tx, {
+          submissionId,
+          userAnswerRows: pendingAnswerRows,
+          difficultyRows,
+          replaceExisting: true,
+        });
+      }
 
       await tx.submissionLog.create({
         data: {
@@ -996,11 +1323,18 @@ export async function PUT(request: Request) {
       return savedSubmission;
     });
 
-    invalidateCorrectRateCache(exam.id, examType);
+    if (scoreResult || existingSubmission.scoringStatus === SubmissionScoringStatus.SCORED) {
+      invalidateCorrectRateCache(exam.id, examType);
+    }
 
     return NextResponse.json({
       success: true,
       submissionId: updated.id,
+      scoringStatus,
+      message:
+        scoringStatus === SubmissionScoringStatus.PENDING
+          ? "답안 수정이 완료되었습니다. 가답안 발표 후 자동 채점됩니다."
+          : null,
       result: scoreResult,
     });
   } catch (error) {

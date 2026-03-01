@@ -1,4 +1,4 @@
-import { BonusType, ExamType, Gender, Prisma } from "@prisma/client";
+import { BonusType, ExamType, Gender, Prisma, SubmissionScoringStatus } from "@prisma/client";
 import { invalidateCorrectRateCache } from "@/lib/correct-rate";
 import { normalizeSubjectName } from "@/lib/exam-utils";
 import { SUBJECT_CUTOFF_RATE, TOTAL_CUTOFF_RATE } from "@/lib/policy";
@@ -368,7 +368,7 @@ function scoreByAnswerMap(params: {
   const hasTotalCutoff = totalScore < totalMaxScore * TOTAL_CUTOFF_RATE;
 
   // 총점 과락이면 모든 과목을 과락으로 표시하고 가산점 제거
-  if (hasTotalCutoff && !hasCutoff) {
+  if (hasTotalCutoff) {
     hasCutoff = true;
     totalBonusScore = 0;
     for (const score of scores) {
@@ -663,6 +663,7 @@ export async function rescoreExam(examId: number, options?: RescoreOptions): Pro
             totalScore: result.totalScore,
             finalScore: result.finalScore,
             bonusRate: normalizedBonusRate,
+            scoringStatus: SubmissionScoringStatus.SCORED,
           },
         });
 

@@ -35,14 +35,22 @@ interface RegionItem {
   applicantAcademicCombined: number | null;
   applicantEmtMale: number | null;
   applicantEmtFemale: number | null;
-  examNumberStartPublic: string | null;
-  examNumberEndPublic: string | null;
+  examNumberStartPublicMale: string | null;
+  examNumberEndPublicMale: string | null;
+  examNumberStartPublicFemale: string | null;
+  examNumberEndPublicFemale: string | null;
   examNumberStartCareerRescue: string | null;
   examNumberEndCareerRescue: string | null;
-  examNumberStartCareerAcademic: string | null;
-  examNumberEndCareerAcademic: string | null;
-  examNumberStartCareerEmt: string | null;
-  examNumberEndCareerEmt: string | null;
+  examNumberStartCareerAcademicMale: string | null;
+  examNumberEndCareerAcademicMale: string | null;
+  examNumberStartCareerAcademicFemale: string | null;
+  examNumberEndCareerAcademicFemale: string | null;
+  examNumberStartCareerAcademicCombined: string | null;
+  examNumberEndCareerAcademicCombined: string | null;
+  examNumberStartCareerEmtMale: string | null;
+  examNumberEndCareerEmtMale: string | null;
+  examNumberStartCareerEmtFemale: string | null;
+  examNumberEndCareerEmtFemale: string | null;
   submissionCount: number;
   submissionCountPublic: number;
   submissionCountCareerRescue: number;
@@ -82,14 +90,22 @@ type EditableRegionItem = Pick<
   | "applicantAcademicCombined"
   | "applicantEmtMale"
   | "applicantEmtFemale"
-  | "examNumberStartPublic"
-  | "examNumberEndPublic"
+  | "examNumberStartPublicMale"
+  | "examNumberEndPublicMale"
+  | "examNumberStartPublicFemale"
+  | "examNumberEndPublicFemale"
   | "examNumberStartCareerRescue"
   | "examNumberEndCareerRescue"
-  | "examNumberStartCareerAcademic"
-  | "examNumberEndCareerAcademic"
-  | "examNumberStartCareerEmt"
-  | "examNumberEndCareerEmt"
+  | "examNumberStartCareerAcademicMale"
+  | "examNumberEndCareerAcademicMale"
+  | "examNumberStartCareerAcademicFemale"
+  | "examNumberEndCareerAcademicFemale"
+  | "examNumberStartCareerAcademicCombined"
+  | "examNumberEndCareerAcademicCombined"
+  | "examNumberStartCareerEmtMale"
+  | "examNumberEndCareerEmtMale"
+  | "examNumberStartCareerEmtFemale"
+  | "examNumberEndCareerEmtFemale"
   | "submissionCount"
   | "submissionCountPublic"
   | "submissionCountCareerRescue"
@@ -176,14 +192,22 @@ export default function AdminRegionsPage() {
         original.applicantAcademicCombined !== row.applicantAcademicCombined ||
         original.applicantEmtMale !== row.applicantEmtMale ||
         original.applicantEmtFemale !== row.applicantEmtFemale ||
-        original.examNumberStartPublic !== row.examNumberStartPublic ||
-        original.examNumberEndPublic !== row.examNumberEndPublic ||
+        original.examNumberStartPublicMale !== row.examNumberStartPublicMale ||
+        original.examNumberEndPublicMale !== row.examNumberEndPublicMale ||
+        original.examNumberStartPublicFemale !== row.examNumberStartPublicFemale ||
+        original.examNumberEndPublicFemale !== row.examNumberEndPublicFemale ||
         original.examNumberStartCareerRescue !== row.examNumberStartCareerRescue ||
         original.examNumberEndCareerRescue !== row.examNumberEndCareerRescue ||
-        original.examNumberStartCareerAcademic !== row.examNumberStartCareerAcademic ||
-        original.examNumberEndCareerAcademic !== row.examNumberEndCareerAcademic ||
-        original.examNumberStartCareerEmt !== row.examNumberStartCareerEmt ||
-        original.examNumberEndCareerEmt !== row.examNumberEndCareerEmt
+        original.examNumberStartCareerAcademicMale !== row.examNumberStartCareerAcademicMale ||
+        original.examNumberEndCareerAcademicMale !== row.examNumberEndCareerAcademicMale ||
+        original.examNumberStartCareerAcademicFemale !== row.examNumberStartCareerAcademicFemale ||
+        original.examNumberEndCareerAcademicFemale !== row.examNumberEndCareerAcademicFemale ||
+        original.examNumberStartCareerAcademicCombined !== row.examNumberStartCareerAcademicCombined ||
+        original.examNumberEndCareerAcademicCombined !== row.examNumberEndCareerAcademicCombined ||
+        original.examNumberStartCareerEmtMale !== row.examNumberStartCareerEmtMale ||
+        original.examNumberEndCareerEmtMale !== row.examNumberEndCareerEmtMale ||
+        original.examNumberStartCareerEmtFemale !== row.examNumberStartCareerEmtFemale ||
+        original.examNumberEndCareerEmtFemale !== row.examNumberEndCareerEmtFemale
       ) {
         count += 1;
       }
@@ -201,13 +225,13 @@ export default function AdminRegionsPage() {
       if (tabKey === "PUBLIC_MALE") {
         fieldChanged = original.recruitPublicMale !== row.recruitPublicMale ||
           original.applicantPublicMale !== row.applicantPublicMale ||
-          original.examNumberStartPublic !== row.examNumberStartPublic ||
-          original.examNumberEndPublic !== row.examNumberEndPublic;
+          original.examNumberStartPublicMale !== row.examNumberStartPublicMale ||
+          original.examNumberEndPublicMale !== row.examNumberEndPublicMale;
       } else if (tabKey === "PUBLIC_FEMALE") {
         fieldChanged = original.recruitPublicFemale !== row.recruitPublicFemale ||
           original.applicantPublicFemale !== row.applicantPublicFemale ||
-          original.examNumberStartPublic !== row.examNumberStartPublic ||
-          original.examNumberEndPublic !== row.examNumberEndPublic;
+          original.examNumberStartPublicFemale !== row.examNumberStartPublicFemale ||
+          original.examNumberEndPublicFemale !== row.examNumberEndPublicFemale;
       } else if (tabKey === "CAREER_RESCUE") {
         fieldChanged = original.recruitRescue !== row.recruitRescue ||
           original.applicantRescue !== row.applicantRescue ||
@@ -216,28 +240,28 @@ export default function AdminRegionsPage() {
       } else if (tabKey === "CAREER_ACADEMIC_MALE") {
         fieldChanged = original.recruitAcademicMale !== row.recruitAcademicMale ||
           original.applicantAcademicMale !== row.applicantAcademicMale ||
-          original.examNumberStartCareerAcademic !== row.examNumberStartCareerAcademic ||
-          original.examNumberEndCareerAcademic !== row.examNumberEndCareerAcademic;
+          original.examNumberStartCareerAcademicMale !== row.examNumberStartCareerAcademicMale ||
+          original.examNumberEndCareerAcademicMale !== row.examNumberEndCareerAcademicMale;
       } else if (tabKey === "CAREER_ACADEMIC_FEMALE") {
         fieldChanged = original.recruitAcademicFemale !== row.recruitAcademicFemale ||
           original.applicantAcademicFemale !== row.applicantAcademicFemale ||
-          original.examNumberStartCareerAcademic !== row.examNumberStartCareerAcademic ||
-          original.examNumberEndCareerAcademic !== row.examNumberEndCareerAcademic;
+          original.examNumberStartCareerAcademicFemale !== row.examNumberStartCareerAcademicFemale ||
+          original.examNumberEndCareerAcademicFemale !== row.examNumberEndCareerAcademicFemale;
       } else if (tabKey === "CAREER_ACADEMIC_COMBINED") {
         fieldChanged = original.recruitAcademicCombined !== row.recruitAcademicCombined ||
           original.applicantAcademicCombined !== row.applicantAcademicCombined ||
-          original.examNumberStartCareerAcademic !== row.examNumberStartCareerAcademic ||
-          original.examNumberEndCareerAcademic !== row.examNumberEndCareerAcademic;
+          original.examNumberStartCareerAcademicCombined !== row.examNumberStartCareerAcademicCombined ||
+          original.examNumberEndCareerAcademicCombined !== row.examNumberEndCareerAcademicCombined;
       } else if (tabKey === "CAREER_EMT_MALE") {
         fieldChanged = original.recruitEmtMale !== row.recruitEmtMale ||
           original.applicantEmtMale !== row.applicantEmtMale ||
-          original.examNumberStartCareerEmt !== row.examNumberStartCareerEmt ||
-          original.examNumberEndCareerEmt !== row.examNumberEndCareerEmt;
+          original.examNumberStartCareerEmtMale !== row.examNumberStartCareerEmtMale ||
+          original.examNumberEndCareerEmtMale !== row.examNumberEndCareerEmtMale;
       } else {
         fieldChanged = original.recruitEmtFemale !== row.recruitEmtFemale ||
           original.applicantEmtFemale !== row.applicantEmtFemale ||
-          original.examNumberStartCareerEmt !== row.examNumberStartCareerEmt ||
-          original.examNumberEndCareerEmt !== row.examNumberEndCareerEmt;
+          original.examNumberStartCareerEmtFemale !== row.examNumberStartCareerEmtFemale ||
+          original.examNumberEndCareerEmtFemale !== row.examNumberEndCareerEmtFemale;
       }
       if (activeChanged || fieldChanged) count += 1;
     }
@@ -276,14 +300,22 @@ export default function AdminRegionsPage() {
         applicantAcademicCombined: item.applicantAcademicCombined ?? null,
         applicantEmtMale: item.applicantEmtMale ?? null,
         applicantEmtFemale: item.applicantEmtFemale ?? null,
-        examNumberStartPublic: item.examNumberStartPublic ?? null,
-        examNumberEndPublic: item.examNumberEndPublic ?? null,
+        examNumberStartPublicMale: item.examNumberStartPublicMale ?? null,
+        examNumberEndPublicMale: item.examNumberEndPublicMale ?? null,
+        examNumberStartPublicFemale: item.examNumberStartPublicFemale ?? null,
+        examNumberEndPublicFemale: item.examNumberEndPublicFemale ?? null,
         examNumberStartCareerRescue: item.examNumberStartCareerRescue ?? null,
         examNumberEndCareerRescue: item.examNumberEndCareerRescue ?? null,
-        examNumberStartCareerAcademic: item.examNumberStartCareerAcademic ?? null,
-        examNumberEndCareerAcademic: item.examNumberEndCareerAcademic ?? null,
-        examNumberStartCareerEmt: item.examNumberStartCareerEmt ?? null,
-        examNumberEndCareerEmt: item.examNumberEndCareerEmt ?? null,
+        examNumberStartCareerAcademicMale: item.examNumberStartCareerAcademicMale ?? null,
+        examNumberEndCareerAcademicMale: item.examNumberEndCareerAcademicMale ?? null,
+        examNumberStartCareerAcademicFemale: item.examNumberStartCareerAcademicFemale ?? null,
+        examNumberEndCareerAcademicFemale: item.examNumberEndCareerAcademicFemale ?? null,
+        examNumberStartCareerAcademicCombined: item.examNumberStartCareerAcademicCombined ?? null,
+        examNumberEndCareerAcademicCombined: item.examNumberEndCareerAcademicCombined ?? null,
+        examNumberStartCareerEmtMale: item.examNumberStartCareerEmtMale ?? null,
+        examNumberEndCareerEmtMale: item.examNumberEndCareerEmtMale ?? null,
+        examNumberStartCareerEmtFemale: item.examNumberStartCareerEmtFemale ?? null,
+        examNumberEndCareerEmtFemale: item.examNumberEndCareerEmtFemale ?? null,
         submissionCount: item.submissionCount,
         submissionCountPublic: item.submissionCountPublic,
         submissionCountCareerRescue: item.submissionCountCareerRescue,
@@ -314,7 +346,7 @@ export default function AdminRegionsPage() {
 
   type RecruitField = "recruitPublicMale" | "recruitPublicFemale" | "recruitRescue" | "recruitAcademicMale" | "recruitAcademicFemale" | "recruitAcademicCombined" | "recruitEmtMale" | "recruitEmtFemale";
   type ApplicantField = "applicantPublicMale" | "applicantPublicFemale" | "applicantRescue" | "applicantAcademicMale" | "applicantAcademicFemale" | "applicantAcademicCombined" | "applicantEmtMale" | "applicantEmtFemale";
-  type ExamNumberField = "examNumberStartPublic" | "examNumberEndPublic" | "examNumberStartCareerRescue" | "examNumberEndCareerRescue" | "examNumberStartCareerAcademic" | "examNumberEndCareerAcademic" | "examNumberStartCareerEmt" | "examNumberEndCareerEmt";
+  type ExamNumberField = "examNumberStartPublicMale" | "examNumberEndPublicMale" | "examNumberStartPublicFemale" | "examNumberEndPublicFemale" | "examNumberStartCareerRescue" | "examNumberEndCareerRescue" | "examNumberStartCareerAcademicMale" | "examNumberEndCareerAcademicMale" | "examNumberStartCareerAcademicFemale" | "examNumberEndCareerAcademicFemale" | "examNumberStartCareerAcademicCombined" | "examNumberEndCareerAcademicCombined" | "examNumberStartCareerEmtMale" | "examNumberEndCareerEmtMale" | "examNumberStartCareerEmtFemale" | "examNumberEndCareerEmtFemale";
 
   function updateRegionValue(id: number, field: RecruitField, value: string) {
     setRegions((prev) => prev.map((row) => (row.id === id ? { ...row, [field]: toSafeNonNegativeInt(value) } : row)));
@@ -329,7 +361,8 @@ export default function AdminRegionsPage() {
   }
 
   function updateRegionStringValue(id: number, field: ExamNumberField, value: string) {
-    setRegions((prev) => prev.map((row) => (row.id === id ? { ...row, [field]: value.trim() || null } : row)));
+    const normalized = value.replace(/\D/g, "").slice(0, 10);
+    setRegions((prev) => prev.map((row) => (row.id === id ? { ...row, [field]: normalized || null } : row)));
   }
 
   function updateRegionActive(id: number, nextActive: boolean) {
@@ -385,14 +418,22 @@ export default function AdminRegionsPage() {
             applicantAcademicCombined: row.applicantAcademicCombined,
             applicantEmtMale: row.applicantEmtMale,
             applicantEmtFemale: row.applicantEmtFemale,
-            examNumberStartPublic: row.examNumberStartPublic,
-            examNumberEndPublic: row.examNumberEndPublic,
+            examNumberStartPublicMale: row.examNumberStartPublicMale,
+            examNumberEndPublicMale: row.examNumberEndPublicMale,
+            examNumberStartPublicFemale: row.examNumberStartPublicFemale,
+            examNumberEndPublicFemale: row.examNumberEndPublicFemale,
             examNumberStartCareerRescue: row.examNumberStartCareerRescue,
             examNumberEndCareerRescue: row.examNumberEndCareerRescue,
-            examNumberStartCareerAcademic: row.examNumberStartCareerAcademic,
-            examNumberEndCareerAcademic: row.examNumberEndCareerAcademic,
-            examNumberStartCareerEmt: row.examNumberStartCareerEmt,
-            examNumberEndCareerEmt: row.examNumberEndCareerEmt,
+            examNumberStartCareerAcademicMale: row.examNumberStartCareerAcademicMale,
+            examNumberEndCareerAcademicMale: row.examNumberEndCareerAcademicMale,
+            examNumberStartCareerAcademicFemale: row.examNumberStartCareerAcademicFemale,
+            examNumberEndCareerAcademicFemale: row.examNumberEndCareerAcademicFemale,
+            examNumberStartCareerAcademicCombined: row.examNumberStartCareerAcademicCombined,
+            examNumberEndCareerAcademicCombined: row.examNumberEndCareerAcademicCombined,
+            examNumberStartCareerEmtMale: row.examNumberStartCareerEmtMale,
+            examNumberEndCareerEmtMale: row.examNumberEndCareerEmtMale,
+            examNumberStartCareerEmtFemale: row.examNumberStartCareerEmtFemale,
+            examNumberEndCareerEmtFemale: row.examNumberEndCareerEmtFemale,
           })),
         }),
       });
@@ -586,10 +627,10 @@ export default function AdminRegionsPage() {
                       recruitField: "recruitPublicMale" as RecruitField,
                       applicant: row.applicantPublicMale,
                       applicantField: "applicantPublicMale" as ApplicantField,
-                      numStart: row.examNumberStartPublic,
-                      numEnd: row.examNumberEndPublic,
-                      numStartField: "examNumberStartPublic" as ExamNumberField,
-                      numEndField: "examNumberEndPublic" as ExamNumberField,
+                      numStart: row.examNumberStartPublicMale,
+                      numEnd: row.examNumberEndPublicMale,
+                      numStartField: "examNumberStartPublicMale" as ExamNumberField,
+                      numEndField: "examNumberEndPublicMale" as ExamNumberField,
                       submissionCount: row.submissionCountPublic,
                     },
                     PUBLIC_FEMALE: {
@@ -597,10 +638,10 @@ export default function AdminRegionsPage() {
                       recruitField: "recruitPublicFemale" as RecruitField,
                       applicant: row.applicantPublicFemale,
                       applicantField: "applicantPublicFemale" as ApplicantField,
-                      numStart: row.examNumberStartPublic,
-                      numEnd: row.examNumberEndPublic,
-                      numStartField: "examNumberStartPublic" as ExamNumberField,
-                      numEndField: "examNumberEndPublic" as ExamNumberField,
+                      numStart: row.examNumberStartPublicFemale,
+                      numEnd: row.examNumberEndPublicFemale,
+                      numStartField: "examNumberStartPublicFemale" as ExamNumberField,
+                      numEndField: "examNumberEndPublicFemale" as ExamNumberField,
                       submissionCount: row.submissionCountPublic,
                     },
                     CAREER_RESCUE: {
@@ -619,10 +660,10 @@ export default function AdminRegionsPage() {
                       recruitField: "recruitAcademicMale" as RecruitField,
                       applicant: row.applicantAcademicMale,
                       applicantField: "applicantAcademicMale" as ApplicantField,
-                      numStart: row.examNumberStartCareerAcademic,
-                      numEnd: row.examNumberEndCareerAcademic,
-                      numStartField: "examNumberStartCareerAcademic" as ExamNumberField,
-                      numEndField: "examNumberEndCareerAcademic" as ExamNumberField,
+                      numStart: row.examNumberStartCareerAcademicMale,
+                      numEnd: row.examNumberEndCareerAcademicMale,
+                      numStartField: "examNumberStartCareerAcademicMale" as ExamNumberField,
+                      numEndField: "examNumberEndCareerAcademicMale" as ExamNumberField,
                       submissionCount: row.submissionCountCareerAcademic,
                     },
                     CAREER_ACADEMIC_FEMALE: {
@@ -630,10 +671,10 @@ export default function AdminRegionsPage() {
                       recruitField: "recruitAcademicFemale" as RecruitField,
                       applicant: row.applicantAcademicFemale,
                       applicantField: "applicantAcademicFemale" as ApplicantField,
-                      numStart: row.examNumberStartCareerAcademic,
-                      numEnd: row.examNumberEndCareerAcademic,
-                      numStartField: "examNumberStartCareerAcademic" as ExamNumberField,
-                      numEndField: "examNumberEndCareerAcademic" as ExamNumberField,
+                      numStart: row.examNumberStartCareerAcademicFemale,
+                      numEnd: row.examNumberEndCareerAcademicFemale,
+                      numStartField: "examNumberStartCareerAcademicFemale" as ExamNumberField,
+                      numEndField: "examNumberEndCareerAcademicFemale" as ExamNumberField,
                       submissionCount: row.submissionCountCareerAcademic,
                     },
                     CAREER_ACADEMIC_COMBINED: {
@@ -641,10 +682,10 @@ export default function AdminRegionsPage() {
                       recruitField: "recruitAcademicCombined" as RecruitField,
                       applicant: row.applicantAcademicCombined,
                       applicantField: "applicantAcademicCombined" as ApplicantField,
-                      numStart: row.examNumberStartCareerAcademic,
-                      numEnd: row.examNumberEndCareerAcademic,
-                      numStartField: "examNumberStartCareerAcademic" as ExamNumberField,
-                      numEndField: "examNumberEndCareerAcademic" as ExamNumberField,
+                      numStart: row.examNumberStartCareerAcademicCombined,
+                      numEnd: row.examNumberEndCareerAcademicCombined,
+                      numStartField: "examNumberStartCareerAcademicCombined" as ExamNumberField,
+                      numEndField: "examNumberEndCareerAcademicCombined" as ExamNumberField,
                       submissionCount: row.submissionCountCareerAcademic,
                     },
                     CAREER_EMT_MALE: {
@@ -652,10 +693,10 @@ export default function AdminRegionsPage() {
                       recruitField: "recruitEmtMale" as RecruitField,
                       applicant: row.applicantEmtMale,
                       applicantField: "applicantEmtMale" as ApplicantField,
-                      numStart: row.examNumberStartCareerEmt,
-                      numEnd: row.examNumberEndCareerEmt,
-                      numStartField: "examNumberStartCareerEmt" as ExamNumberField,
-                      numEndField: "examNumberEndCareerEmt" as ExamNumberField,
+                      numStart: row.examNumberStartCareerEmtMale,
+                      numEnd: row.examNumberEndCareerEmtMale,
+                      numStartField: "examNumberStartCareerEmtMale" as ExamNumberField,
+                      numEndField: "examNumberEndCareerEmtMale" as ExamNumberField,
                       submissionCount: row.submissionCountCareerEmt,
                     },
                     CAREER_EMT_FEMALE: {
@@ -663,10 +704,10 @@ export default function AdminRegionsPage() {
                       recruitField: "recruitEmtFemale" as RecruitField,
                       applicant: row.applicantEmtFemale,
                       applicantField: "applicantEmtFemale" as ApplicantField,
-                      numStart: row.examNumberStartCareerEmt,
-                      numEnd: row.examNumberEndCareerEmt,
-                      numStartField: "examNumberStartCareerEmt" as ExamNumberField,
-                      numEndField: "examNumberEndCareerEmt" as ExamNumberField,
+                      numStart: row.examNumberStartCareerEmtFemale,
+                      numEnd: row.examNumberEndCareerEmtFemale,
+                      numStartField: "examNumberStartCareerEmtFemale" as ExamNumberField,
+                      numEndField: "examNumberEndCareerEmtFemale" as ExamNumberField,
                       submissionCount: row.submissionCountCareerEmt,
                     },
                   };
@@ -744,6 +785,8 @@ export default function AdminRegionsPage() {
                             value={numStart ?? ""}
                             onChange={(e) => updateRegionStringValue(row.id, numStartField, e.target.value)}
                             placeholder="시작"
+                            inputMode="numeric"
+                            maxLength={10}
                             className={`h-9 w-24 rounded-md border px-2 text-center text-sm font-mono ${
                               isFieldChanged(row, numStartField)
                                 ? "border-amber-300 bg-amber-50"
@@ -756,6 +799,8 @@ export default function AdminRegionsPage() {
                             value={numEnd ?? ""}
                             onChange={(e) => updateRegionStringValue(row.id, numEndField, e.target.value)}
                             placeholder="끝"
+                            inputMode="numeric"
+                            maxLength={10}
                             className={`h-9 w-24 rounded-md border px-2 text-center text-sm font-mono ${
                               isFieldChanged(row, numEndField)
                                 ? "border-amber-300 bg-amber-50"

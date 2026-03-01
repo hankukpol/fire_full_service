@@ -1,7 +1,8 @@
-import { ExamType } from "@prisma/client";
+import { ExamType, Gender } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { validateExamNumberWithRange } from "@/lib/exam-number";
 import { prisma } from "@/lib/prisma";
 import { consumeFixedWindowRateLimit } from "@/lib/rate-limit";
 import { getClientIp } from "@/lib/request-ip";
@@ -17,14 +18,18 @@ function parsePositiveInt(value: string | null): number | null {
   return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
-/**
- * 응시번호를 정수로 파싱. "00123" → 123, "abc" → null
- */
-function parseExamNumberInt(value: string): number | null {
-  const trimmed = value.trim();
-  if (!trimmed) return null;
-  const parsed = Number(trimmed);
-  return Number.isInteger(parsed) && parsed >= 0 ? parsed : null;
+function parseExamType(value: string | null): ExamType | null {
+  if (value === ExamType.PUBLIC) return ExamType.PUBLIC;
+  if (value === ExamType.CAREER_RESCUE) return ExamType.CAREER_RESCUE;
+  if (value === ExamType.CAREER_ACADEMIC) return ExamType.CAREER_ACADEMIC;
+  if (value === ExamType.CAREER_EMT) return ExamType.CAREER_EMT;
+  return null;
+}
+
+function parseGender(value: string | null): Gender | null {
+  if (value === Gender.MALE) return Gender.MALE;
+  if (value === Gender.FEMALE) return Gender.FEMALE;
+  return null;
 }
 
 export async function GET(request: NextRequest) {
@@ -42,7 +47,7 @@ export async function GET(request: NextRequest) {
   });
   if (!rateLimit.allowed) {
     return NextResponse.json(
-      { error: "요청이 너무 많습니다. 잠시 후 다시 시도해주세요." },
+      { error: "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요." },
       {
         status: 429,
         headers: { "Retry-After": String(rateLimit.retryAfterSec) },
@@ -54,63 +59,62 @@ export async function GET(request: NextRequest) {
   const examId = parsePositiveInt(searchParams.get("examId"));
   const regionId = parsePositiveInt(searchParams.get("regionId"));
   const examNumber = searchParams.get("examNumber")?.trim() ?? "";
-  const examTypeParam = searchParams.get("examType")?.trim() ?? "";
+  const examType = parseExamType(searchParams.get("examType"));
+  const gender = parseGender(searchParams.get("gender"));
 
-  if (!examId || !regionId || !examNumber) {
+  if (!examId || !regionId || !examNumber || !examType || !gender) {
     return NextResponse.json(
-      { error: "examId, regionId, examNumber가 모두 필요합니다." },
+      { error: "examId, regionId, examNumber, examType, gender가 모두 필요합니다." },
       { status: 400 }
     );
   }
 
-  const examType: ExamType =
-    examTypeParam === ExamType.CAREER_RESCUE ? ExamType.CAREER_RESCUE
-    : examTypeParam === ExamType.CAREER_ACADEMIC ? ExamType.CAREER_ACADEMIC
-    : examTypeParam === ExamType.CAREER_EMT ? ExamType.CAREER_EMT
-    : ExamType.PUBLIC;
-
   try {
     const userId = Number(session.user.id);
 
-    // 1. 응시번호 범위 검증 (채용유형별 별도 범위)
     const quota = await prisma.examRegionQuota.findUnique({
       where: {
         examId_regionId: { examId, regionId },
       },
       select: {
+        recruitAcademicCombined: true,
+        examNumberStartPublicMale: true,
+        examNumberEndPublicMale: true,
+        examNumberStartPublicFemale: true,
+        examNumberEndPublicFemale: true,
+        examNumberStartCareerRescue: true,
+        examNumberEndCareerRescue: true,
+        examNumberStartCareerAcademicMale: true,
+        examNumberEndCareerAcademicMale: true,
+        examNumberStartCareerAcademicFemale: true,
+        examNumberEndCareerAcademicFemale: true,
+        examNumberStartCareerAcademicCombined: true,
+        examNumberEndCareerAcademicCombined: true,
+        examNumberStartCareerEmtMale: true,
+        examNumberEndCareerEmtMale: true,
+        examNumberStartCareerEmtFemale: true,
+        examNumberEndCareerEmtFemale: true,
         examNumberStart: true,
         examNumberEnd: true,
       },
     });
 
-    // TODO: 채용유형별 응시번호 범위 필드가 스키마에 추가되면 분기 처리 필요
-    const rangeStart = quota?.examNumberStart ?? null;
-    const rangeEnd = quota?.examNumberEnd ?? null;
-
-    if (rangeStart && rangeEnd) {
-      const inputNum = parseExamNumberInt(examNumber);
-      const startNum = parseExamNumberInt(rangeStart);
-      const endNum = parseExamNumberInt(rangeEnd);
-
-      if (inputNum !== null && startNum !== null && endNum !== null) {
-        if (inputNum < startNum || inputNum > endNum) {
-          return NextResponse.json({
-            available: false,
-            reason: `응시번호가 유효 범위(${rangeStart}~${rangeEnd}) 밖입니다.`,
-          });
-        }
-      } else {
-        // 숫자 파싱 실패 시 문자열 비교
-        if (examNumber < rangeStart || examNumber > rangeEnd) {
-          return NextResponse.json({
-            available: false,
-            reason: `응시번호가 유효 범위(${rangeStart}~${rangeEnd}) 밖입니다.`,
-          });
-        }
-      }
+    const validation = validateExamNumberWithRange({
+      examNumber,
+      context: {
+        examType,
+        gender,
+        recruitAcademicCombined: quota?.recruitAcademicCombined ?? 0,
+      },
+      quota,
+    });
+    if (!validation.ok) {
+      return NextResponse.json({
+        available: false,
+        reason: validation.message ?? "응시번호 검증에 실패했습니다.",
+      });
     }
 
-    // 2. 중복 검증 (본인 제출 제외)
     const duplicate = await prisma.submission.findFirst({
       where: {
         examId,
@@ -134,3 +138,4 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "응시번호 확인에 실패했습니다." }, { status: 500 });
   }
 }
+

@@ -30,6 +30,8 @@ export function validateRegisterInput(
   const name = input.name?.trim() ?? "";
   const phone = normalizePhone(input.phone ?? "");
   const password = input.password?.trim() ?? "";
+  const agreedToTerms = input.agreedToTerms === true;
+  const agreedToPrivacy = input.agreedToPrivacy === true;
 
   if (!koreanNameRegex.test(name)) {
     errors.push("이름은 한글 2~20자로 입력해 주세요.");
@@ -58,6 +60,14 @@ export function validateRegisterInput(
     }
   }
 
+  if (!agreedToTerms) {
+    errors.push("서비스 이용약관에 동의해 주세요.");
+  }
+
+  if (!agreedToPrivacy) {
+    errors.push("개인정보 수집·이용에 동의해 주세요.");
+  }
+
   if (errors.length > 0) {
     return { isValid: false, errors };
   }
@@ -69,6 +79,8 @@ export function validateRegisterInput(
       name,
       phone,
       password,
+      agreedToTerms,
+      agreedToPrivacy,
     },
   };
 }

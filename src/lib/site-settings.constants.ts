@@ -29,7 +29,9 @@ export type SiteSettingKey =
   | "site.tabPredictionEnabled"
   | "site.tabNoticesEnabled"
   | "site.tabFaqEnabled"
-  | "site.tabLockedMessage";
+  | "site.tabLockedMessage"
+  | "site.termsOfService"
+  | "site.privacyPolicy";
 
 export type SiteSettingValueType = "string" | "nullable-string" | "boolean" | "number";
 
@@ -67,6 +69,8 @@ export const SITE_SETTING_TYPES: Record<SiteSettingKey, SiteSettingValueType> = 
   "site.tabNoticesEnabled": "boolean",
   "site.tabFaqEnabled": "boolean",
   "site.tabLockedMessage": "string",
+  "site.termsOfService": "string",
+  "site.privacyPolicy": "string",
 };
 
 export const SITE_SETTING_DEFAULTS: SiteSettingsMap = {
@@ -103,4 +107,40 @@ export const SITE_SETTING_DEFAULTS: SiteSettingsMap = {
   "site.tabNoticesEnabled": true,
   "site.tabFaqEnabled": true,
   "site.tabLockedMessage": "시험 후 오픈 예정입니다",
+  "site.termsOfService": `제1조 (목적)
+본 약관은 소방 필기 합격예측 서비스(이하 "서비스")의 이용 조건 및 절차에 관한 사항을 규정합니다.
+
+제2조 (서비스 내용)
+서비스는 응시자가 OMR 답안을 입력하면 예상 점수 및 합격 가능성을 분석하는 참고용 도구입니다.
+본 서비스의 분석 결과는 실제 합격 여부를 보장하지 않으며, 최종 결과는 소방청 공식 발표를 따릅니다.
+
+제3조 (회원 의무)
+① 회원은 타인의 정보를 도용하거나 허위 정보를 입력해서는 안 됩니다.
+② 회원은 서비스를 통해 취득한 정보를 무단으로 복제·배포할 수 없습니다.
+
+제4조 (서비스 변경·중단)
+운영자는 서비스의 내용을 변경하거나 일시 중단할 수 있으며, 사전 공지를 원칙으로 합니다.
+
+제5조 (면책 사항)
+서비스는 참고용 분석 도구이며, 분석 결과에 의한 손해에 대해 운영자는 책임을 지지 않습니다.`,
+  "site.privacyPolicy": `■ 개인정보 수집·이용 동의
+
+1. 수집 항목
+   - 필수: 이름, 휴대전화번호, 비밀번호(암호화 저장)
+   - 서비스 이용 시: 응시번호, OMR 답안, 지역, 채용유형
+
+2. 수집 목적
+   - 회원 식별 및 로그인 인증
+   - 성적 분석 및 합격예측 서비스 제공
+   - 서비스 운영 및 부정이용 방지
+
+3. 보유 기간
+   - 회원 탈퇴 시 즉시 삭제
+   - 단, 관련 법령에 따라 일정 기간 보관이 필요한 경우 해당 기간 동안 보관
+
+4. 제3자 제공
+   - 이용자의 개인정보는 제3자에게 제공하지 않습니다.
+
+5. 동의 거부 권리
+   - 위 동의를 거부할 수 있으나, 거부 시 서비스 이용이 불가합니다.`,
 };

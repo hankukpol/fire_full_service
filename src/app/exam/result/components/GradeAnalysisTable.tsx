@@ -149,7 +149,7 @@ export default function GradeAnalysisTable({ result }: GradeAnalysisTableProps) 
               <span className="text-sm font-medium text-slate-500">
                 가산점
                 <span className="ml-2 inline-flex items-center rounded-md bg-slate-200/60 px-2 py-0.5 text-xs font-normal text-slate-600">
-                  {formatBonusType(result.submission.bonusType)} {(result.submission.bonusRate * 100).toFixed(0)}%
+                  {formatBonusType(result.submission.bonusType)}
                 </span>
               </span>
               <span className="text-base font-semibold text-emerald-600">+{formatScore(result.statistics.bonusScore)}점</span>

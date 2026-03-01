@@ -142,6 +142,7 @@ export async function POST(request: NextRequest) {
       snapshots: evaluatedRows.map((row) => ({
         regionId: row.regionId,
         examType: row.examType,
+        gender: row.gender,
         participantCount: row.participantCount,
         recruitCount: row.recruitCount,
         averageScore: row.averageScore,

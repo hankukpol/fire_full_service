@@ -1,8 +1,9 @@
-import { ExamType, Prisma } from "@prisma/client";
+import { ExamType, Gender, Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { getDifficultyStats } from "@/lib/difficulty";
+import { estimateApplicants } from "@/lib/policy";
 import { getLikelyMultiple, getPassMultiple } from "@/lib/prediction";
 import { prisma } from "@/lib/prisma";
 import { getActiveNotices, getSiteSettings } from "@/lib/site-settings";
@@ -522,11 +523,23 @@ export async function GET() {
     const [totalParticipants, examTypeStats, recentParticipants, latestSubmission, difficulty, quotas, mySubmissions] =
       await Promise.all([
         prisma.submission.count({
-          where: { examId: activeExam.id },
+          where: {
+            examId: activeExam.id,
+            NOT: {
+              examType: ExamType.CAREER_RESCUE,
+              gender: Gender.FEMALE,
+            },
+          },
         }),
         prisma.submission.groupBy({
           by: ["examType"],
-          where: { examId: activeExam.id },
+          where: {
+            examId: activeExam.id,
+            NOT: {
+              examType: ExamType.CAREER_RESCUE,
+              gender: Gender.FEMALE,
+            },
+          },
           _count: {
             _all: true,
           },
@@ -534,11 +547,21 @@ export async function GET() {
         prisma.submission.count({
           where: {
             examId: activeExam.id,
+            NOT: {
+              examType: ExamType.CAREER_RESCUE,
+              gender: Gender.FEMALE,
+            },
             createdAt: { gte: oneHourAgo },
           },
         }),
         prisma.submission.findFirst({
-          where: { examId: activeExam.id },
+          where: {
+            examId: activeExam.id,
+            NOT: {
+              examType: ExamType.CAREER_RESCUE,
+              gender: Gender.FEMALE,
+            },
+          },
           orderBy: { createdAt: "desc" },
           select: { createdAt: true },
         }),
@@ -598,6 +621,10 @@ export async function GET() {
     const populationWhere: Prisma.SubmissionWhereInput = {
       examId: activeExam.id,
       isSuspicious: false,
+      NOT: {
+        examType: ExamType.CAREER_RESCUE,
+        gender: Gender.FEMALE,
+      },
       subjectScores: {
         some: {},
         none: {
@@ -631,6 +658,10 @@ export async function GET() {
         where: {
           examId: activeExam.id,
           isSuspicious: false,
+          NOT: {
+            examType: ExamType.CAREER_RESCUE,
+            gender: Gender.FEMALE,
+          },
         },
         _count: {
           _all: true,
@@ -642,6 +673,10 @@ export async function GET() {
           submission: {
             examId: activeExam.id,
             isSuspicious: false,
+            NOT: {
+              examType: ExamType.CAREER_RESCUE,
+              gender: Gender.FEMALE,
+            },
           },
         },
         _count: {
@@ -697,7 +732,10 @@ export async function GET() {
         const participantCount = participant?.participantCount ?? 0;
         const averageFinalScore = participant?.averageFinalScore ?? null;
         const applicantCountInfo = getQuotaApplicantCount(quota, examType);
-        const estimatedApplicants = applicantCountInfo.applicantCount ?? 0;
+        const estimatedApplicants = estimateApplicants({
+          applicantCount: applicantCountInfo.applicantCount,
+          recruitCount,
+        });
         const competitionRate =
           recruitCount > 0 && applicantCountInfo.applicantCount !== null
             ? roundNumber(applicantCountInfo.applicantCount / recruitCount)
@@ -837,3 +875,4 @@ export async function GET() {
     return NextResponse.json({ error: "풀서비스 메인 통계 조회에 실패했습니다." }, { status: 500 });
   }
 }
+

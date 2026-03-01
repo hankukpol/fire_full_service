@@ -3,7 +3,7 @@
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,11 @@ interface RegisterResponse {
   message?: string;
 }
 
+interface TermsResponse {
+  termsOfService: string;
+  privacyPolicy: string;
+}
+
 export default function RegisterPage() {
   const router = useRouter();
   const { showErrorToast, showToast } = useToast();
@@ -24,9 +29,37 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
+  const [termsContent, setTermsContent] = useState("");
+  const [privacyContent, setPrivacyContent] = useState("");
+  const [isTermsLoading, setIsTermsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 마운트 시 약관 내용 로드
+  useEffect(() => {
+    fetch("/api/terms")
+      .then((res) => res.json())
+      .then((data: TermsResponse) => {
+        setTermsContent(data.termsOfService ?? "");
+        setPrivacyContent(data.privacyPolicy ?? "");
+      })
+      .catch(() => {
+        // 로드 실패 시 빈 내용으로 표시
+      })
+      .finally(() => {
+        setIsTermsLoading(false);
+      });
+  }, []);
+
+  const allAgreed = agreedToTerms && agreedToPrivacy;
+
+  const handleAllAgreed = (checked: boolean) => {
+    setAgreedToTerms(checked);
+    setAgreedToPrivacy(checked);
+  };
 
   const handlePhoneChange = (value: string) => {
     setPhone(normalizePhone(value));
@@ -37,7 +70,13 @@ export default function RegisterPage() {
     setErrorMessage("");
     setSuccessMessage("");
 
-    const validationResult = validateRegisterInput({ name, phone, password });
+    const validationResult = validateRegisterInput({
+      name,
+      phone,
+      password,
+      agreedToTerms,
+      agreedToPrivacy,
+    });
     if (!validationResult.isValid) {
       setErrorMessage(validationResult.errors[0]);
       return;
@@ -120,7 +159,7 @@ export default function RegisterPage() {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                placeholder="8자 이상 입력"
+                placeholder="8자 이상, 대/소문자·숫자·특수문자 포함"
                 required
               />
             </div>
@@ -135,6 +174,63 @@ export default function RegisterPage() {
                 placeholder="비밀번호를 다시 입력"
                 required
               />
+            </div>
+
+            {/* 약관 동의 섹션 */}
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
+              {/* 전체 동의 */}
+              <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+                <input
+                  id="allAgreed"
+                  type="checkbox"
+                  checked={allAgreed}
+                  onChange={(e) => handleAllAgreed(e.target.checked)}
+                  className="h-4 w-4 cursor-pointer rounded border-slate-300 accent-slate-800"
+                />
+                <Label htmlFor="allAgreed" className="font-semibold cursor-pointer">
+                  전체 동의
+                </Label>
+              </div>
+
+              {/* 서비스 이용약관 */}
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <input
+                    id="agreedToTerms"
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={(e) => setAgreedToTerms(e.target.checked)}
+                    className="h-4 w-4 cursor-pointer rounded border-slate-300 accent-slate-800"
+                  />
+                  <Label htmlFor="agreedToTerms" className="cursor-pointer text-sm">
+                    서비스 이용약관 동의{" "}
+                    <span className="text-red-500">(필수)</span>
+                  </Label>
+                </div>
+                <div className="max-h-24 overflow-y-auto rounded border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 whitespace-pre-wrap leading-relaxed">
+                  {isTermsLoading ? "약관을 불러오는 중..." : termsContent}
+                </div>
+              </div>
+
+              {/* 개인정보 수집·이용 동의 */}
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <input
+                    id="agreedToPrivacy"
+                    type="checkbox"
+                    checked={agreedToPrivacy}
+                    onChange={(e) => setAgreedToPrivacy(e.target.checked)}
+                    className="h-4 w-4 cursor-pointer rounded border-slate-300 accent-slate-800"
+                  />
+                  <Label htmlFor="agreedToPrivacy" className="cursor-pointer text-sm">
+                    개인정보 수집·이용 동의{" "}
+                    <span className="text-red-500">(필수)</span>
+                  </Label>
+                </div>
+                <div className="max-h-24 overflow-y-auto rounded border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600 whitespace-pre-wrap leading-relaxed">
+                  {isTermsLoading ? "약관을 불러오는 중..." : privacyContent}
+                </div>
+              </div>
             </div>
 
             {errorMessage ? (

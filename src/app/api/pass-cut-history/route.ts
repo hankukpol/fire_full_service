@@ -1,4 +1,4 @@
-import { ExamType, PassCutSnapshotStatus } from "@prisma/client";
+import { ExamType, Gender, PassCutSnapshotStatus } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
@@ -27,6 +27,34 @@ function parseExamType(value: string | null): ExamType | null {
   if (value === ExamType.CAREER_ACADEMIC) return ExamType.CAREER_ACADEMIC;
   if (value === ExamType.CAREER_EMT) return ExamType.CAREER_EMT;
   return null;
+}
+
+function parseGender(value: string | null): Gender | null {
+  if (value === Gender.MALE) return Gender.MALE;
+  if (value === Gender.FEMALE) return Gender.FEMALE;
+  return null;
+}
+
+function resolveCohortGender(params: {
+  examType: ExamType;
+  requestedGender: Gender | null;
+  recruitAcademicCombined: number;
+}): { gender: Gender | null; error: string | null } {
+  const { examType, requestedGender, recruitAcademicCombined } = params;
+
+  if (examType === ExamType.CAREER_RESCUE) {
+    return { gender: Gender.MALE, error: null };
+  }
+
+  if (examType === ExamType.CAREER_ACADEMIC && recruitAcademicCombined > 0) {
+    return { gender: null, error: null };
+  }
+
+  if (!requestedGender) {
+    return { gender: null, error: "gender is required for this examType." };
+  }
+
+  return { gender: requestedGender, error: null };
 }
 
 function fallbackCurrentSnapshot() {
@@ -80,6 +108,11 @@ export async function GET(request: NextRequest) {
   const examIdQuery = parsePositiveInt(searchParams.get("examId"));
   const regionId = parsePositiveInt(searchParams.get("regionId"));
   const examType = parseExamType(searchParams.get("examType"));
+  const genderQueryRaw = searchParams.get("gender");
+  const requestedGender = parseGender(genderQueryRaw);
+  if (genderQueryRaw !== null && !requestedGender) {
+    return NextResponse.json({ error: "gender must be MALE or FEMALE." }, { status: 400 });
+  }
 
   if (!regionId) {
     return NextResponse.json({ error: "regionId is required." }, { status: 400 });
@@ -106,6 +139,27 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  const quota = await prisma.examRegionQuota.findUnique({
+    where: {
+      examId_regionId: {
+        examId,
+        regionId,
+      },
+    },
+    select: {
+      recruitAcademicCombined: true,
+    },
+  });
+  const cohortGenderResolved = resolveCohortGender({
+    examType,
+    requestedGender,
+    recruitAcademicCombined: quota?.recruitAcademicCombined ?? 0,
+  });
+  if (cohortGenderResolved.error) {
+    return NextResponse.json({ error: cohortGenderResolved.error }, { status: 400 });
+  }
+  const cohortGender = cohortGenderResolved.gender;
+
   let autoRows = [] as Awaited<ReturnType<typeof evaluateAutoPassCutRows>>;
   try {
     const autoResult = await runAutoPassCutRelease({
@@ -130,8 +184,14 @@ export async function GET(request: NextRequest) {
         where: {
           regionId,
           examType,
+          ...(cohortGender === null
+            ? { gender: null }
+            : {
+                OR: [{ gender: cohortGender }, { gender: null }],
+              }),
         },
         select: {
+          gender: true,
           participantCount: true,
           recruitCount: true,
           applicantCount: true,
@@ -146,7 +206,7 @@ export async function GET(request: NextRequest) {
           likelyMinScore: true,
           possibleMinScore: true,
         },
-        take: 1,
+        take: cohortGender === null ? 1 : 2,
       },
     },
   });
@@ -166,7 +226,12 @@ export async function GET(request: NextRequest) {
   }
 
   let current = toSnapshotFromEvaluatedRow(
-    autoRows.find((row) => row.regionId === regionId && row.examType === examType)
+    autoRows.find(
+      (row) =>
+        row.regionId === regionId &&
+        row.examType === examType &&
+        (row.gender === cohortGender || (cohortGender !== null && row.gender === null))
+    )
   );
 
   if (autoRows.length < 1) {
@@ -176,7 +241,12 @@ export async function GET(request: NextRequest) {
         examId,
         includeCareerExamType: Boolean(settings["site.careerExamEnabled"] ?? true),
       });
-      const matched = rows.find((row) => row.regionId === regionId && row.examType === examType);
+      const matched = rows.find(
+        (row) =>
+          row.regionId === regionId &&
+          row.examType === examType &&
+          (row.gender === cohortGender || (cohortGender !== null && row.gender === null))
+      );
       if (matched) {
         const fallbackStatus = toFallbackStatus({
           participantCount: matched.participantCount,
@@ -206,7 +276,10 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     releases: releases.map((release) => {
-      const snapshot = release.snapshots[0] ?? null;
+      const snapshot =
+        release.snapshots.find((item) => item.gender === cohortGender) ??
+        (cohortGender !== null ? release.snapshots.find((item) => item.gender === null) : null) ??
+        null;
       return {
         releaseNumber: release.releaseNumber,
         releasedAt: release.releasedAt.toISOString(),

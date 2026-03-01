@@ -97,8 +97,27 @@ export async function calculateKnownFinalRank(params: {
   examId: number;
   regionId: number;
   examType: ExamType;
+  gender: Gender | null;
   submissionId: number;
 }): Promise<{ finalRank: number | null; totalParticipants: number }> {
+  const quota = await prisma.examRegionQuota.findUnique({
+    where: {
+      examId_regionId: {
+        examId: params.examId,
+        regionId: params.regionId,
+      },
+    },
+    select: {
+      recruitAcademicCombined: true,
+    },
+  });
+
+  const genderFilter = buildFinalGenderFilter(
+    params.examType,
+    params.gender,
+    quota?.recruitAcademicCombined ?? 0
+  );
+
   const rows = await prisma.finalPrediction.findMany({
     where: {
       finalScore: { not: null },
@@ -106,6 +125,7 @@ export async function calculateKnownFinalRank(params: {
         examId: params.examId,
         regionId: params.regionId,
         examType: params.examType,
+        ...genderFilter,
       },
     },
     select: {
@@ -190,8 +210,7 @@ function buildFinalGenderFilter(
       // 소방 공채: 남녀 분리 선발
       return gender ? { gender } : {};
     case ExamType.CAREER_RESCUE:
-      // 구조: 통합 선발
-      return {};
+      return { gender: Gender.MALE };
     case ExamType.CAREER_ACADEMIC:
       // 소방학과: 양성 지역이면 통합, 아니면 성별 분리
       if (recruitAcademicCombined > 0) return {};
@@ -321,3 +340,4 @@ export async function calculateFinalRankingDetails(params: {
     competitors,
   };
 }
+

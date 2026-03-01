@@ -14,10 +14,10 @@ enum Role {
 }
 
 enum ExamType {
-  PUBLIC           // 공채 (남/여 분리 선발)
+  PUBLIC           // 공채 (소방학개론+소방관계법규+행정법총론)
   CAREER_RESCUE    // 구조 경채 (남자만)
-  CAREER_ACADEMIC  // 소방관련학과 경채 (남/여/양성 — 지역마다 다름)
-  CAREER_EMT       // 구급 경채 (남/여 분리 선발)
+  CAREER_ACADEMIC  // 소방관련학과 경채 (남/여/양성)
+  CAREER_EMT       // 구급 경채 (소방학개론+응급처치학개론)
 }
 
 enum Gender {
@@ -41,6 +41,11 @@ enum DifficultyRatingLevel {
   VERY_HARD
 }
 
+enum SubmissionScoringStatus {
+  PENDING
+  SCORED
+}
+
 enum PassCutSnapshotStatus {
   READY
   COLLECTING_LOW_PARTICIPATION
@@ -54,8 +59,10 @@ model User {
   name        String
   phone       String       @unique
   password    String
-  role        Role         @default(USER)
-  createdAt   DateTime     @default(now())
+  role            Role         @default(USER)
+  createdAt       DateTime     @default(now())
+  termsAgreedAt   DateTime?    // 서비스 이용약관 동의 일시
+  privacyAgreedAt DateTime?    // 개인정보 수집·이용 동의 일시
   submissions Submission[]
   comments    Comment[]
   answerKeyLogs AnswerKeyLog[]
@@ -95,35 +102,52 @@ model Region {
 }
 
 model ExamRegionQuota {
-  id                          Int      @id @default(autoincrement())
+  id                          Int    @id @default(autoincrement())
   examId                      Int
   regionId                    Int
-  // 공채 (남/여 분리)
-  recruitPublicMale              Int      @default(0)
-  recruitPublicFemale            Int      @default(0)
+  // 공채 (남여 분리)
+  recruitPublicMale           Int    @default(0)
+  recruitPublicFemale         Int    @default(0)
   // 구조 경채 (남자만)
-  recruitRescue                  Int      @default(0)
-  // 소방관련학과 경채 (남/여/양성 — 지역마다 다름)
-  recruitAcademicMale            Int      @default(0)
-  recruitAcademicFemale          Int      @default(0)
-  recruitAcademicCombined        Int      @default(0) // 양성
-  // 구급 경채 (남/여 분리)
-  recruitEmtMale                 Int      @default(0)
-  recruitEmtFemale               Int      @default(0)
-  // 접수인원 (선택)
-  applicantPublicMale            Int?
-  applicantPublicFemale          Int?
-  applicantRescue                Int?
-  applicantAcademicMale          Int?
-  applicantAcademicFemale        Int?
-  applicantAcademicCombined      Int?
-  applicantEmtMale               Int?
-  applicantEmtFemale             Int?
-  // 응시번호 범위
-  examNumberStart                String?  // 공채 시작
-  examNumberEnd                  String?  // 공채 끝
-  exam                        Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
-  region                      Region   @relation(fields: [regionId], references: [id], onDelete: Restrict)
+  recruitRescue               Int    @default(0)
+  // 소방관련학과 경채 (남/여/양성)
+  recruitAcademicMale         Int    @default(0)
+  recruitAcademicFemale       Int    @default(0)
+  recruitAcademicCombined     Int    @default(0) // 양성
+  // 구급 경채 (남여 분리)
+  recruitEmtMale              Int    @default(0)
+  recruitEmtFemale            Int    @default(0)
+  // 응시인원 (선택)
+  applicantPublicMale         Int?
+  applicantPublicFemale       Int?
+  applicantRescue             Int?
+  applicantAcademicMale       Int?
+  applicantAcademicFemale     Int?
+  applicantAcademicCombined   Int?
+  applicantEmtMale            Int?
+  applicantEmtFemale          Int?
+  // 응시번호 범위 (직렬/성별별)
+  examNumberStartPublicMale              String?
+  examNumberEndPublicMale                String?
+  examNumberStartPublicFemale            String?
+  examNumberEndPublicFemale              String?
+  examNumberStartCareerRescue            String?
+  examNumberEndCareerRescue              String?
+  examNumberStartCareerAcademicMale      String?
+  examNumberEndCareerAcademicMale        String?
+  examNumberStartCareerAcademicFemale    String?
+  examNumberEndCareerAcademicFemale      String?
+  examNumberStartCareerAcademicCombined  String?
+  examNumberEndCareerAcademicCombined    String?
+  examNumberStartCareerEmtMale           String?
+  examNumberEndCareerEmtMale             String?
+  examNumberStartCareerEmtFemale         String?
+  examNumberEndCareerEmtFemale           String?
+  // deprecated: 단일 범위 (하위호환)
+  examNumberStart             String?
+  examNumberEnd               String?
+  exam                        Exam   @relation(fields: [examId], references: [id], onDelete: Cascade)
+  region                      Region @relation(fields: [regionId], references: [id], onDelete: Restrict)
 
   @@unique([examId, regionId])
   @@map("exam_region_quotas")
@@ -187,12 +211,13 @@ model Submission {
   totalScore    Float
   bonusType     BonusType      @default(NONE)
   bonusRate     Float          @default(0)
-  certificateBonus Float        @default(0) // 자격증 가산점 (0/2/4/5, 최종환산 시 적용)
+  certificateBonus Float        @default(0) // 자격증 가산점 (0/2/4/5, 최종합격 시 적용)
   finalScore    Float
+  scoringStatus SubmissionScoringStatus @default(SCORED)
   editCount         Int            @default(0)
   isSuspicious      Boolean        @default(false)
   suspiciousReason  String?        @db.Text
-  submitDurationMs  Int?           // 페이지 로드 → 제출까지 소요시간 (밀리초)
+  submitDurationMs  Int?           // 페이지 로드 후 제출까지 소요시간 (밀리초)
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @default(now()) @updatedAt
   exam          Exam           @relation(fields: [examId], references: [id], onDelete: Restrict)

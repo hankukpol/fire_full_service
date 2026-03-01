@@ -10,6 +10,7 @@ interface GeneratePayload {
   examId?: unknown;
   publicPerRegion?: unknown;
   careerPerRegion?: unknown;
+  includeEmploymentBonus?: unknown;
   resetBeforeGenerate?: unknown;
   includeFinalPredictionMock?: unknown;
 }
@@ -80,6 +81,7 @@ export async function POST(request: NextRequest) {
       careerRescueEnabled: careerExamEnabled,
       careerAcademicEnabled: careerExamEnabled,
       careerEmtEnabled: careerExamEnabled,
+      includeEmploymentBonus: parseBoolean(body.includeEmploymentBonus, false),
       resetBeforeGenerate: parseBoolean(body.resetBeforeGenerate, true),
       includeFinalPredictionMock: parseBoolean(body.includeFinalPredictionMock, true),
     });

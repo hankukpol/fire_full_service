@@ -1,4 +1,4 @@
-import { ExamType, PassCutSnapshotStatus, Prisma } from "@prisma/client";
+import { ExamType, Gender, PassCutSnapshotStatus, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 export type PassCutReleaseSource = "ADMIN" | "AUTO";
@@ -25,6 +25,7 @@ export interface PassCutSnapshotStatusPayload {
 export interface PassCutSnapshotInput {
   regionId: number;
   examType: ExamType;
+  gender: Gender | null;
   participantCount: number;
   recruitCount: number;
   averageScore: number | null;
@@ -170,6 +171,7 @@ export async function createPassCutRelease(
             passCutReleaseId: created.id,
             regionId: row.regionId,
             examType: row.examType,
+            gender: row.gender,
             status: row.statusPayload?.status ?? PassCutSnapshotStatus.READY,
             statusReason: row.statusPayload?.statusReason ?? null,
             applicantCount: row.statusPayload?.applicantCount ?? null,

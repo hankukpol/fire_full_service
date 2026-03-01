@@ -61,6 +61,7 @@ export default function AdminMockDataPage() {
 
   const [publicPerRegion, setPublicPerRegion] = useState("40");
   const [careerPerRegion, setCareerPerRegion] = useState("20");
+  const [includeEmploymentBonus, setIncludeEmploymentBonus] = useState(false);
   const [resetBeforeGenerate, setResetBeforeGenerate] = useState(true);
   const [includeFinalPredictionMock, setIncludeFinalPredictionMock] = useState(true);
 
@@ -143,6 +144,7 @@ export default function AdminMockDataPage() {
           examId: selectedExamId,
           publicPerRegion: Number(publicPerRegion),
           ...(careerExamEnabled ? { careerPerRegion: Number(careerPerRegion) } : {}),
+          includeEmploymentBonus,
           resetBeforeGenerate,
           includeFinalPredictionMock,
         }),
@@ -323,6 +325,15 @@ export default function AdminMockDataPage() {
             </div>
           ) : null}
         </div>
+
+        <label className="flex items-center gap-2 text-sm text-slate-700">
+          <input
+            type="checkbox"
+            checked={includeEmploymentBonus}
+            onChange={(event) => setIncludeEmploymentBonus(event.target.checked)}
+          />
+          취업지원/의사상자 가산점 포함 생성 (기본 해제)
+        </label>
 
         <label className="flex items-center gap-2 text-sm text-slate-700">
           <input

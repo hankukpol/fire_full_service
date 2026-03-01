@@ -44,6 +44,10 @@ export interface ResultResponse {
   features: {
     finalPredictionEnabled: boolean;
   };
+  pending?: {
+    isPending: boolean;
+    message: string;
+  };
   submission: {
     id: number;
     isOwner: boolean;
@@ -58,6 +62,7 @@ export interface ResultResponse {
     examNumber: string | null;
     totalScore: number;
     finalScore: number;
+    scoringStatus: "PENDING" | "SCORED";
     bonusType: "NONE" | "VETERAN_5" | "VETERAN_10" | "HERO_3" | "HERO_5";
     bonusRate: number;
     certificateBonus: number;

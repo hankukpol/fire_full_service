@@ -9,6 +9,8 @@ import { useToast } from "@/components/providers/ToastProvider";
 import { Button } from "@/components/ui/button";
 
 interface PredictionPageResponse {
+  isAdminPreview?: boolean;
+  adminPreviewCandidates?: AdminPreviewCandidate[];
   summary: {
     submissionId: number;
     examId: number;
@@ -17,6 +19,7 @@ interface PredictionPageResponse {
     examRound: number;
     userName: string;
     examType: "PUBLIC" | "CAREER_RESCUE" | "CAREER_ACADEMIC" | "CAREER_EMT";
+    gender: "MALE" | "FEMALE";
     examTypeLabel: string;
     regionId: number;
     regionName: string;
@@ -76,6 +79,11 @@ interface PredictionPageResponse {
   updatedAt: string;
 }
 
+interface AdminPreviewCandidate {
+  submissionId: number;
+  label: string;
+}
+
 interface CompetitorDetailResponse {
   competitor: {
     submissionId: number;
@@ -132,10 +140,6 @@ interface ExamPredictionPageProps {
   embedded?: boolean;
 }
 
-function formatScore(value: number | null): string {
-  if (value === null) return "-";
-  return value.toFixed(2);
-}
 
 /** 스마트 소수점 포맷: 정수면 소수점 제거, 아니면 1자리 유지 */
 function formatScoreSmart(value: number): string {
@@ -147,65 +151,7 @@ function getParticipationRate(participants: number, estimated: number): number {
   return (participants / estimated) * 100;
 }
 
-function getConfidenceLevel(rate: number): {
-  label: string;
-  message: string;
-  barColor: string;
-  badgeClass: string;
-} {
-  if (rate >= 30)
-    return {
-      label: "확정적",
-      message: "충분한 데이터가 모여 신뢰도가 높습니다.",
-      barColor: "bg-emerald-500",
-      badgeClass: "bg-emerald-200 text-emerald-800 font-bold",
-    };
-  if (rate >= 15)
-    return {
-      label: "신뢰도 높음",
-      message: "어느 정도 신뢰할 수 있는 데이터입니다.",
-      barColor: "bg-blue-500",
-      badgeClass: "bg-emerald-100 text-emerald-700",
-    };
-  if (rate >= 5)
-    return {
-      label: "집계 중",
-      message: "데이터 수집 중입니다. 순위 변동 가능성이 있습니다.",
-      barColor: "bg-blue-400",
-      badgeClass: "bg-blue-100 text-blue-700",
-    };
-  return {
-    label: "초기 집계",
-    message: "초기 데이터입니다. 순위가 크게 변동될 수 있습니다.",
-    barColor: "bg-amber-400",
-    badgeClass: "bg-amber-100 text-amber-700",
-  };
-}
-
 /** 등급별 비율 바 색상 */
-function levelBarColor(key: PredictionPageResponse["pyramid"]["levels"][number]["key"]): string {
-  if (key === "sure") return "bg-blue-600";
-  if (key === "likely") return "bg-blue-400";
-  if (key === "possible") return "bg-cyan-400";
-  if (key === "challenge") return "bg-slate-400";
-  return "bg-slate-300";
-}
-
-function levelColor(
-  key: PredictionPageResponse["pyramid"]["levels"][number]["key"],
-  current: boolean
-): string {
-  if (key === "sure") return current ? "bg-blue-900" : "bg-blue-800";
-  if (key === "likely") return current ? "bg-blue-700" : "bg-blue-600";
-  if (key === "possible") return current ? "bg-cyan-600" : "bg-cyan-500";
-  if (key === "challenge") return current ? "bg-slate-500" : "bg-slate-400";
-  return current ? "bg-slate-300" : "bg-slate-200";
-}
-
-function levelTextColor(key: PredictionPageResponse["pyramid"]["levels"][number]["key"]): string {
-  return key === "belowChallenge" ? "text-slate-700" : "text-white";
-}
-
 function buildPageNumbers(page: number, totalPages: number): number[] {
   const pages = new Set<number>([1, totalPages, page, page - 1, page + 1]);
   return Array.from(pages)
@@ -220,8 +166,11 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
   const [page, setPage] = useState(1);
   const [prediction, setPrediction] = useState<PredictionPageResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [pendingScoring, setPendingScoring] = useState(false);
+  const [isAdminPreview, setIsAdminPreview] = useState(false);
+  const [adminPreviewCandidates, setAdminPreviewCandidates] = useState<AdminPreviewCandidate[]>([]);
+  const [selectedAdminSubmissionId, setSelectedAdminSubmissionId] = useState("");
 
   const [passCutHistory, setPassCutHistory] = useState<PassCutHistoryResponse | null>(null);
   const [isPassCutLoading, setIsPassCutLoading] = useState(false);
@@ -232,19 +181,28 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
   const [competitorDetail, setCompetitorDetail] = useState<CompetitorDetailResponse | null>(null);
 
   const pageRef = useRef(page);
+  const selectedAdminSubmissionIdRef = useRef("");
 
   const fetchPrediction = useCallback(
-    async (targetPage: number, silent = false) => {
-      if (silent) {
-        setIsRefreshing(true);
-      } else {
+    async (targetPage: number, silent = false, submissionIdOverride?: string) => {
+      if (!silent) {
         setIsLoading(true);
       }
 
       setErrorMessage("");
+      setPendingScoring(false);
 
       try {
-        const response = await fetch(`/api/prediction?page=${targetPage}&limit=20`, {
+        const query = new URLSearchParams({
+          page: String(targetPage),
+          limit: "20",
+        });
+        const submissionIdParam = submissionIdOverride ?? selectedAdminSubmissionIdRef.current;
+        if (submissionIdParam) {
+          query.set("submissionId", submissionIdParam);
+        }
+
+        const response = await fetch(`/api/prediction?${query.toString()}`, {
           method: "GET",
           cache: "no-store",
         });
@@ -257,6 +215,12 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
             } else {
               router.replace("/login?callbackUrl=/exam/prediction");
             }
+            return;
+          }
+
+          if (response.status === 409) {
+            // 채점 대기 상태 — 정답키가 아직 없음
+            setPendingScoring(true);
             return;
           }
 
@@ -275,6 +239,16 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
           throw new Error(data.error ?? "합격예측 데이터를 불러오지 못했습니다.");
         }
 
+        setIsAdminPreview(Boolean(data.isAdminPreview));
+        setAdminPreviewCandidates(data.adminPreviewCandidates ?? []);
+        setSelectedAdminSubmissionId((current) => {
+          if (!data.isAdminPreview) return "";
+          const currentExists = (data.adminPreviewCandidates ?? []).some(
+            (candidate) => String(candidate.submissionId) === current
+          );
+          if (currentExists) return current;
+          return String(data.summary.submissionId);
+        });
         setPrediction(data);
         if (targetPage !== data.competitors.page) {
           setPage(data.competitors.page);
@@ -286,7 +260,6 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
         showErrorToast(message);
       } finally {
         setIsLoading(false);
-        setIsRefreshing(false);
       }
     },
     [embedded, router, showErrorToast]
@@ -299,6 +272,10 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
   useEffect(() => {
     pageRef.current = page;
   }, [page]);
+
+  useEffect(() => {
+    selectedAdminSubmissionIdRef.current = selectedAdminSubmissionId;
+  }, [selectedAdminSubmissionId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -322,6 +299,7 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
           examId: String(summary.examId),
           regionId: String(summary.regionId),
           examType: summary.examType,
+          gender: summary.gender,
         });
         const response = await fetch(`/api/pass-cut-history?${query.toString()}`, {
           method: "GET",
@@ -366,6 +344,21 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isCompetitorModalOpen]);
 
+  const handleAdminPreviewLoad = useCallback(async () => {
+    const submissionId = Number(selectedAdminSubmissionId);
+    if (!Number.isInteger(submissionId) || submissionId <= 0) {
+      showErrorToast("관리자 미리보기 제출ID를 정확히 선택해주세요.");
+      return;
+    }
+
+    if (page !== 1) {
+      setPage(1);
+      return;
+    }
+
+    await fetchPrediction(1, false, selectedAdminSubmissionId);
+  }, [fetchPrediction, page, selectedAdminSubmissionId, showErrorToast]);
+
   const handleOpenCompetitorDetail = useCallback(
     async (submissionId: number) => {
       setIsCompetitorModalOpen(true);
@@ -374,7 +367,14 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
       setCompetitorDetail(null);
 
       try {
-        const response = await fetch(`/api/prediction/competitor?submissionId=${submissionId}`, {
+        const query = new URLSearchParams({
+          submissionId: String(submissionId),
+        });
+        if (prediction?.summary.submissionId) {
+          query.set("baseSubmissionId", String(prediction.summary.submissionId));
+        }
+
+        const response = await fetch(`/api/prediction/competitor?${query.toString()}`, {
           method: "GET",
           cache: "no-store",
         });
@@ -393,7 +393,7 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
         setIsCompetitorDetailLoading(false);
       }
     },
-    [showErrorToast]
+    [prediction?.summary.submissionId, showErrorToast]
   );
 
   const pageNumbers = useMemo(() => {
@@ -405,6 +405,17 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
     return (
       <section className="rounded-xl border border-slate-200 bg-white p-8 text-sm text-slate-600">
         합격예측 데이터를 불러오는 중입니다...
+      </section>
+    );
+  }
+
+  if (pendingScoring) {
+    return (
+      <section className="rounded-xl border border-amber-200 bg-amber-50 p-8">
+        <p className="text-sm font-semibold text-amber-800">채점 대기 중입니다.</p>
+        <p className="mt-1 text-sm text-amber-700">
+          가답안 발표 후 자동으로 채점되면 이 페이지가 활성화됩니다.
+        </p>
       </section>
     );
   }
@@ -425,24 +436,40 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
     );
   }
 
-  const { summary, pyramid, competitors } = prediction;
+  const { summary, competitors } = prediction;
   const participationRate = getParticipationRate(
     summary.totalParticipants,
-    summary.applicantCount ?? 0
+    summary.estimatedApplicants
   );
-  const confidence = getConfidenceLevel(participationRate);
-
-  // 트랙용 역순 (좌→우: 도전이하 → 확실권)
-  const trackLevels = pyramid.levels.slice().reverse();
-  // 내 위치 마커 (rank 1 = 우측 100%, 최하위 = 좌측 0%)
-  const markerPercent = summary.totalParticipants <= 1
-    ? 50
-    : ((summary.totalParticipants - summary.myRank) / (summary.totalParticipants - 1)) * 100;
-  // 내 등급 라벨
-  const myLevelLabel = pyramid.levels.find((l) => l.isCurrent)?.label ?? "";
 
   return (
     <div className="space-y-6">
+      {isAdminPreview ? (
+        <section className="rounded-xl border border-indigo-200 bg-indigo-50 p-5">
+          <h2 className="text-sm font-semibold text-indigo-900">관리자 미리보기</h2>
+          <p className="mt-1 text-xs text-indigo-800">
+            MOCK 제출 데이터를 선택하면 실제 데이터 기반으로 합격 예측을 미리 검증할 수 있습니다.
+          </p>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <select
+              className="h-10 flex-1 rounded-md border border-indigo-300 bg-white px-3 text-sm"
+              value={selectedAdminSubmissionId}
+              onChange={(event) => setSelectedAdminSubmissionId(event.target.value)}
+            >
+              <option value="">미리보기 제출ID 선택</option>
+              {adminPreviewCandidates.map((candidate) => (
+                <option key={candidate.submissionId} value={candidate.submissionId}>
+                  {candidate.label}
+                </option>
+              ))}
+            </select>
+            <Button type="button" variant="outline" onClick={() => void handleAdminPreviewLoad()}>
+              불러오기
+            </Button>
+          </div>
+        </section>
+      ) : null}
+
       <PredictionLiveDashboard prediction={prediction} />
 
       {isPassCutLoading ? (
