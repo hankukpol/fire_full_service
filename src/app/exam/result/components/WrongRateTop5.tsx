@@ -110,36 +110,67 @@ export default function WrongRateTop5({ submissionId, subjectOptions }: WrongRat
       ) : null}
 
       {!isLoading && !errorMessage && !isCollecting ? (
-        <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200">
-          <table className="min-w-[560px] w-full border-collapse text-sm">
-            <thead>
-              <tr className="bg-slate-100 text-slate-700">
-                <th className="border border-slate-200 px-3 py-2 text-center">순위</th>
-                <th className="border border-slate-200 px-3 py-2 text-left">과목</th>
-                <th className="border border-slate-200 px-3 py-2 text-center">문항</th>
-                <th className="border border-slate-200 px-3 py-2 text-right">오답률</th>
-                <th className="border border-slate-200 px-3 py-2 text-center">정답</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr key={`${item.subjectId}-${item.questionNumber}`}>
-                  <td className="border border-slate-200 px-3 py-2 text-center">{item.rank}</td>
-                  <td className="border border-slate-200 px-3 py-2">{item.subjectName}</td>
-                  <td className="border border-slate-200 px-3 py-2 text-center">{item.questionNumber}</td>
-                  <td className="border border-slate-200 px-3 py-2 text-right">{item.wrongRate.toFixed(1)}%</td>
-                  <td className="border border-slate-200 px-3 py-2 text-center">{item.correctAnswer}</td>
+        <div className="mt-4 space-y-2">
+          <div className="hidden overflow-x-auto rounded-xl border border-slate-200 md:block">
+            <table className="min-w-[560px] w-full border-collapse text-sm">
+              <thead>
+                <tr className="bg-slate-100 text-slate-700">
+                  <th className="border border-slate-200 px-3 py-2 text-center">순위</th>
+                  <th className="border border-slate-200 px-3 py-2 text-left">과목</th>
+                  <th className="border border-slate-200 px-3 py-2 text-center">문항</th>
+                  <th className="border border-slate-200 px-3 py-2 text-right">오답률</th>
+                  <th className="border border-slate-200 px-3 py-2 text-center">정답</th>
                 </tr>
-              ))}
-              {items.length < 1 ? (
-                <tr>
-                  <td colSpan={5} className="border border-slate-200 px-3 py-6 text-center text-slate-500">
-                    표시할 데이터가 없습니다.
-                  </td>
-                </tr>
-              ) : null}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {items.map((item) => (
+                  <tr key={`${item.subjectId}-${item.questionNumber}`}>
+                    <td className="border border-slate-200 px-3 py-2 text-center">{item.rank}</td>
+                    <td className="border border-slate-200 px-3 py-2">{item.subjectName}</td>
+                    <td className="border border-slate-200 px-3 py-2 text-center">{item.questionNumber}</td>
+                    <td className="border border-slate-200 px-3 py-2 text-right">{item.wrongRate.toFixed(1)}%</td>
+                    <td className="border border-slate-200 px-3 py-2 text-center">{item.correctAnswer}</td>
+                  </tr>
+                ))}
+                {items.length < 1 ? (
+                  <tr>
+                    <td colSpan={5} className="border border-slate-200 px-3 py-6 text-center text-slate-500">
+                      표시할 데이터가 없습니다.
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="space-y-2 md:hidden">
+            {items.length > 0 ? (
+              items.map((item) => (
+                <div key={`${item.subjectId}-${item.questionNumber}`} className="rounded-xl border border-slate-200 bg-white p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-slate-800">#{item.rank}</p>
+                    <p className="text-sm font-medium text-slate-700">
+                      {item.subjectName} · {item.questionNumber}번
+                    </p>
+                  </div>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-slate-500">오답률</span>
+                      <span className="font-semibold text-slate-900">{item.wrongRate.toFixed(1)}%</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="text-slate-500">정답</span>
+                      <span className="font-medium text-slate-800">{item.correctAnswer}</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-xl border border-slate-200 bg-white px-3 py-6 text-center text-sm text-slate-500">
+                표시할 데이터가 없습니다.
+              </div>
+            )}
+          </div>
         </div>
       ) : null}
     </section>

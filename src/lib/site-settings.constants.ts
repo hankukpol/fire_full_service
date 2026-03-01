@@ -11,6 +11,7 @@ export type SiteSettingKey =
   | "site.maintenanceMessage"
   | "site.mainPageAutoRefresh"
   | "site.mainPageRefreshInterval"
+  | "site.mainCardLiveStatsEnabled"
   | "site.mainCardOverviewEnabled"
   | "site.mainCardDifficultyEnabled"
   | "site.mainCardCompetitiveEnabled"
@@ -50,6 +51,7 @@ export const SITE_SETTING_TYPES: Record<SiteSettingKey, SiteSettingValueType> = 
   "site.maintenanceMessage": "string",
   "site.mainPageAutoRefresh": "boolean",
   "site.mainPageRefreshInterval": "string",
+  "site.mainCardLiveStatsEnabled": "boolean",
   "site.mainCardOverviewEnabled": "boolean",
   "site.mainCardDifficultyEnabled": "boolean",
   "site.mainCardCompetitiveEnabled": "boolean",
@@ -88,6 +90,7 @@ export const SITE_SETTING_DEFAULTS: SiteSettingsMap = {
   "site.maintenanceMessage": "시스템 점검 중입니다.",
   "site.mainPageAutoRefresh": true,
   "site.mainPageRefreshInterval": "60",
+  "site.mainCardLiveStatsEnabled": true,
   "site.mainCardOverviewEnabled": true,
   "site.mainCardDifficultyEnabled": true,
   "site.mainCardCompetitiveEnabled": true,

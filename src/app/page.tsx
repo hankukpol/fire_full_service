@@ -125,6 +125,7 @@ export default async function HomePage() {
   const heroSubBanners = bannersByZone.hero.slice(1);
   const heroBadge = String(siteSettings["site.heroBadge"] ?? "2026년 소방 1차 필기시험 합격예측");
   const careerExamEnabled = Boolean(siteSettings["site.careerExamEnabled"] ?? true);
+  const liveStatsCardEnabled = Boolean(siteSettings["site.mainCardLiveStatsEnabled"] ?? true);
   const finalPredictionEnabled = Boolean(siteSettings["site.finalPredictionEnabled"] ?? false);
   const commentsEnabled = Boolean(siteSettings["site.commentsEnabled"] ?? true);
   const tabEnabled = {
@@ -176,7 +177,9 @@ export default async function HomePage() {
             </div>
           ) : null}
 
-          <LiveStatsCounter stats={liveStats} careerExamEnabled={careerExamEnabled} />
+          {liveStatsCardEnabled ? (
+            <LiveStatsCounter stats={liveStats} careerExamEnabled={careerExamEnabled} />
+          ) : null}
           <NoticeBar notices={activeNotices} />
           <ExamFunctionArea
             isAuthenticated={isLoggedIn}

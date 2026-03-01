@@ -45,6 +45,7 @@ export default function CorrectRateChart({ subjects }: CorrectRateChartProps) {
       isCorrect: answer.isCorrect,
     }));
   }, [selectedSubject]);
+
   const hasChartData = chartData.length > 0;
 
   if (!selectedSubject) {
@@ -95,7 +96,7 @@ export default function CorrectRateChart({ subjects }: CorrectRateChartProps) {
         </select>
       </div>
 
-      <div className="mt-4 h-[320px]">
+      <div className="mt-4 hidden h-[320px] md:block">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 20, right: 8, left: -12, bottom: 8 }}>
             <CartesianGrid stroke="#e2e8f0" vertical={false} strokeDasharray="3 3" />
@@ -131,9 +132,28 @@ export default function CorrectRateChart({ subjects }: CorrectRateChartProps) {
         </ResponsiveContainer>
       </div>
 
+      <div className="mt-4 space-y-2 md:hidden">
+        {chartData.map((item) => (
+          <div key={item.key} className="rounded-lg border border-slate-200 bg-white p-3">
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <p className="font-semibold text-slate-800">{item.questionNumber}번</p>
+              <p className={`font-semibold ${item.isCorrect ? "text-blue-700" : "text-rose-700"}`}>
+                {item.correctRate.toFixed(1)}%
+              </p>
+            </div>
+            <div className="mt-2 h-2 rounded-full bg-slate-200">
+              <div
+                className={`h-2 rounded-full ${item.isCorrect ? "bg-blue-600" : "bg-rose-500"}`}
+                style={{ width: `${Math.max(0, Math.min(100, item.correctRate))}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
-        <span className="rounded-full bg-blue-100 px-3 py-1 text-blue-700">파랑: 내가 맞힌 문항</span>
-        <span className="rounded-full bg-rose-100 px-3 py-1 text-rose-700">빨강: 내가 틀린 문항</span>
+        <span className="rounded-full bg-blue-100 px-3 py-1 text-blue-700">파란색: 내가 맞힌 문항</span>
+        <span className="rounded-full bg-rose-100 px-3 py-1 text-rose-700">빨간색: 내가 틀린 문항</span>
       </div>
     </section>
   );

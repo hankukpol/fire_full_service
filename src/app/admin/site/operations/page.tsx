@@ -80,6 +80,10 @@ export default function AdminSiteOperationsTabPage() {
         "site.maintenanceMessage": asString(settings["site.maintenanceMessage"]),
         "site.mainPageAutoRefresh": asBoolean(settings["site.mainPageAutoRefresh"], true),
         "site.mainPageRefreshInterval": String(refreshInterval),
+        "site.mainCardLiveStatsEnabled": asBoolean(
+          settings["site.mainCardLiveStatsEnabled"],
+          true
+        ),
         "site.mainCardOverviewEnabled": asBoolean(settings["site.mainCardOverviewEnabled"], true),
         "site.mainCardDifficultyEnabled": asBoolean(
           settings["site.mainCardDifficultyEnabled"],
@@ -162,12 +166,22 @@ export default function AdminSiteOperationsTabPage() {
           <label className="flex items-center gap-2 text-sm text-slate-700">
             <input
               type="checkbox"
+              checked={asBoolean(settings["site.mainCardLiveStatsEnabled"], true)}
+              onChange={(event) =>
+                updateSettingBoolean("site.mainCardLiveStatsEnabled", event.target.checked)
+              }
+            />
+            합격예측 실시간 참여 현황 카드
+          </label>
+          <label className="flex items-center gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
               checked={asBoolean(settings["site.mainCardOverviewEnabled"], true)}
               onChange={(event) =>
                 updateSettingBoolean("site.mainCardOverviewEnabled", event.target.checked)
               }
             />
-            참여 현황 카드
+            직렬별 실시간 합격예측 분석 카드
           </label>
           <label className="flex items-center gap-2 text-sm text-slate-700">
             <input
