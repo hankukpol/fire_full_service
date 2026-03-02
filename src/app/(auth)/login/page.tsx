@@ -96,6 +96,12 @@ export default function LoginPage() {
             </Button>
           </form>
 
+          <p className="mt-3 text-right text-sm">
+            <Link href="/forgot-password" className="text-slate-700 underline">
+              비밀번호를 잊으셨나요?
+            </Link>
+          </p>
+
           <p className="mt-4 text-sm text-slate-600">
             계정이 없으신가요?{" "}
             <Link href="/register" className="font-medium text-slate-900 underline">

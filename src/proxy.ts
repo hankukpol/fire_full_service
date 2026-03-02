@@ -2,11 +2,13 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-const publicAuthPaths = new Set(["/login", "/register"]);
+const publicAuthPaths = new Set(["/login", "/register", "/forgot-password", "/reset-password"]);
 const maintenanceBypassPaths = new Set([
   "/maintenance",
   "/login",
   "/register",
+  "/forgot-password",
+  "/reset-password",
   "/api/site-settings",
   "/api/notices",
 ]);

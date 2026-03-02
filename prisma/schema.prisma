@@ -57,6 +57,7 @@ enum PassCutSnapshotStatus {
 model User {
   id          Int          @id @default(autoincrement())
   name        String
+  email       String?      @unique
   phone       String       @unique
   password    String
   role            Role         @default(USER)
@@ -71,6 +72,35 @@ model User {
   rescoreDetails RescoreDetail[]
   finalPredictions FinalPrediction[]
   submissionLogs SubmissionLog[]
+  passwordResetTokens PasswordResetToken[]
+  recoveryCodes       RecoveryCode[]
+}
+
+model PasswordResetToken {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  tokenHash        String   @unique
+  expiresAt        DateTime
+  usedAt           DateTime?
+  requestedIp      String?
+  requestedAgent   String?
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@index([expiresAt])
+}
+
+model RecoveryCode {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  codeHash  String
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, usedAt])
+  @@index([codeHash])
 }
 
 model Exam {

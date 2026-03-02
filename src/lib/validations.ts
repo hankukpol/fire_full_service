@@ -8,6 +8,7 @@ export interface ValidationResult<T> {
 
 const koreanNameRegex = /^[가-힣]{2,20}$/;
 const phoneRegex = /^010-\d{4}-\d{4}$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordHasUppercase = /[A-Z]/;
 const passwordHasLowercase = /[a-z]/;
 const passwordHasNumber = /\d/;
@@ -23,23 +24,17 @@ export function normalizePhone(rawPhone: string): string {
   return rawPhone.trim();
 }
 
-export function validateRegisterInput(
-  input: Partial<RegisterFormData>
-): ValidationResult<RegisterFormData> {
+export function normalizeEmail(rawEmail: string): string {
+  return rawEmail.trim().toLowerCase();
+}
+
+export function isValidEmail(email: string): boolean {
+  return emailRegex.test(email);
+}
+
+export function validatePasswordStrength(rawPassword: string): ValidationResult<string> {
   const errors: string[] = [];
-  const name = input.name?.trim() ?? "";
-  const phone = normalizePhone(input.phone ?? "");
-  const password = input.password?.trim() ?? "";
-  const agreedToTerms = input.agreedToTerms === true;
-  const agreedToPrivacy = input.agreedToPrivacy === true;
-
-  if (!koreanNameRegex.test(name)) {
-    errors.push("이름은 한글 2~20자로 입력해 주세요.");
-  }
-
-  if (!phoneRegex.test(phone)) {
-    errors.push("연락처는 010-XXXX-XXXX 형식으로 입력해 주세요.");
-  }
+  const password = rawPassword.trim();
 
   if (!password) {
     errors.push("비밀번호를 입력해 주세요.");
@@ -60,6 +55,42 @@ export function validateRegisterInput(
     }
   }
 
+  if (errors.length > 0) {
+    return { isValid: false, errors };
+  }
+
+  return { isValid: true, errors: [], data: password };
+}
+
+export function validateRegisterInput(
+  input: Partial<RegisterFormData>
+): ValidationResult<RegisterFormData> {
+  const errors: string[] = [];
+  const name = input.name?.trim() ?? "";
+  const email = normalizeEmail(input.email ?? "");
+  const phone = normalizePhone(input.phone ?? "");
+  const passwordResult = validatePasswordStrength(input.password ?? "");
+  const agreedToTerms = input.agreedToTerms === true;
+  const agreedToPrivacy = input.agreedToPrivacy === true;
+
+  if (!koreanNameRegex.test(name)) {
+    errors.push("이름은 한글 2~20자로 입력해 주세요.");
+  }
+
+  if (!phoneRegex.test(phone)) {
+    errors.push("연락처는 010-XXXX-XXXX 형식으로 입력해 주세요.");
+  }
+
+  if (email && !isValidEmail(email)) {
+    errors.push("이메일 형식이 올바르지 않습니다.");
+  }
+
+  if (!passwordResult.isValid) {
+    for (const message of passwordResult.errors) {
+      errors.push(message);
+    }
+  }
+
   if (!agreedToTerms) {
     errors.push("서비스 이용약관에 동의해 주세요.");
   }
@@ -77,8 +108,9 @@ export function validateRegisterInput(
     errors: [],
     data: {
       name,
+      email: email || undefined,
       phone,
-      password,
+      password: passwordResult.data ?? "",
       agreedToTerms,
       agreedToPrivacy,
     },

@@ -27,6 +27,7 @@ export interface SubjectDefinition {
 
 export interface RegisterFormData {
   name: string;
+  email?: string;
   phone: string;
   password: string;
   agreedToTerms: boolean;    // 서비스 이용약관 동의 (필수)
