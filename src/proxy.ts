@@ -63,6 +63,11 @@ async function getMaintenanceMode(request: NextRequest): Promise<boolean> {
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  // Keep auth endpoints free from extra middleware fetches.
+  if (pathname.startsWith("/api/auth")) {
+    return NextResponse.next();
+  }
+
   if (pathname.startsWith("/api/site-settings")) {
     return NextResponse.next();
   }

@@ -1,56 +1,59 @@
-# 소방 합격예측 프로그램 (`fire/`)
+﻿# 소방 합격예측 프로그램 (`fire/`)
+[![E2E Verification](https://github.com/hankukpol/fire_full_service/actions/workflows/e2e.yml/badge.svg)](https://github.com/hankukpol/fire_full_service/actions/workflows/e2e.yml)
 
-Next.js + Prisma 기반 소방공무원 채용시험 합격예측 서비스.
-경찰 프로젝트(`police/`)와 **완전히 분리된** 독립 프로젝트입니다.
+Next.js + Prisma 湲곕컲 ?뚮갑怨듬Т??梨꾩슜?쒗뿕 ?⑷꺽?덉륫 ?쒕퉬??
+寃쎌같 ?꾨줈?앺듃(`police/`)? **?꾩쟾??遺꾨━??* ?낅┰ ?꾨줈?앺듃?낅땲??
 
-- **로컬 서버**: http://localhost:3200
-- **DB**: Supabase `iqhkmcxeuwueiqopkwfd` (서울)
-- **관리자**: `010-0000-0000` / `Admin2026!`
+- **濡쒖뺄 ?쒕쾭**: http://localhost:3200
+- **DB**: Supabase `iqhkmcxeuwueiqopkwfd` (?쒖슱)
+- **愿由ъ옄**: `010-0000-0000` / `Admin2026!`
 
 ---
 
-## 빠른 시작
+## 鍮좊Ⅸ ?쒖옉
 
 ```bash
-# Windows: dev-start.bat 더블클릭
-# 또는:
+# Windows: dev-start.bat ?붾툝?대┃
+# ?먮뒗:
 cd fire
 npm run dev
 ```
 
 ---
 
-## 채용유형 4종
-
-| ExamType | 한글명 | 성별 | 문항 | 만점 |
+## 梨꾩슜?좏삎 4醫?
+| ExamType | ?쒓?紐?| ?깅퀎 | 臾명빆 | 留뚯젏 |
 |----------|--------|------|------|------|
-| `PUBLIC` | 공채 | 남/여 분리 | 75문항 | 300점 |
-| `CAREER_RESCUE` | 구조 경채 | 남자만 | 65문항 | 200점 |
-| `CAREER_ACADEMIC` | 소방학과 경채 | 지역마다 남/여/양성 | 65문항 | 200점 |
-| `CAREER_EMT` | 구급 경채 | 남/여 분리 | 65문항 | 200점 |
+| `PUBLIC` | 怨듭콈 | ????遺꾨━ | 75臾명빆 | 300??|
+| `CAREER_RESCUE` | 援ъ“ 寃쎌콈 | ?⑥옄留?| 65臾명빆 | 200??|
+| `CAREER_ACADEMIC` | ?뚮갑?숆낵 寃쎌콈 | 吏??쭏???????묒꽦 | 65臾명빆 | 200??|
+| `CAREER_EMT` | 援ш툒 寃쎌콈 | ????遺꾨━ | 65臾명빆 | 200??|
 
 ---
 
-## 개발 문서
+## 媛쒕컻 臾몄꽌
 
-| 문서 | 내용 |
+| 臾몄꽌 | ?댁슜 |
 |------|------|
-| [00_소방시험_전체구조_이해.md](./docs/00_소방시험_전체구조_이해.md) | **필독** — 시험 구조, 합격배수, 과락, 가산점, 서비스 흐름 전체 |
-| [01_소방_프로젝트_개요.md](./docs/01_소방_프로젝트_개요.md) | 프로젝트 구조, 기술스택, 경찰과의 차이점 |
-| [02_시험규정_채점로직.md](./docs/02_시험규정_채점로직.md) | 과목/배점/과락/합격배수/가산점 상세 규정 |
-| [03_DB_스키마_및_데이터모델.md](./docs/03_DB_스키마_및_데이터모델.md) | Prisma 스키마, 테이블/필드 설명 |
-| [04_핵심변경사항_경찰to소방.md](./docs/04_핵심변경사항_경찰to소방.md) | 경찰→소방 변환 내용, 수정 파일 목록, 주의사항 |
-| [05_개발환경_설정_가이드.md](./docs/05_개발환경_설정_가이드.md) | 로컬 실행, DB 설정, 트러블슈팅 |
-| [DEPLOY_VERCEL_SUPABASE.md](./docs/DEPLOY_VERCEL_SUPABASE.md) | Vercel + Supabase 배포 가이드 |
+| [00_?뚮갑?쒗뿕_?꾩껜援ъ“_?댄빐.md](./docs/00_?뚮갑?쒗뿕_?꾩껜援ъ“_?댄빐.md) | **?꾨룆** ???쒗뿕 援ъ“, ?⑷꺽諛곗닔, 怨쇰씫, 媛?곗젏, ?쒕퉬???먮쫫 ?꾩껜 |
+| [01_?뚮갑_?꾨줈?앺듃_媛쒖슂.md](./docs/01_?뚮갑_?꾨줈?앺듃_媛쒖슂.md) | ?꾨줈?앺듃 援ъ“, 湲곗닠?ㅽ깮, 寃쎌같怨쇱쓽 李⑥씠??|
+| [02_?쒗뿕洹쒖젙_梨꾩젏濡쒖쭅.md](./docs/02_?쒗뿕洹쒖젙_梨꾩젏濡쒖쭅.md) | 怨쇰ぉ/諛곗젏/怨쇰씫/?⑷꺽諛곗닔/媛?곗젏 ?곸꽭 洹쒖젙 |
+| [03_DB_?ㅽ궎留?諛??곗씠?곕え??md](./docs/03_DB_?ㅽ궎留?諛??곗씠?곕え??md) | Prisma ?ㅽ궎留? ?뚯씠釉??꾨뱶 ?ㅻ챸 |
+| [04_?듭떖蹂寃쎌궗??寃쎌같to?뚮갑.md](./docs/04_?듭떖蹂寃쎌궗??寃쎌같to?뚮갑.md) | 寃쎌같?믪냼諛?蹂???댁슜, ?섏젙 ?뚯씪 紐⑸줉, 二쇱쓽?ы빆 |
+| [05_媛쒕컻?섍꼍_?ㅼ젙_媛?대뱶.md](./docs/05_媛쒕컻?섍꼍_?ㅼ젙_媛?대뱶.md) | 濡쒖뺄 ?ㅽ뻾, DB ?ㅼ젙, ?몃윭釉붿뒋??|
+| [DEPLOY_VERCEL_SUPABASE.md](./docs/DEPLOY_VERCEL_SUPABASE.md) | Vercel + Supabase 諛고룷 媛?대뱶 |
 
 ---
 
-## 핵심 파일
+## ?듭떖 ?뚯씪
 
 ```
-src/lib/scoring.ts        # 채점 엔진
-src/lib/prediction.ts     # 합격예측 엔진
-src/lib/policy.ts         # 소방 정책 상수 (과락율, 가산점 등)
-prisma/schema.prisma      # DB 스키마
-prisma/seed.ts            # 초기 데이터
-```
+src/lib/scoring.ts        # 梨꾩젏 ?붿쭊
+src/lib/prediction.ts     # ?⑷꺽?덉륫 ?붿쭊
+src/lib/policy.ts         # ?뚮갑 ?뺤콉 ?곸닔 (怨쇰씫?? 媛?곗젏 ??
+prisma/schema.prisma      # DB ?ㅽ궎留?prisma/seed.ts            # 珥덇린 ?곗씠??```
+
+
+
+
+

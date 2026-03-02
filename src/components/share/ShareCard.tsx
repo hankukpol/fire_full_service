@@ -45,13 +45,14 @@ export default function ShareCard({
 
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          display: "flex",
+          flexDirection: "row",
           gap: "24px",
         }}
       >
         <div
           style={{
+            flex: 1,
             borderRadius: "20px",
             background: "rgba(255,255,255,0.12)",
             padding: "28px",
@@ -65,6 +66,7 @@ export default function ShareCard({
         </div>
         <div
           style={{
+            flex: 1,
             borderRadius: "20px",
             background: "rgba(255,255,255,0.15)",
             padding: "28px",
