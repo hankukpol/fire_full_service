@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/providers/ToastProvider";
-import { normalizeEmail, normalizePhone, validateRegisterInput } from "@/lib/validations";
+import { normalizePhone, validateRegisterInput } from "@/lib/validations";
 
 interface RegisterResponse {
   error?: string;
@@ -27,7 +27,6 @@ export default function RegisterPage() {
   const router = useRouter();
   const { showErrorToast, showToast } = useToast();
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -74,7 +73,6 @@ export default function RegisterPage() {
 
     const validationResult = validateRegisterInput({
       name,
-      email,
       phone,
       password,
       agreedToTerms,
@@ -131,7 +129,7 @@ export default function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">회원가입</CardTitle>
-          <p className="text-sm text-slate-500">한글 이름과 연락처를 입력하고 계정을 생성하세요.</p>
+          <p className="text-sm text-slate-500">한글 이름과 연락처로 가입하고 복구코드를 안전하게 보관해 주세요.</p>
         </CardHeader>
         <CardContent>
           {recoveryCodes.length > 0 ? (
@@ -167,18 +165,6 @@ export default function RegisterPage() {
                     placeholder="홍길동"
                     required
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">이메일 (선택)</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(event) => setEmail(normalizeEmail(event.target.value))}
-                    placeholder="name@example.com"
-                  />
-                  <p className="text-xs text-slate-500">등록하면 이메일 재설정 링크로 비밀번호를 찾을 수 있습니다.</p>
                 </div>
 
                 <div className="space-y-2">

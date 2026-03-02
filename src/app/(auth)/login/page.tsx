@@ -98,7 +98,7 @@ export default function LoginPage() {
 
           <p className="mt-3 text-right text-sm">
             <Link href="/forgot-password" className="text-slate-700 underline">
-              비밀번호를 잊으셨나요?
+              복구코드로 비밀번호 재설정
             </Link>
           </p>
 
