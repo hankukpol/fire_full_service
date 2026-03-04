@@ -15,7 +15,7 @@ function joinClassNames(...parts: Array<string | undefined>): string {
   return parts.filter(Boolean).join(" ");
 }
 
-/** 모바일 전용 이미지 (md 미만에서만 표시) */
+/** 모바일 전용 이미지 (768px 이하에서 표시) */
 function MobileImage({ banner, safeLinkUrl }: { banner: PublicBannerItem; safeLinkUrl: string | null }) {
   const img = (
     // eslint-disable-next-line @next/next/no-img-element
@@ -50,12 +50,12 @@ export default function BannerImage({ banner, className, fullWidth = false }: Ba
   if (fullWidth && hasMobileImage) {
     return (
       <>
-        {/* 모바일: md 미만 */}
-        <div className="block md:hidden">
+        {/* 모바일: 768px 이하 */}
+        <div className="block min-[769px]:hidden">
           <MobileImage banner={banner} safeLinkUrl={safeLinkUrl} />
         </div>
-        {/* PC: md 이상 */}
-        <div className="hidden md:block">
+        {/* PC: 769px 이상 */}
+        <div className="hidden min-[769px]:block">
           {safeHtmlContent ? (
             <div
               className="flex w-full justify-center overflow-hidden"
