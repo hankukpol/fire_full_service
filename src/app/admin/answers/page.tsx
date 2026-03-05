@@ -65,6 +65,14 @@ interface PreviewResponse {
   };
 }
 
+interface ResetAnswersResponse {
+  success: boolean;
+  deletedQuestions: number;
+  affectedSubmissions: number;
+  pendingUpdatedCount: number;
+  clearedSubjectScoreCount: number;
+}
+
 interface AnswerLogRow {
   id: number;
   subjectId: number;
@@ -182,6 +190,7 @@ export default function AdminAnswersPage() {
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const [showDiffPanel, setShowDiffPanel] = useState(false);
   const [showHistoryPanel, setShowHistoryPanel] = useState(false);
   const [historyRows, setHistoryRows] = useState<AnswerLogRow[]>([]);
@@ -606,6 +615,63 @@ export default function AdminAnswersPage() {
     }
   }
 
+  async function resetAnswerKeys() {
+    setNotice(null);
+
+    if (!selectedExamId) {
+      setNotice({ type: "error", message: "시험을 먼저 선택해 주세요." });
+      return;
+    }
+
+    const ok = await confirm({
+      title: "정답 초기화",
+      description: [
+        "관리자 정답키가 삭제됩니다.",
+        "해당 유형 제출은 채점 대기(PENDING) 상태로 전환됩니다.",
+        "",
+        "정말 초기화하시겠습니까?",
+      ].join("\n"),
+      variant: "danger",
+      confirmLabel: "초기화",
+    });
+    if (!ok) return;
+
+    setIsResetting(true);
+    try {
+      const response = await fetch(ADMIN_ANSWERS_API, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          examId: selectedExamId,
+          examType,
+          reason: rescoreReason.trim() || null,
+        }),
+      });
+
+      const data = (await response.json()) as ResetAnswersResponse & { error?: string };
+      if (!response.ok) {
+        throw new Error(data.error ?? "정답 초기화에 실패했습니다.");
+      }
+
+      setNotice({
+        type: "success",
+        message: `정답이 초기화되었습니다. 삭제 문항 ${data.deletedQuestions}개, 채점대기 전환 ${data.pendingUpdatedCount}건, 과목점수 정리 ${data.clearedSubjectScoreCount}건`,
+      });
+
+      await loadAnswers(selectedExamId, examType, isConfirmed);
+      if (showHistoryPanel) {
+        await loadHistory();
+      }
+    } catch (error) {
+      setNotice({
+        type: "error",
+        message: error instanceof Error ? error.message : "정답 초기화 중 오류가 발생했습니다.",
+      });
+    } finally {
+      setIsResetting(false);
+    }
+  }
+
   function downloadTemplateCsv(type: RecruitExamType) {
     const templateSubjects = TEMPLATE_SUBJECTS[type];
     const lines = ["과목,문항번호,정답"];
@@ -727,6 +793,15 @@ export default function AdminAnswersPage() {
             </Button>
             <Button type="button" variant="outline" onClick={() => void toggleHistoryPanel()}>
               {showHistoryPanel ? "저장 이력 닫기" : "저장 이력 보기"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="text-rose-600 hover:text-rose-700"
+              onClick={() => void resetAnswerKeys()}
+              disabled={isSaving || isResetting || isLoading || !selectedExamId}
+            >
+              {isResetting ? "초기화 중..." : "정답 초기화"}
             </Button>
           </div>
         </div>
@@ -902,7 +977,7 @@ export default function AdminAnswersPage() {
             </section>
           ))}
 
-          <Button type="submit" disabled={isSaving}>
+          <Button type="submit" disabled={isSaving || isResetting}>
             {isSaving ? "저장 중..." : "정답 저장"}
           </Button>
         </form>
@@ -939,7 +1014,7 @@ export default function AdminAnswersPage() {
             onChange={handleFileChange}
             className="block w-full text-sm text-slate-700 md:max-w-sm"
           />
-          <Button type="submit" variant="outline" disabled={isSaving}>
+          <Button type="submit" variant="outline" disabled={isSaving || isResetting}>
             CSV 저장
           </Button>
         </form>

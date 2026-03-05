@@ -16,13 +16,21 @@ function joinClassNames(...parts: Array<string | undefined>): string {
 }
 
 /** 모바일 전용 이미지 (768px 이하에서 표시) */
-function MobileImage({ banner, safeLinkUrl }: { banner: PublicBannerItem; safeLinkUrl: string | null }) {
+function MobileImage({
+  banner,
+  safeLinkUrl,
+  className,
+}: {
+  banner: PublicBannerItem;
+  safeLinkUrl: string | null;
+  className?: string;
+}) {
   const img = (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={banner.mobileImageUrl!}
       alt={banner.altText || "배너 이미지"}
-      className="block h-auto w-full object-cover bg-white"
+      className={joinClassNames("block h-auto w-full object-cover bg-white", className)}
     />
   );
 
@@ -46,69 +54,63 @@ export default function BannerImage({ banner, className, fullWidth = false }: Ba
   const hasMobileImage = !!banner.mobileImageUrl;
   const safeLinkUrl = banner.linkUrl && !banner.linkUrl.startsWith("//") ? banner.linkUrl : null;
 
-  // fullWidth 모드 + 모바일 이미지 있음 → PC/모바일 분기 렌더링
-  if (fullWidth && hasMobileImage) {
+  const renderDesktopContent = () => {
+    if (safeHtmlContent) {
+      return (
+        <div
+          className={fullWidth ? "flex w-full justify-center overflow-hidden" : "block"}
+          dangerouslySetInnerHTML={{ __html: safeHtmlContent }}
+        />
+      );
+    }
+
+    if (!banner.imageUrl) return null;
+
+    if (fullWidth) {
+      return <FullWidthImage banner={banner} safeLinkUrl={safeLinkUrl} className={className} />;
+    }
+
+    const image = (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={banner.imageUrl}
+        alt={banner.altText || "배너 이미지"}
+        className={joinClassNames("block h-auto w-full border border-slate-200 object-cover bg-white", className)}
+      />
+    );
+
+    if (!safeLinkUrl) return image;
+
+    const external = isExternalUrl(safeLinkUrl);
+    return (
+      <a
+        href={safeLinkUrl}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noreferrer noopener" : undefined}
+        className="block"
+      >
+        {image}
+      </a>
+    );
+  };
+
+  // 모바일 이미지가 있으면 fullWidth 여부와 무관하게 모바일/PC 분기 렌더링
+  if (hasMobileImage) {
     return (
       <>
         {/* 모바일: 768px 이하 */}
         <div className="block min-[769px]:hidden">
-          <MobileImage banner={banner} safeLinkUrl={safeLinkUrl} />
+          <MobileImage banner={banner} safeLinkUrl={safeLinkUrl} className={className} />
         </div>
         {/* PC: 769px 이상 */}
         <div className="hidden min-[769px]:block">
-          {safeHtmlContent ? (
-            <div
-              className="flex w-full justify-center overflow-hidden"
-              dangerouslySetInnerHTML={{ __html: safeHtmlContent }}
-            />
-          ) : banner.imageUrl ? (
-            <FullWidthImage banner={banner} safeLinkUrl={safeLinkUrl} className={className} />
-          ) : null}
+          {renderDesktopContent()}
         </div>
       </>
     );
   }
 
-  // HTML 콘텐츠 모드 (모바일 이미지 없음)
-  if (safeHtmlContent) {
-    return (
-      <div
-        className={fullWidth ? "flex w-full justify-center overflow-hidden" : "block"}
-        dangerouslySetInnerHTML={{ __html: safeHtmlContent }}
-      />
-    );
-  }
-
-  // 이미지 모드
-  if (!banner.imageUrl) return null;
-
-  if (fullWidth) {
-    return <FullWidthImage banner={banner} safeLinkUrl={safeLinkUrl} className={className} />;
-  }
-
-  // 일반(비 fullWidth) 이미지
-  const image = (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={banner.imageUrl}
-      alt={banner.altText || "배너 이미지"}
-      className={joinClassNames("block h-auto w-full border border-slate-200 object-cover bg-white", className)}
-    />
-  );
-
-  if (!safeLinkUrl) return image;
-
-  const external = isExternalUrl(safeLinkUrl);
-  return (
-    <a
-      href={safeLinkUrl}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noreferrer noopener" : undefined}
-      className="block"
-    >
-      {image}
-    </a>
-  );
+  return renderDesktopContent();
 }
 
 /** fullWidth PC 이미지 — 히어로 확대 문제 수정: w-full max-w-[1920px] */

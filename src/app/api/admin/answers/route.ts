@@ -12,6 +12,7 @@ import {
   type RawAnswerRow,
 } from "@/lib/admin-answer-keys";
 import { requireAdminRoute } from "@/lib/admin-auth";
+import { invalidateCorrectRateCache } from "@/lib/correct-rate";
 import { prisma } from "@/lib/prisma";
 import { rescoreExam } from "@/lib/scoring";
 
@@ -212,6 +213,107 @@ export async function GET(request: NextRequest) {
       isConfirmed: answerKey.isConfirmed,
     })),
   });
+}
+
+export async function DELETE(request: NextRequest) {
+  const guard = await requireAdminRoute();
+  if ("error" in guard) return guard.error;
+
+  try {
+    let body: {
+      examId?: number;
+      examType?: string;
+      reason?: string;
+    };
+
+    try {
+      body = (await request.json()) as {
+        examId?: number;
+        examType?: string;
+        reason?: string;
+      };
+    } catch {
+      return NextResponse.json({ error: "요청 본문(JSON) 형식이 올바르지 않습니다." }, { status: 400 });
+    }
+
+    const examId = parsePositiveInt(body.examId);
+    const examType = parseExamType(body.examType ?? null);
+    if (!examId) {
+      return NextResponse.json({ error: "examId는 필수입니다." }, { status: 400 });
+    }
+    if (!examType) {
+      return NextResponse.json(
+        { error: "examType은 PUBLIC, CAREER_RESCUE, CAREER_ACADEMIC, CAREER_EMT 중 하나여야 합니다." },
+        { status: 400 }
+      );
+    }
+
+    const exam = await prisma.exam.findUnique({
+      where: { id: examId },
+      select: { id: true },
+    });
+    if (!exam) {
+      return NextResponse.json({ error: "해당 시험을 찾을 수 없습니다." }, { status: 404 });
+    }
+
+    const subjects = await getSubjectsByExamType(examType);
+    if (subjects.length < 1) {
+      return NextResponse.json({ error: "해당 유형의 시험 과목 정보를 찾을 수 없습니다." }, { status: 400 });
+    }
+    const subjectIds = subjects.map((subject) => subject.id);
+
+    const resetResult = await prisma.$transaction(async (tx) => {
+      const deletedAnswerKeys = await tx.answerKey.deleteMany({
+        where: {
+          examId,
+          subjectId: { in: subjectIds },
+        },
+      });
+
+      const affectedSubmissions = await tx.submission.count({
+        where: {
+          examId,
+          examType,
+        },
+      });
+
+      const pendingUpdated = await tx.submission.updateMany({
+        where: {
+          examId,
+          examType,
+        },
+        data: {
+          scoringStatus: SubmissionScoringStatus.PENDING,
+        },
+      });
+
+      const clearedSubjectScores = await tx.subjectScore.deleteMany({
+        where: {
+          submission: {
+            examId,
+            examType,
+          },
+        },
+      });
+
+      return {
+        deletedQuestions: deletedAnswerKeys.count,
+        affectedSubmissions,
+        pendingUpdatedCount: pendingUpdated.count,
+        clearedSubjectScoreCount: clearedSubjectScores.count,
+      };
+    });
+
+    invalidateCorrectRateCache(examId, examType);
+
+    return NextResponse.json({
+      success: true,
+      ...resetResult,
+    });
+  } catch (error) {
+    console.error("정답 초기화 중 오류가 발생했습니다.", error);
+    return NextResponse.json({ error: "정답 초기화 중 오류가 발생했습니다." }, { status: 500 });
+  }
 }
 
 export async function POST(request: NextRequest) {
