@@ -1048,8 +1048,9 @@ export async function PUT(request: Request) {
     const settings = await getSiteSettingsUncached();
     const maxEditLimit = (settings["site.submissionEditLimit"] as number) ?? 3;
     const careerExamEnabled = Boolean(settings["site.careerExamEnabled"] ?? true);
+    const editLimitErrorMessage = "답안 수정 제한 횟수를 초과했거나 수정이 불가능합니다.";
     if (maxEditLimit === 0 || existingSubmission.editCount >= maxEditLimit) {
-      return NextResponse.json({ error: "답안 수정 제한 횟수를 초과했거나 수정이 불가능합니다." }, { status: 403 });
+      return NextResponse.json({ error: editLimitErrorMessage }, { status: 403 });
     }
 
     const examType = parseExamType(body.examType);
@@ -1262,8 +1263,12 @@ export async function PUT(request: Request) {
     changedFields.push("answers");
 
     const updated = await prisma.$transaction(async (tx) => {
-      const savedSubmission = await tx.submission.update({
-        where: { id: submissionId },
+      const updatedSubmission = await tx.submission.updateMany({
+        where: {
+          id: submissionId,
+          userId,
+          editCount: { lt: maxEditLimit },
+        },
         data: {
           examId: exam.id,
           regionId: region.id,
@@ -1282,6 +1287,10 @@ export async function PUT(request: Request) {
           suspiciousReason,
         },
       });
+
+      if (updatedSubmission.count < 1) {
+        return null;
+      }
 
       if (scoreResult) {
         await persistSubmissionScoreRows(tx, {
@@ -1320,8 +1329,12 @@ export async function PUT(request: Request) {
         },
       });
 
-      return savedSubmission;
+      return { id: submissionId };
     });
+
+    if (!updated) {
+      return NextResponse.json({ error: editLimitErrorMessage }, { status: 403 });
+    }
 
     if (scoreResult || existingSubmission.scoringStatus === SubmissionScoringStatus.SCORED) {
       invalidateCorrectRateCache(exam.id, examType);

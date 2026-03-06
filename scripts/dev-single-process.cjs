@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 'use strict';
 
 const { startServer } = require('next/dist/server/lib/start-server');
