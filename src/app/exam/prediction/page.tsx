@@ -2,9 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import PassCutHistoryTable from "@/components/prediction/PassCutHistoryTable";
 import PassCutTrendChart from "@/components/prediction/PassCutTrendChart";
 import PredictionLiveDashboard from "@/components/prediction/PredictionLiveDashboard";
+import AdminStudentSearchBar from "@/components/admin/AdminStudentSearchBar";
 import { useToast } from "@/components/providers/ToastProvider";
 import { Button } from "@/components/ui/button";
 
@@ -162,6 +164,8 @@ function buildPageNumbers(page: number, totalPages: number): number[] {
 export default function ExamPredictionPage({ embedded = false }: ExamPredictionPageProps = {}) {
   const router = useRouter();
   const { showErrorToast } = useToast();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "ADMIN";
 
   const [page, setPage] = useState(1);
   const [prediction, setPrediction] = useState<PredictionPageResponse | null>(null);
@@ -444,6 +448,32 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
 
   return (
     <div className="space-y-6">
+      {isAdmin && !isAdminPreview && (
+        <section className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+          <h2 className="mb-2 text-sm font-semibold text-indigo-900">관리자 학생 조회</h2>
+          <AdminStudentSearchBar
+            currentSubmissionId={
+              selectedAdminSubmissionId ? Number(selectedAdminSubmissionId) : undefined
+            }
+            onSelect={(submissionId) => {
+              if (submissionId > 0) {
+                setSelectedAdminSubmissionId(String(submissionId));
+                void fetchPrediction(1, false, String(submissionId));
+              } else {
+                setSelectedAdminSubmissionId("");
+                void fetchPrediction(1, false, "");
+              }
+            }}
+            placeholder="이름 또는 수험번호로 학생 검색..."
+          />
+          {selectedAdminSubmissionId && (
+            <p className="mt-2 text-xs text-indigo-700">
+              ※ 선택한 학생의 합격예측을 표시 중입니다. 초기화 시 본인 데이터로 복귀합니다.
+            </p>
+          )}
+        </section>
+      )}
+
       {isAdminPreview ? (
         <section className="rounded-xl border border-indigo-200 bg-indigo-50 p-5">
           <h2 className="text-sm font-semibold text-indigo-900">관리자 미리보기</h2>

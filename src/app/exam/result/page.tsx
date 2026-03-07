@@ -2,8 +2,10 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import AnalysisSubTabs from "@/app/exam/result/components/AnalysisSubTabs";
 import type { ResultResponse } from "@/app/exam/result/types";
+import AdminStudentSearchBar from "@/components/admin/AdminStudentSearchBar";
 import { useToast } from "@/components/providers/ToastProvider";
 import ShareButton from "@/components/share/ShareButton";
 import { Button } from "@/components/ui/button";
@@ -16,10 +18,13 @@ export default function ExamResultPage({ embedded = false }: ExamResultPageProps
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showErrorToast } = useToast();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "ADMIN";
 
   const [result, setResult] = useState<ResultResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [adminSelectedId, setAdminSelectedId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     let mounted = true;
@@ -34,7 +39,10 @@ export default function ExamResultPage({ embedded = false }: ExamResultPageProps
           !embedded && typeof window !== "undefined"
             ? sessionStorage.getItem("latestSubmissionId")
             : null;
-        const submissionId = fromQuery ?? fromStorage ?? "";
+        // 관리자가 학생 검색으로 선택한 ID 우선 적용
+        const submissionId = adminSelectedId
+          ? String(adminSelectedId)
+          : (fromQuery ?? fromStorage ?? "");
         const fetchResult = async (id: string) => {
           const query = id ? `?submissionId=${encodeURIComponent(id)}` : "";
           const response = await fetch(`/api/result${query}`, {
@@ -83,7 +91,7 @@ export default function ExamResultPage({ embedded = false }: ExamResultPageProps
     return () => {
       mounted = false;
     };
-  }, [embedded, router, searchParams, showErrorToast]);
+  }, [adminSelectedId, embedded, router, searchParams, showErrorToast]);
 
   if (isLoading) {
     return (
@@ -113,6 +121,24 @@ export default function ExamResultPage({ embedded = false }: ExamResultPageProps
 
   return (
     <div className="space-y-6">
+      {isAdmin && (
+        <section className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+          <h2 className="mb-2 text-sm font-semibold text-indigo-900">관리자 학생 조회</h2>
+          <AdminStudentSearchBar
+            currentSubmissionId={adminSelectedId}
+            onSelect={(submissionId) => {
+              setAdminSelectedId(submissionId > 0 ? submissionId : undefined);
+            }}
+            placeholder="이름 또는 수험번호로 학생 검색..."
+          />
+          {adminSelectedId && (
+            <p className="mt-2 text-xs text-indigo-700">
+              ※ 선택한 학생의 성적을 표시 중입니다. 초기화 시 본인 성적으로 복귀합니다.
+            </p>
+          )}
+        </section>
+      )}
+
       <section className="rounded-xl border border-slate-200 bg-white p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h1 className="text-lg font-semibold text-slate-900">내 성적 분석</h1>
