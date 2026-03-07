@@ -33,6 +33,11 @@ type NoticeState = {
   message: string;
 } | null;
 
+type TempPasswordInfo = {
+  userName: string;
+  password: string;
+} | null;
+
 const PAGE_LIMIT = 20;
 
 function formatDateText(dateText: string): string {
@@ -55,6 +60,8 @@ export default function AdminUsersPage() {
   const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
   const { confirm, modalProps } = useConfirmModal();
   const [draftRoles, setDraftRoles] = useState<Record<number, UserRole>>({});
+  const [tempPasswordInfo, setTempPasswordInfo] = useState<TempPasswordInfo>(null);
+  const [copied, setCopied] = useState(false);
 
   const canGoPrev = page > 1;
   const canGoNext = page < totalPages;
@@ -163,10 +170,8 @@ export default function AdminUsersPage() {
       }
 
       const tempPassword = data.tempPassword ?? "";
-      setNotice({
-        type: "success",
-        message: `${user.name}님의 임시 비밀번호: ${tempPassword}`,
-      });
+      setTempPasswordInfo({ userName: user.name, password: tempPassword });
+      setCopied(false);
     } catch (error) {
       setNotice({
         type: "error",
@@ -367,6 +372,53 @@ export default function AdminUsersPage() {
       </section>
 
       <ConfirmModal {...modalProps} />
+
+      {/* 임시 비밀번호 모달 */}
+      {tempPasswordInfo ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <h2 className="text-lg font-semibold text-slate-900">임시 비밀번호 발급 완료</h2>
+            <p className="mt-1 text-sm text-slate-600">
+              <span className="font-medium">{tempPasswordInfo.userName}</span>님의 비밀번호가 초기화되었습니다.
+              아래 임시 비밀번호를 카카오톡 또는 문자로 전달해 주세요.
+            </p>
+
+            <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
+              <p className="mb-1 text-xs font-medium text-amber-700">임시 비밀번호</p>
+              <p className="font-mono text-2xl font-bold tracking-widest text-amber-900">
+                {tempPasswordInfo.password}
+              </p>
+            </div>
+
+            <p className="mt-3 text-xs text-slate-500">
+              로그인 후 반드시 새 비밀번호로 변경하도록 안내해 주세요.
+            </p>
+
+            <div className="mt-5 flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  void navigator.clipboard.writeText(tempPasswordInfo.password).then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  });
+                }}
+              >
+                {copied ? "복사됨!" : "클립보드 복사"}
+              </Button>
+              <Button
+                type="button"
+                className="flex-1"
+                onClick={() => setTempPasswordInfo(null)}
+              >
+                확인
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

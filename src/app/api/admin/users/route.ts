@@ -46,9 +46,10 @@ function parseResetPasswordFlag(value: unknown): boolean | null {
 }
 
 function buildTempPassword(phone: string): string {
+  // 소문자(fire) + 전화번호 뒷 4자리 + 특수문자(!) → 유효성 조건 충족
   const digits = phone.replace(/\D/g, "");
   const suffix = digits.length >= 4 ? digits.slice(-4) : "0000";
-  return `${suffix}!@#$`;
+  return `fire${suffix}!`;
 }
 
 export async function GET(request: NextRequest) {
