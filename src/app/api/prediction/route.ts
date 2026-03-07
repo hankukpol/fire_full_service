@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     if (isAdmin && !submissionId && adminPreviewCandidates.length === 0) {
       return NextResponse.json(
         {
-          error: "MOCK 데이터가 없습니다. MOCK- 수험번호로 답안을 제출한 후 미리보기를 사용할 수 있습니다.",
+          error: "위 검색창에서 학생 이름 또는 수험번호를 입력하여 합격예측 데이터를 조회하세요.",
           isAdminPreview: true,
           adminPreviewCandidates: [],
         },
