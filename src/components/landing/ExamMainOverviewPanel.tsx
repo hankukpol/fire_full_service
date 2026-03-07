@@ -15,12 +15,14 @@ import {
 } from "recharts";
 
 type ExamType = "PUBLIC" | "CAREER_RESCUE" | "CAREER_ACADEMIC" | "CAREER_EMT";
+type Gender = "MALE" | "FEMALE";
 type ScoreDistributionKey = "TOTAL" | "FIRE_INTRO" | "FIRE_LAW" | "ADMIN_LAW" | "EMERGENCY";
 
 interface MainStatsRow {
   regionId: number;
   regionName: string;
   examType: ExamType;
+  gender: Gender | null; // 구조경채: null, 나머지: MALE | FEMALE
   examTypeLabel: string;
   recruitCount: number;
   applicantCount: number | null;
@@ -266,6 +268,7 @@ export default function ExamMainOverviewPanel() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [selectedExamType, setSelectedExamType] = useState<ExamType>("PUBLIC");
+  const [selectedGender, setSelectedGender] = useState<Gender>("MALE");
   const [selectedRegionId, setSelectedRegionId] = useState<number | null>(null);
   const [difficultySubjectId, setDifficultySubjectId] = useState<number | null>(null);
   const [selectedScoreDistributionKey, setSelectedScoreDistributionKey] =
@@ -335,6 +338,11 @@ export default function ExamMainOverviewPanel() {
     }
   }, [availableExamTypes, selectedExamType]);
 
+  // 직렬 탭 변경 시 성별 초기화
+  useEffect(() => {
+    setSelectedGender("MALE");
+  }, [selectedExamType]);
+
   const regionOptions = useMemo(() => {
     const map = new Map<number, string>();
     for (const row of rowsByExamType) {
@@ -363,10 +371,13 @@ export default function ExamMainOverviewPanel() {
     }
   }, [regionOptions, selectedRegionId]);
 
-  const selectedRow = useMemo(
-    () => rowsByExamType.find((row) => row.regionId === selectedRegionId) ?? null,
-    [rowsByExamType, selectedRegionId]
-  );
+  const selectedRow = useMemo(() => {
+    const candidates = rowsByExamType.filter((row) => row.regionId === selectedRegionId);
+    if (candidates.length === 0) return null;
+    // 구조경채는 gender 없음, 나머지는 선택된 성별로 필터
+    if (selectedExamType === "CAREER_RESCUE") return candidates[0] ?? null;
+    return candidates.find((row) => row.gender === selectedGender) ?? null;
+  }, [rowsByExamType, selectedRegionId, selectedExamType, selectedGender]);
 
   const isCollecting = selectedRow !== null && selectedRow.participantCount < 10;
   const isLowSample =
@@ -576,6 +587,31 @@ export default function ExamMainOverviewPanel() {
             );
           })}
         </div>
+
+        {/* 공채/소방학과/구급: 남녀 구분 탭 (별도 줄 표시) */}
+        {selectedExamType !== "CAREER_RESCUE" && (
+          <div className="mt-3 block">
+          <div className="inline-flex gap-1 rounded-md bg-slate-100 p-1">
+            {(["MALE", "FEMALE"] as const).map((g) => {
+              const active = selectedGender === g;
+              return (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => setSelectedGender(g)}
+                  className={`rounded-md px-6 py-2 text-sm font-bold transition ${
+                    active
+                      ? "bg-white text-fire-600 border border-slate-200/50"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  {g === "MALE" ? "남" : "여"}
+                </button>
+              );
+            })}
+          </div>
+          </div>
+        )}
 
         <div className="mt-6 rounded-md border border-slate-200 bg-slate-50 p-5">
           <p className="text-sm font-bold text-slate-800">지역 선택</p>

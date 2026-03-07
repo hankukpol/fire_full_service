@@ -34,6 +34,7 @@ interface QuotaRow {
 interface ScoreBandRow {
   regionId: number;
   examType: ExamType;
+  gender: Gender;
   finalScore: number;
   _count: {
     _all: number;
@@ -44,6 +45,7 @@ interface MainStatsRow {
   regionId: number;
   regionName: string;
   examType: ExamType;
+  gender: Gender | null; // 구조경채: null, 나머지: MALE | FEMALE
   examTypeLabel: string;
   recruitCount: number;
   applicantCount: number | null;
@@ -115,11 +117,12 @@ function roundNumber(value: number): number {
   return Number(value.toFixed(2));
 }
 
-function examTypeLabel(examType: ExamType): string {
+function examTypeLabel(examType: ExamType, gender: Gender | null): string {
+  const genderSuffix = gender === Gender.MALE ? "(남)" : gender === Gender.FEMALE ? "(여)" : "";
   if (examType === ExamType.CAREER_RESCUE) return "구조";
-  if (examType === ExamType.CAREER_ACADEMIC) return "소방학과";
-  if (examType === ExamType.CAREER_EMT) return "구급";
-  return "공채";
+  if (examType === ExamType.CAREER_ACADEMIC) return `소방학과${genderSuffix}`;
+  if (examType === ExamType.CAREER_EMT) return `구급${genderSuffix}`;
+  return `공채${genderSuffix}`;
 }
 
 function getScoreDistributionConfig(examType: ExamType): ScoreDistributionConfig[] {
@@ -352,50 +355,45 @@ function getScoreRange(
   };
 }
 
-function getQuotaRecruitCount(quota: QuotaRow, examType: ExamType): number {
-  if (examType === ExamType.CAREER_RESCUE) return quota.recruitRescue;
-  if (examType === ExamType.CAREER_ACADEMIC) return quota.recruitAcademicMale + quota.recruitAcademicFemale + quota.recruitAcademicCombined;
-  if (examType === ExamType.CAREER_EMT) return quota.recruitEmtMale + quota.recruitEmtFemale;
-  return quota.recruitPublicMale + quota.recruitPublicFemale;
+// 성별별 선발인원 반환 (구조경채: gender=null → recruitRescue)
+function getGenderRecruitCount(quota: QuotaRow, examType: ExamType, gender: Gender | null): number {
+  switch (examType) {
+    case ExamType.CAREER_RESCUE:
+      return quota.recruitRescue;
+    case ExamType.CAREER_ACADEMIC:
+      return gender === Gender.FEMALE ? quota.recruitAcademicFemale : quota.recruitAcademicMale;
+    case ExamType.CAREER_EMT:
+      return gender === Gender.FEMALE ? quota.recruitEmtFemale : quota.recruitEmtMale;
+    default: // PUBLIC
+      return gender === Gender.FEMALE ? quota.recruitPublicFemale : quota.recruitPublicMale;
+  }
 }
 
-function getQuotaApplicantCount(
+// 성별별 응시인원 반환
+function getGenderApplicantCount(
   quota: QuotaRow,
-  examType: ExamType
+  examType: ExamType,
+  gender: Gender | null
 ): { applicantCount: number | null; isExact: boolean } {
   let actual: number | null = null;
-  if (examType === ExamType.CAREER_RESCUE) {
-    actual = quota.applicantRescue;
-  } else if (examType === ExamType.CAREER_ACADEMIC) {
-    const m = quota.applicantAcademicMale;
-    const f = quota.applicantAcademicFemale;
-    const c = quota.applicantAcademicCombined;
-    if (m !== null || f !== null || c !== null) {
-      actual = (m ?? 0) + (f ?? 0) + (c ?? 0);
-    }
-  } else if (examType === ExamType.CAREER_EMT) {
-    const m = quota.applicantEmtMale;
-    const f = quota.applicantEmtFemale;
-    if (m !== null || f !== null) {
-      actual = (m ?? 0) + (f ?? 0);
-    }
-  } else {
-    const m = quota.applicantPublicMale;
-    const f = quota.applicantPublicFemale;
-    if (m !== null || f !== null) {
-      actual = (m ?? 0) + (f ?? 0);
-    }
+  switch (examType) {
+    case ExamType.CAREER_RESCUE:
+      actual = quota.applicantRescue;
+      break;
+    case ExamType.CAREER_ACADEMIC:
+      actual = gender === Gender.FEMALE ? quota.applicantAcademicFemale : quota.applicantAcademicMale;
+      break;
+    case ExamType.CAREER_EMT:
+      actual = gender === Gender.FEMALE ? quota.applicantEmtFemale : quota.applicantEmtMale;
+      break;
+    default: // PUBLIC
+      actual = gender === Gender.FEMALE ? quota.applicantPublicFemale : quota.applicantPublicMale;
+      break;
   }
   if (typeof actual === "number" && Number.isFinite(actual) && actual >= 0) {
-    return {
-      applicantCount: Math.floor(actual),
-      isExact: true,
-    };
+    return { applicantCount: Math.floor(actual), isExact: true };
   }
-  return {
-    applicantCount: null,
-    isExact: false,
-  };
+  return { applicantCount: null, isExact: false };
 }
 
 async function getQuotasForExam(examId: number): Promise<QuotaRow[]> {
@@ -636,7 +634,7 @@ export async function GET() {
     const [participantStats, scoreBandStats, totalScoreDistributionRaw, subjectScoreDistributionRaw, subjects] =
       await Promise.all([
       prisma.submission.groupBy({
-        by: ["regionId", "examType"],
+        by: ["regionId", "examType", "gender"],
         where: populationWhere,
         _count: {
           _all: true,
@@ -646,12 +644,12 @@ export async function GET() {
         },
       }),
       prisma.submission.groupBy({
-        by: ["regionId", "examType", "finalScore"],
+        by: ["regionId", "examType", "gender", "finalScore"],
         where: populationWhere,
         _count: {
           _all: true,
         },
-        orderBy: [{ regionId: "asc" }, { examType: "asc" }, { finalScore: "desc" }],
+        orderBy: [{ regionId: "asc" }, { examType: "asc" }, { gender: "asc" }, { finalScore: "desc" }],
       }),
       prisma.submission.groupBy({
         by: ["examType", "totalScore"],
@@ -693,9 +691,10 @@ export async function GET() {
       }),
     ]);
 
+    // 키: `${regionId}-${examType}-${gender}` (구조경채는 MALE로 저장됨)
     const participantMap = new Map(
       participantStats.map((item) => [
-        `${item.regionId}-${item.examType}`,
+        `${item.regionId}-${item.examType}-${item.gender}`,
         {
           participantCount: item._count._all,
           averageFinalScore: item._avg.finalScore === null ? null : roundNumber(Number(item._avg.finalScore)),
@@ -705,11 +704,12 @@ export async function GET() {
 
     const scoreBandMap = new Map<string, ScoreBandRow[]>();
     for (const row of scoreBandStats) {
-      const key = `${row.regionId}-${row.examType}`;
+      const key = `${row.regionId}-${row.examType}-${row.gender}`;
       const current = scoreBandMap.get(key) ?? [];
       current.push({
         regionId: row.regionId,
         examType: row.examType,
+        gender: row.gender,
         finalScore: Number(row.finalScore),
         _count: {
           _all: row._count._all,
@@ -720,62 +720,81 @@ export async function GET() {
 
     const rows: MainStatsRow[] = [];
 
+    function buildRow(
+      quota: QuotaRow,
+      examType: ExamType,
+      gender: Gender | null
+    ): MainStatsRow | null {
+      const recruitCount = getGenderRecruitCount(quota, examType, gender);
+      if (recruitCount < 1) return null;
+
+      // 구조경채 submissions는 MALE로 저장되므로 키에 MALE 사용
+      const genderKey = gender ?? Gender.MALE;
+      const key = `${quota.regionId}-${examType}-${genderKey}`;
+      const participant = participantMap.get(key);
+      const participantCount = participant?.participantCount ?? 0;
+      const averageFinalScore = participant?.averageFinalScore ?? null;
+      const applicantCountInfo = getGenderApplicantCount(quota, examType, gender);
+      const estimatedApplicants = estimateApplicants({
+        applicantCount: applicantCountInfo.applicantCount,
+        recruitCount,
+      });
+      const competitionRate =
+        recruitCount > 0 && applicantCountInfo.applicantCount !== null
+          ? roundNumber(applicantCountInfo.applicantCount / recruitCount)
+          : null;
+
+      const scoreBands = buildScoreBands(scoreBandMap.get(key) ?? []);
+      const oneMultipleBand = getScoreBandInfoAtRank(scoreBands, recruitCount);
+      const oneMultipleCutScore = oneMultipleBand?.score ?? null;
+      const oneMultipleActualRank = oneMultipleBand?.endRank ?? null;
+      const oneMultipleTieCount = oneMultipleBand?.count ?? null;
+
+      const passMultiple = getPassMultiple(recruitCount, examType);
+      const likelyMultiple = getLikelyMultiple(passMultiple);
+      const likelyMaxRank = Math.max(1, Math.floor(recruitCount * likelyMultiple));
+      const passCount = Math.ceil(recruitCount * passMultiple);
+
+      const likelyRange = getScoreRange(scoreBands, recruitCount + 1, likelyMaxRank);
+      const possibleRange = getScoreRange(scoreBands, likelyMaxRank + 1, passCount);
+      const sureMinScore = getScoreAtRank(scoreBands, recruitCount);
+
+      return {
+        regionId: quota.regionId,
+        regionName: quota.regionName,
+        examType,
+        gender,
+        examTypeLabel: examTypeLabel(examType, gender),
+        recruitCount,
+        applicantCount: applicantCountInfo.applicantCount,
+        estimatedApplicants,
+        isApplicantCountExact: applicantCountInfo.isExact,
+        competitionRate,
+        participantCount,
+        averageFinalScore,
+        oneMultipleCutScore,
+        oneMultipleBaseRank: recruitCount,
+        oneMultipleActualRank,
+        oneMultipleTieCount,
+        possibleRange,
+        likelyRange,
+        sureMinScore,
+      };
+    }
+
     for (const quota of quotas) {
       for (const examType of enabledExamTypes) {
-        const recruitCount = getQuotaRecruitCount(quota, examType);
-        if (recruitCount < 1) {
-          continue;
+        if (examType === ExamType.CAREER_RESCUE) {
+          // 구조경채: 남자만, gender = null로 표시
+          const row = buildRow(quota, examType, null);
+          if (row) rows.push(row);
+        } else {
+          // 공채 / 소방학과 / 구급: 남녀 분리 (양성 제외)
+          for (const gender of [Gender.MALE, Gender.FEMALE]) {
+            const row = buildRow(quota, examType, gender);
+            if (row) rows.push(row);
+          }
         }
-
-        const key = `${quota.regionId}-${examType}`;
-        const participant = participantMap.get(key);
-        const participantCount = participant?.participantCount ?? 0;
-        const averageFinalScore = participant?.averageFinalScore ?? null;
-        const applicantCountInfo = getQuotaApplicantCount(quota, examType);
-        const estimatedApplicants = estimateApplicants({
-          applicantCount: applicantCountInfo.applicantCount,
-          recruitCount,
-        });
-        const competitionRate =
-          recruitCount > 0 && applicantCountInfo.applicantCount !== null
-            ? roundNumber(applicantCountInfo.applicantCount / recruitCount)
-            : null;
-
-        const scoreBands = buildScoreBands(scoreBandMap.get(key) ?? []);
-        const oneMultipleBand = getScoreBandInfoAtRank(scoreBands, recruitCount);
-        const oneMultipleCutScore = oneMultipleBand?.score ?? null;
-        const oneMultipleActualRank = oneMultipleBand?.endRank ?? null;
-        const oneMultipleTieCount = oneMultipleBand?.count ?? null;
-
-        const passMultiple = getPassMultiple(recruitCount, examType);
-        const likelyMultiple = getLikelyMultiple(passMultiple);
-        const likelyMaxRank = Math.max(1, Math.floor(recruitCount * likelyMultiple));
-        const passCount = Math.ceil(recruitCount * passMultiple);
-
-        const likelyRange = getScoreRange(scoreBands, recruitCount + 1, likelyMaxRank);
-        const possibleRange = getScoreRange(scoreBands, likelyMaxRank + 1, passCount);
-        const sureMinScore = getScoreAtRank(scoreBands, recruitCount);
-
-        rows.push({
-          regionId: quota.regionId,
-          regionName: quota.regionName,
-          examType,
-          examTypeLabel: examTypeLabel(examType),
-          recruitCount,
-          applicantCount: applicantCountInfo.applicantCount,
-          estimatedApplicants,
-          isApplicantCountExact: applicantCountInfo.isExact,
-          competitionRate,
-          participantCount,
-          averageFinalScore,
-          oneMultipleCutScore,
-          oneMultipleBaseRank: recruitCount,
-          oneMultipleActualRank,
-          oneMultipleTieCount,
-          possibleRange,
-          likelyRange,
-          sureMinScore,
-        });
       }
     }
 
