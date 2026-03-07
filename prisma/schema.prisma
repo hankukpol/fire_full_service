@@ -483,15 +483,19 @@ model FinalPrediction {
   @@index([userId])
 }
 
-// 일별 방문자 로그 (로그인 사용자 기준, 하루 1회)
+// 일별 방문자 로그 (로그인 + 비회원 모두, 하루 1회)
+// - 로그인 사용자: userId 기록, anonymousId는 null
+// - 비회원: anonymousId(UUID) 기록, userId는 null
 model VisitorLog {
-  id        Int      @id @default(autoincrement())
-  date      DateTime @db.Date   // 방문 날짜 (시간 제외)
-  userId    Int
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          Int      @id @default(autoincrement())
+  date        DateTime @db.Date          // 방문 날짜 (시간 제외)
+  userId      Int?                       // 로그인 사용자 ID (비회원은 null)
+  anonymousId String?  @db.VarChar(36)  // 비회원 UUID (로그인 사용자는 null)
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([date, userId])       // 하루 1회 중복 방지
+  @@unique([date, userId])        // 로그인 사용자: 하루 1회
+  @@unique([date, anonymousId])   // 비회원: 하루 1회
   @@index([date])
   @@map("visitor_logs")
 }

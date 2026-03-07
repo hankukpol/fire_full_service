@@ -71,10 +71,16 @@ export async function GET(request: NextRequest) {
     const todayStr = todayUTC.toISOString().slice(0, 10);
     const todayRow = daily.find((r) => r.date === todayStr);
 
-    // 전체 누적 방문자 (중복 제거된 유니크 사용자 수)
-    const totalUniqueVisitors = await prisma.visitorLog
-      .groupBy({ by: ["userId"] })
-      .then((rows) => rows.length);
+    // 전체 누적 방문자 (로그인 + 비회원 합산)
+    const [loggedInVisitors, anonVisitors] = await Promise.all([
+      prisma.visitorLog
+        .groupBy({ by: ["userId"], where: { userId: { not: null } } })
+        .then((rows) => rows.length),
+      prisma.visitorLog
+        .groupBy({ by: ["anonymousId"], where: { anonymousId: { not: null } } })
+        .then((rows) => rows.length),
+    ]);
+    const totalUniqueVisitors = loggedInVisitors + anonVisitors;
 
     // 전체 누적 가입자
     const totalUsers = await prisma.user.count();

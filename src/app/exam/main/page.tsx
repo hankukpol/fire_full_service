@@ -49,7 +49,7 @@ export default async function ExamMainPage() {
 
   return (
     <>
-      {isAuthenticated ? <VisitorTracker /> : null}
+      <VisitorTracker />
       <ExamFunctionArea
         isAuthenticated={isAuthenticated}
         hasSubmission={hasSubmission}

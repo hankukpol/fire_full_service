@@ -1,32 +1,52 @@
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
-export async function POST() {
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) {
-    return NextResponse.json({ ok: false }, { status: 401 });
+  const userId = session?.user?.id ? Number(session.user.id) : null;
+  const isValidUserId = userId !== null && Number.isInteger(userId) && userId > 0;
+
+  // 요청 body에서 anonymousId 파싱
+  let anonymousId: string | null = null;
+  try {
+    const body = (await request.json()) as { anonymousId?: unknown };
+    if (typeof body.anonymousId === "string" && UUID_REGEX.test(body.anonymousId)) {
+      anonymousId = body.anonymousId;
+    }
+  } catch {
+    // body 파싱 실패 무시
   }
 
-  const userId = Number(session.user.id);
-  if (!Number.isInteger(userId) || userId < 1) {
+  // 로그인 사용자도 익명도 아니면 무시
+  if (!isValidUserId && !anonymousId) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
   try {
-    // 오늘 날짜 (시간 없이 자정 기준)
     const now = new Date();
     const today = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
 
-    // 하루 1회만 기록 (중복 시 무시)
-    await prisma.visitorLog.upsert({
-      where: { date_userId: { date: today, userId } },
-      create: { date: today, userId },
-      update: {},
-    });
+    if (isValidUserId) {
+      // 로그인 사용자: userId 기준 기록
+      await prisma.visitorLog.upsert({
+        where: { date_userId: { date: today, userId: userId! } },
+        create: { date: today, userId: userId! },
+        update: {},
+      });
+    } else {
+      // 비회원: anonymousId(UUID) 기준 기록
+      await prisma.visitorLog.upsert({
+        where: { date_anonymousId: { date: today, anonymousId: anonymousId! } },
+        create: { date: today, anonymousId: anonymousId! },
+        update: {},
+      });
+    }
 
     return NextResponse.json({ ok: true });
   } catch {
