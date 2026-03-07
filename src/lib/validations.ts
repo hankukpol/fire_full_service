@@ -41,9 +41,6 @@ export function validatePasswordStrength(rawPassword: string): ValidationResult<
   } else if (password.length < 8) {
     errors.push("비밀번호는 8자 이상이어야 합니다.");
   } else {
-    if (!passwordHasUppercase.test(password)) {
-      errors.push("비밀번호에 영문 대문자를 1자 이상 포함해 주세요.");
-    }
     if (!passwordHasLowercase.test(password)) {
       errors.push("비밀번호에 영문 소문자를 1자 이상 포함해 주세요.");
     }
