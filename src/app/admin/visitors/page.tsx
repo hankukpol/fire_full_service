@@ -136,8 +136,9 @@ export default function AdminVisitorsPage() {
                 <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "12px" }}
-                  formatter={(value: unknown, name: string) => {
-                    const label = name === "visitors" ? "방문자" : name === "newUsers" ? "신규 가입" : "제출";
+                  formatter={(value, name) => {
+                    const seriesName = typeof name === "string" ? name : "";
+                    const label = seriesName === "visitors" ? "방문자" : seriesName === "newUsers" ? "신규 가입" : "제출";
                     return [`${Number(value ?? 0).toLocaleString("ko-KR")}명`, label];
                   }}
                 />

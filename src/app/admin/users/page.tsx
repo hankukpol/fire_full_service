@@ -62,6 +62,7 @@ export default function AdminUsersPage() {
   const [draftRoles, setDraftRoles] = useState<Record<number, UserRole>>({});
   const [tempPasswordInfo, setTempPasswordInfo] = useState<TempPasswordInfo>(null);
   const [copied, setCopied] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const canGoPrev = page > 1;
   const canGoNext = page < totalPages;
@@ -182,6 +183,33 @@ export default function AdminUsersPage() {
     }
   }
 
+  async function handleDownloadCsv() {
+    setIsDownloading(true);
+    try {
+      const params = new URLSearchParams();
+      if (searchKeyword) params.set("search", searchKeyword);
+      if (roleFilter) params.set("role", roleFilter);
+
+      const response = await fetch(`/api/admin/users/export?${params.toString()}`);
+      if (!response.ok) throw new Error("다운로드에 실패했습니다.");
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `회원목록_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      setNotice({
+        type: "error",
+        message: error instanceof Error ? error.message : "CSV 다운로드에 실패했습니다.",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  }
+
   async function handleDeleteUser(user: UserRow) {
     const ok = await confirm({ title: "사용자 삭제", description: `${user.name} 사용자를 삭제하시겠습니까? 삭제 시 제출/댓글 데이터도 함께 삭제됩니다.`, variant: "danger" });
     if (!ok) return;
@@ -214,11 +242,22 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-xl font-semibold text-slate-900">사용자 관리</h1>
-        <p className="mt-1 text-sm text-slate-600">
-          사용자 검색, 권한 변경, 비밀번호 초기화, 계정 삭제를 관리합니다.
-        </p>
+      <header className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold text-slate-900">사용자 관리</h1>
+          <p className="mt-1 text-sm text-slate-600">
+            사용자 검색, 권한 변경, 비밀번호 초기화, 계정 삭제를 관리합니다.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => void handleDownloadCsv()}
+          disabled={isDownloading || isLoading}
+          className="shrink-0"
+        >
+          {isDownloading ? "다운로드 중..." : "CSV 다운로드"}
+        </Button>
       </header>
 
       <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
