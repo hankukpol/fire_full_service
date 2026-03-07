@@ -425,6 +425,35 @@ export default function ExamPredictionPage({ embedded = false }: ExamPredictionP
   }
 
   if (errorMessage) {
+    // 관리자: 에러 상태에서도 학생 검색바 표시 (MOCK 없음 등의 경우에도 조회 가능)
+    if (isAdmin) {
+      return (
+        <div className="space-y-4">
+          <section className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+            <h2 className="mb-2 text-sm font-semibold text-indigo-900">관리자 학생 조회</h2>
+            <AdminStudentSearchBar
+              currentSubmissionId={
+                selectedAdminSubmissionId ? Number(selectedAdminSubmissionId) : undefined
+              }
+              onSelect={(submissionId) => {
+                if (submissionId > 0) {
+                  setSelectedAdminSubmissionId(String(submissionId));
+                  void fetchPrediction(1, false, String(submissionId));
+                } else {
+                  setSelectedAdminSubmissionId("");
+                  void fetchPrediction(1, false, "");
+                }
+              }}
+              placeholder="이름 또는 수험번호로 학생 검색..."
+            />
+          </section>
+          <section className="rounded-xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-700">
+            {errorMessage}
+          </section>
+        </div>
+      );
+    }
+
     return (
       <section className="rounded-xl border border-rose-200 bg-rose-50 p-8 text-sm text-rose-700">
         {errorMessage}
