@@ -36,6 +36,19 @@ export async function GET(request: NextRequest) {
 
   try {
     const adminPreviewCandidates = isAdmin ? await buildAdminPreviewCandidates() : [];
+
+    // MOCK 데이터 없고 명시적 submissionId도 없으면 관리자 미리보기 불가
+    if (isAdmin && !submissionId && adminPreviewCandidates.length === 0) {
+      return NextResponse.json(
+        {
+          error: "MOCK 데이터가 없습니다. MOCK- 수험번호로 답안을 제출한 후 미리보기를 사용할 수 있습니다.",
+          isAdminPreview: true,
+          adminPreviewCandidates: [],
+        },
+        { status: 404 }
+      );
+    }
+
     const effectiveSubmissionId = isAdmin
       ? (submissionId ?? adminPreviewCandidates[0]?.submissionId)
       : submissionId;

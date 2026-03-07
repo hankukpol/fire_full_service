@@ -502,7 +502,8 @@ export async function calculatePrediction(
     select: submissionSelect,
   });
 
-  // 2차: 관리자이고 본인 제출이 없으면, 활성 시험의 아무 비과락 제출로 대시보드 미리보기
+  // 2차: 관리자이고 본인 제출이 없으면, 활성 시험의 MOCK 제출로 대시보드 미리보기
+  // 주의: 실제 학생 데이터가 노출되지 않도록 반드시 MOCK- 수험번호만 조회
   if (!submission && !options.submissionId && isAdmin) {
     const activeExam = await prisma.exam.findFirst({
       where: { isActive: true },
@@ -512,6 +513,7 @@ export async function calculatePrediction(
     submission = await prisma.submission.findFirst({
       where: {
         ...(activeExam ? { examId: activeExam.id } : {}),
+        examNumber: { startsWith: "MOCK-" },
         subjectScores: {
           some: {},
           none: { isFailed: true },
