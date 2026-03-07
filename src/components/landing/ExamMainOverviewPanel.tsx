@@ -678,7 +678,11 @@ export default function ExamMainOverviewPanel() {
                 <tr className="divide-x divide-slate-200">
                   <th className="w-[140px] bg-slate-50 px-4 py-3.5 text-left font-bold text-slate-700 sm:w-[170px]">실시간 참여인원</th>
                   <td className="px-4 py-3.5 font-medium text-slate-700">
-                    {selectedRow ? `${selectedRow.participantCount.toLocaleString("ko-KR")}명` : "-"}
+                    {selectedRow
+                      ? selectedRow.participantCount === 0
+                        ? <span className="text-amber-600">데이터 수집 중</span>
+                        : `${selectedRow.participantCount.toLocaleString("ko-KR")}명`
+                      : "-"}
                   </td>
                 </tr>
                 <tr className="divide-x divide-slate-200">
@@ -686,7 +690,11 @@ export default function ExamMainOverviewPanel() {
                     실시간 평균점수
                   </th>
                   <td className="px-4 py-3.5 font-bold text-fire-700">
-                    {selectedRow ? <>{formatScore(selectedRow.averageFinalScore)}</> : "-"}
+                    {selectedRow
+                      ? selectedRow.participantCount === 0
+                        ? <span className="font-medium text-amber-600">데이터 수집 중</span>
+                        : formatScore(selectedRow.averageFinalScore)
+                      : "-"}
                   </td>
                 </tr>
               </tbody>
