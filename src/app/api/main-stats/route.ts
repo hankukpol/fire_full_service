@@ -631,8 +631,20 @@ export async function GET() {
       },
     };
 
-    const [participantStats, scoreBandStats, totalScoreDistributionRaw, subjectScoreDistributionRaw, subjects] =
+    // 과락 포함 참여인원 집계용 where (subjectScores 과락 필터 제외)
+    const allParticipantCountWhere: Prisma.SubmissionWhereInput = {
+      examId: activeExam.id,
+      isSuspicious: false,
+      NOT: {
+        examType: ExamType.CAREER_RESCUE,
+        gender: Gender.FEMALE,
+      },
+      subjectScores: { some: {} },
+    };
+
+    const [participantStats, allParticipantCountStats, scoreBandStats, totalScoreDistributionRaw, subjectScoreDistributionRaw, subjects] =
       await Promise.all([
+      // 과락 제외 집계: averageFinalScore 산출용
       prisma.submission.groupBy({
         by: ["regionId", "examType", "gender"],
         where: populationWhere,
@@ -641,6 +653,14 @@ export async function GET() {
         },
         _avg: {
           finalScore: true,
+        },
+      }),
+      // 과락 포함 집계: participantCount 산출용
+      prisma.submission.groupBy({
+        by: ["regionId", "examType", "gender"],
+        where: allParticipantCountWhere,
+        _count: {
+          _all: true,
         },
       }),
       prisma.submission.groupBy({
@@ -692,14 +712,25 @@ export async function GET() {
     ]);
 
     // 키: `${regionId}-${examType}-${gender}` (구조경채는 MALE로 저장됨)
-    const participantMap = new Map(
+    // 과락 제외 평균점수 맵
+    const avgScoreMap = new Map(
       participantStats.map((item) => [
         `${item.regionId}-${item.examType}-${item.gender}`,
-        {
-          participantCount: item._count._all,
-          averageFinalScore: item._avg.finalScore === null ? null : roundNumber(Number(item._avg.finalScore)),
-        },
+        item._avg.finalScore === null ? null : roundNumber(Number(item._avg.finalScore)),
       ])
+    );
+    // 과락 포함 참여인원 기준으로 participantMap 구성 (평균점수는 과락 제외)
+    const participantMap = new Map(
+      allParticipantCountStats.map((item) => {
+        const key = `${item.regionId}-${item.examType}-${item.gender}`;
+        return [
+          key,
+          {
+            participantCount: item._count._all,
+            averageFinalScore: avgScoreMap.get(key) ?? null,
+          },
+        ];
+      })
     );
 
     const scoreBandMap = new Map<string, ScoreBandRow[]>();

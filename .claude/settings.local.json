@@ -6,7 +6,8 @@
       "Bash(echo EXIT:$?:*)",
       "Bash(cd:*)",
       "Bash(npx tsc:*)",
-      "Bash(pushd:*)"
+      "Bash(pushd:*)",
+      "WebFetch(domain:fullservice.conects.com)"
     ]
   }
 }

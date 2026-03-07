@@ -678,7 +678,6 @@ export default function ExamMainOverviewPanel() {
                 <tr className="divide-x divide-slate-200">
                   <th className="w-[140px] bg-slate-50 px-4 py-3.5 text-left font-bold text-slate-700 sm:w-[170px]">
                     실시간 참여인원
-                    <span className="ml-1 text-xs font-normal text-slate-400">(과락 제외)</span>
                   </th>
                   <td className="px-4 py-3.5 font-medium text-slate-700">
                     {selectedRow
