@@ -158,6 +158,45 @@ export async function GET(request: NextRequest) {
   }
 }
 
+export async function PUT(request: NextRequest) {
+  const guard = await requireAdminRoute();
+  if ("error" in guard) return guard.error;
+
+  const { searchParams } = new URL(request.url);
+  const submissionId = parsePositiveInt(searchParams.get("id"));
+
+  if (!submissionId) {
+    return NextResponse.json({ error: "수정할 제출 ID가 필요합니다." }, { status: 400 });
+  }
+
+  try {
+    const body = (await request.json()) as { examNumber?: unknown };
+    if (!("examNumber" in body)) {
+      return NextResponse.json({ error: "examNumber 필드가 필요합니다." }, { status: 400 });
+    }
+
+    const examNumber = typeof body.examNumber === "string" ? body.examNumber.trim() : "";
+
+    const exists = await prisma.submission.findUnique({
+      where: { id: submissionId },
+      select: { id: true },
+    });
+    if (!exists) {
+      return NextResponse.json({ error: "제출 데이터를 찾을 수 없습니다." }, { status: 404 });
+    }
+
+    await prisma.submission.update({
+      where: { id: submissionId },
+      data: { examNumber },
+    });
+
+    return NextResponse.json({ success: true, submissionId, examNumber });
+  } catch (error) {
+    console.error("제출 응시번호 수정 중 오류가 발생했습니다.", error);
+    return NextResponse.json({ error: "응시번호 수정에 실패했습니다." }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   const guard = await requireAdminRoute();
   if ("error" in guard) return guard.error;

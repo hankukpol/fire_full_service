@@ -74,6 +74,7 @@ model User {
   submissionLogs SubmissionLog[]
   passwordResetTokens PasswordResetToken[]
   recoveryCodes       RecoveryCode[]
+  visitorLogs  VisitorLog[]
 }
 
 model PasswordResetToken {
@@ -480,6 +481,19 @@ model FinalPrediction {
   user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// 일별 방문자 로그 (로그인 사용자 기준, 하루 1회)
+model VisitorLog {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @db.Date   // 방문 날짜 (시간 제외)
+  userId    Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([date, userId])       // 하루 1회 중복 방지
+  @@index([date])
+  @@map("visitor_logs")
 }
 
 // 제출/수정 감사 로그

@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import ExamFunctionArea from "@/components/landing/ExamFunctionArea";
+import VisitorTracker from "@/components/VisitorTracker";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getSiteSettingsUncached } from "@/lib/site-settings";
@@ -47,14 +48,17 @@ export default async function ExamMainPage() {
   const tabLockedMessage = String(settings["site.tabLockedMessage"] ?? "시험 후 오픈 예정입니다");
 
   return (
-    <ExamFunctionArea
-      isAuthenticated={isAuthenticated}
-      hasSubmission={hasSubmission}
-      isAdmin={isAdmin}
-      finalPredictionEnabled={finalPredictionEnabled}
-      commentsEnabled={commentsEnabled}
-      tabEnabled={tabEnabled}
-      tabLockedMessage={tabLockedMessage}
-    />
+    <>
+      {isAuthenticated ? <VisitorTracker /> : null}
+      <ExamFunctionArea
+        isAuthenticated={isAuthenticated}
+        hasSubmission={hasSubmission}
+        isAdmin={isAdmin}
+        finalPredictionEnabled={finalPredictionEnabled}
+        commentsEnabled={commentsEnabled}
+        tabEnabled={tabEnabled}
+        tabLockedMessage={tabLockedMessage}
+      />
+    </>
   );
 }

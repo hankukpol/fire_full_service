@@ -146,6 +146,8 @@ export default function AdminSubmissionsPage() {
   const [isDetailLoading, setIsDetailLoading] = useState(false);
   const [notice, setNotice] = useState<NoticeState>(null);
   const { confirm, modalProps } = useConfirmModal();
+  const [examNumberDraft, setExamNumberDraft] = useState("");
+  const [isSavingExamNumber, setIsSavingExamNumber] = useState(false);
 
   const queryString = useMemo(() => {
     const params = new URLSearchParams();
@@ -250,6 +252,7 @@ export default function AdminSubmissionsPage() {
       }
 
       setDetail(data);
+      setExamNumberDraft(data.submission.examNumber ?? "");
     } catch (error) {
       setNotice({
         type: "error",
@@ -257,6 +260,37 @@ export default function AdminSubmissionsPage() {
       });
     } finally {
       setIsDetailLoading(false);
+    }
+  }
+
+  async function handleSaveExamNumber(submissionId: number) {
+    setIsSavingExamNumber(true);
+    setNotice(null);
+    try {
+      const response = await fetch(`/api/admin/submissions?id=${submissionId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ examNumber: examNumberDraft }),
+      });
+      const data = (await response.json()) as { success?: boolean; examNumber?: string; error?: string };
+      if (!response.ok || !data.success) {
+        throw new Error(data.error ?? "응시번호 수정에 실패했습니다.");
+      }
+
+      setDetail((prev) =>
+        prev ? { ...prev, submission: { ...prev.submission, examNumber: data.examNumber ?? "" } } : prev
+      );
+      setSubmissions((prev) =>
+        prev.map((s) => (s.id === submissionId ? { ...s, examNumber: data.examNumber ?? "" } : s))
+      );
+      setNotice({ type: "success", message: `제출 ID ${submissionId}의 응시번호가 수정되었습니다.` });
+    } catch (error) {
+      setNotice({
+        type: "error",
+        message: error instanceof Error ? error.message : "응시번호 수정에 실패했습니다.",
+      });
+    } finally {
+      setIsSavingExamNumber(false);
     }
   }
 
@@ -528,7 +562,24 @@ export default function AdminSubmissionsPage() {
               <p className="text-sm text-slate-700">연락처: {detail.submission.userPhone}</p>
               <p className="text-sm text-slate-700">유형: {formatExamType(detail.submission.examType)}</p>
               <p className="text-sm text-slate-700">지역: {detail.submission.regionName}</p>
-              <p className="text-sm text-slate-700">응시번호: {detail.submission.examNumber ?? "-"}</p>
+              <div className="flex items-center gap-2 text-sm text-slate-700">
+                <span className="shrink-0">응시번호:</span>
+                <Input
+                  value={examNumberDraft}
+                  onChange={(e) => setExamNumberDraft(e.target.value)}
+                  placeholder="응시번호 없음"
+                  className="h-8 w-40 font-mono text-xs"
+                  disabled={isSavingExamNumber}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={isSavingExamNumber || examNumberDraft === (detail.submission.examNumber ?? "")}
+                  onClick={() => void handleSaveExamNumber(detail.submission.id)}
+                >
+                  {isSavingExamNumber ? "저장 중..." : "저장"}
+                </Button>
+              </div>
               <p className="text-sm text-slate-700">제출일: {formatDateTimeText(detail.submission.createdAt)}</p>
               <p className="text-sm text-slate-700">총점: {detail.submission.totalScore.toFixed(2)}</p>
               <p className="text-sm font-semibold text-slate-900">
